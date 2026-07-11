@@ -1,0 +1,372 @@
+/* =========================================================================
+   LandingHero, hero section styles
+   Ported verbatim from ainow_handoff/index.html (v9_real_ge.html).
+   Changes vs. source:
+   - literal font names routed through next/font CSS variables
+   - DachiLynx loaded from /public/fonts (next serves it at /fonts/...)
+   - the source's page-loader is ported as the html.is-loading / hero-ready
+     blur-fade-in sequence below (the FLIP canvas loader was dead code in source)
+   ========================================================================= */
+
+/* Local Georgian display font for the typewriter word */
+@font-face {
+  font-family: 'DachiLynx';
+  src: url('/fonts/dachi_lynx.otf') format('opentype');
+  font-display: swap;
+}
+
+/* === Page wrapper, the white dot-grid background now lives on <body>
+   (globals.css) so it repeats site-wide; this wrapper stays transparent so the
+   single body grid shows through continuously (no double-paint / seam). It
+   keeps the home page's dark text + JetBrains Mono token (both inherited). === */
+.landing-page {
+  color: #0a0a0a;
+  /* Mirror the source tailwind.config fontFamily so `font-mono` utilities
+     resolve to JetBrains Mono (loaded via the CDN <link> in layout head),
+     not Tailwind v4's default mono stack. */
+  --font-mono: 'JetBrains Mono', 'Noto Sans Georgian', monospace;
+}
+
+/* === Split Text - letter reveal, words stay whole (no mid-word break) === */
+[data-split-text] { word-break: keep-all; overflow-wrap: normal; hyphens: none; }
+.split-word { display: inline-block; white-space: nowrap; }
+.split-char {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.55em);
+  animation: split-rise 850ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes split-rise {
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .split-char { opacity: 1 !important; transform: none !important; animation: none !important; }
+}
+
+/* === Hero - flex center, ALWAYS 100vh === */
+#hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: 80px;
+  padding-bottom: 40px;
+}
+.grainient-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  display: block;
+  opacity: 0.42;
+  filter: saturate(0.85);
+}
+/* Static fallback used on mobile / low-power / reduced-motion / after a GPU context loss.
+
+   It was hardcoded to the PARENT palette (#ff9ffc -> #b497cf -> #5227ff), which meant every
+   phone visiting a product landing saw aiNOW's violet and never the product's own colour. On
+   this market the phone is the majority of the traffic, so the brand was effectively wrong for
+   most people who ever saw it. It now mirrors that landing's own three shader stops. */
+.grainient-canvas--static {
+  background: radial-gradient(
+    120% 110% at 50% 0%,
+    var(--brand-soft) 0%,
+    var(--accent) 45%,
+    var(--brand) 100%
+  );
+  opacity: 0.30;
+  filter: saturate(0.9);
+}
+
+/* Signature 3D glass scene layer, full-bleed, above the faint grainient base
+   (z-0) and the soft white scrim (z-1), beneath the hero content (z-10). The
+   canvas is transparent so the grainient + bottom fade still read through; it
+   never intercepts pointer events (the CTAs stay clickable). Biased toward the
+   upper area so the body headline (lower-center) keeps high contrast. */
+.hero-3d-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  /* nudge the scene upward so the glass sits behind the wordmark, not the body
+     copy; the canvas itself fills the layer. */
+  transform: translateY(-4%);
+}
+@media (max-width: 900px) {
+  /* On phones/tablets keep it lighter so text legibility is never at risk. */
+  .hero-3d-layer { opacity: 0.85; transform: translateY(-2%); }
+}
+/* Soft white scrim - calms the gradient, keeps texture */
+#hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.55) 100%);
+  z-index: 1;
+  pointer-events: none;
+}
+/* Subtle fade to white at bottom so it transitions cleanly */
+.grainient-fade {
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 220px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, #ffffff 90%);
+  z-index: 1;
+  pointer-events: none;
+}
+#hero h1, #hero p, #hero .wordmark-3d, #hero a {
+  text-shadow: 0 1px 2px rgba(255,255,255,0.55);
+}
+
+/* Big hero wordmark fades out on scroll (logo crossfade, "mode A").
+   The small nav-logo fades in via LandingNav's own scroll state. */
+.hero-wordmark {
+  transition: opacity 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity;
+}
+.hero-wordmark.scrolled { opacity: 0; }
+
+/* Hero wordmark line-height is unified to 0.92 in landing-nav.css (alongside the
+   accent-bar rule) so the 3 accent bars hug NOW's caps identically to the blocks
+   and the business card. The previous line-height:1 made the bars sit higher in
+   the hero than everywhere else. */
+
+/* Brand tagline under the hero wordmark, mirrors the business card's centered
+   italic tagline ("AI რომელიც მუშაობს") + gradient divider. Fades out on scroll
+   together with the big wordmark (logo crossfade with the nav logo). */
+.hero-tagline {
+  margin-top: 16px;
+  text-align: center;
+  opacity: 0.88;
+  transition: opacity 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity;
+}
+.hero-tagline.scrolled { opacity: 0; }
+.hero-tagline .ht-text {
+  font-family: var(--font-bricolage), 'Bricolage Grotesque', var(--font-noto-georgian), 'Noto Sans Georgian', sans-serif;
+  font-style: italic;
+  font-weight: 600;
+  font-size: clamp(1.05rem, 2.4vw, 1.65rem);
+  letter-spacing: -0.01em;
+  color: #0a0a0a;
+}
+.hero-tagline .ht-works {
+  background: linear-gradient(90deg, var(--brand), var(--accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+.hero-tagline .ht-rule {
+  display: block;
+  width: 46px;
+  height: 2px;
+  margin: 12px auto 0;
+  border-radius: 1px;
+  background: linear-gradient(90deg, var(--brand) 0%, var(--accent) 100%);
+}
+@media (min-width: 768px) {
+  .hero-tagline { margin-top: 20px; }
+}
+
+/* hero-extras (slogan-bar + buttons), visible by default; during the intro load
+   the html.is-loading rules above hide them, then fade them in with the rest. This
+   base rule is the no-JS fallback (loader script never runs → stays visible). */
+.hero-extras { opacity: 1; }
+
+/* Typewriter - its own line, centered, fixed-width container */
+.typewriter {
+  display: block;
+  text-align: center;
+  letter-spacing: normal;
+  font-feature-settings: "kern" 1, "liga" 1;
+  white-space: nowrap;
+  margin: 32px auto 0;
+  font-weight: 700;
+}
+@media (min-width: 768px) {
+  .typewriter { margin-top: 48px; }
+}
+.tw-text { letter-spacing: 0.06em; }
+.tw-caret {
+  display: inline-block;
+  margin-left: 2px;
+  color: var(--brand);
+  font-weight: 400;
+  animation: tw-blink 800ms steps(2) infinite;
+}
+@keyframes tw-blink { 50% { opacity: 0; } }
+
+/* ===== Slogan bar, single rounded shell wrapping 4 pills with diamond seps ===== */
+.slogan-bar {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.55);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(124,58,237,0.18);
+  box-shadow: 0 8px 28px -10px rgba(124,58,237,0.18), inset 0 0 0 1px rgba(255,255,255,0.5);
+  max-width: 100%;
+  font-size: 14px;
+}
+@media (max-width: 640px) {
+  .slogan-bar { gap: 6px; padding: 8px; }
+}
+
+/* Diamond separator between pills */
+.slogan-sep {
+  width: 6px; height: 6px;
+  transform: rotate(45deg);
+  background: linear-gradient(135deg, var(--brand), var(--accent));
+  border-radius: 1px;
+  flex-shrink: 0;
+  opacity: 0.55;
+}
+.slogan-sep-strong {
+  width: 8px; height: 8px;
+  background: linear-gradient(135deg, var(--accent), var(--brand));
+  opacity: 0.85;
+}
+
+/* Slogan pills - verb-mapping */
+.slogan-pill {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-family: var(--font-noto-georgian), "Noto Sans Georgian", var(--font-bricolage), "Bricolage Grotesque", sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+  background: rgba(0,0,0,0.04);
+  transition: background 240ms, transform 240ms;
+}
+.slogan-pill:hover { transform: translateY(-1px); }
+.slogan-pill b {
+  font-family: var(--font-bricolage), "Bricolage Grotesque", sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+}
+/* aiCONTENT - pink → rose */
+.slogan-content { background: linear-gradient(135deg, rgba(236,72,153,0.08), rgba(244,63,94,0.08)); color: #ec4899; }
+.slogan-content b { color: #0a0a0a; }
+.slogan-content:hover { background: linear-gradient(135deg, rgba(236,72,153,0.16), rgba(244,63,94,0.16)); }
+/* aiSTAFF - royal blue → cyan */
+.slogan-staff { background: linear-gradient(135deg, rgba(37,99,235,0.08), rgba(6,182,212,0.08)); color: #2563eb; }
+.slogan-staff b { color: #0a0a0a; }
+.slogan-staff:hover { background: linear-gradient(135deg, rgba(37,99,235,0.16), rgba(6,182,212,0.16)); }
+/* aiADS - emerald → teal (green freed from iAI for the ads product) */
+.slogan-ads { background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(6,214,160,0.08)); color: #10b981; }
+.slogan-ads b { color: #0a0a0a; }
+.slogan-ads:hover { background: linear-gradient(135deg, rgba(16,185,129,0.16), rgba(6,214,160,0.16)); }
+/* iAI - premium unifier (tricolor, ties content + ads + staff together) */
+.slogan-iai { background: linear-gradient(135deg, rgba(236,72,153,0.07), rgba(16,185,129,0.07)); color: #2563eb; }
+.slogan-iai b { color: #0a0a0a; }
+.slogan-iai:hover { background: linear-gradient(135deg, rgba(236,72,153,0.14), rgba(16,185,129,0.14)); }
+
+/* Per-pill wordmark color theming - stripes & prefix tuned to each brand */
+.slogan-pill .wordmark-3d { display: inline-flex; vertical-align: baseline; line-height: 0.92 !important; font-size: 1em; }
+.slogan-pill .wordmark-3d .wm-mark { color: #0a0a0a !important; -webkit-text-fill-color: #0a0a0a !important; }
+/* aiCONTENT - pink prefix + pink/rose stripes */
+.slogan-content .wm-prefix { color: #ec4899 !important; -webkit-text-fill-color: #ec4899 !important; }
+.slogan-content .wm-accent::before { background: #f43f5e !important; }
+.slogan-content .wm-accent::after  { background: #ec4899 !important; }
+/* aiSTAFF - blue prefix + blue/cyan stripes */
+.slogan-staff .wm-prefix { color: #2563eb !important; -webkit-text-fill-color: #2563eb !important; }
+.slogan-staff .wm-accent::before { background: #06b6d4 !important; }
+.slogan-staff .wm-accent::after  { background: #2563eb !important; }
+/* aiADS - emerald prefix + emerald/teal stripes */
+.slogan-ads .wm-prefix { color: #10b981 !important; -webkit-text-fill-color: #10b981 !important; }
+.slogan-ads .wm-accent::before { background: #06d6a0 !important; }
+.slogan-ads .wm-accent::after  { background: #10b981 !important; }
+/* iAI - premium tricolor wordmark (unifies all three) */
+.slogan-iai .wordmark-3d .wm-prefix,
+.slogan-iai .wordmark-3d .wm-mark {
+  background: linear-gradient(120deg, #ec4899, #2563eb, #10b981) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+}
+.slogan-iai .wm-accent::before { background: #ec4899 !important; }
+.slogan-iai .wm-accent::after  { background: #10b981 !important; }
+
+/* Together-pill - light gradient, frames aiNOW logo */
+.slogan-together {
+  background: linear-gradient(135deg, rgba(124,58,237,0.12), rgba(255,107,0,0.12)) !important;
+  color: #0a0a0a !important;
+  padding: 6px 14px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(124,58,237,0.25);
+}
+.slogan-together .wordmark-3d {
+  font-size: 1.05em;
+  line-height: 0.92 !important;
+  transform: translateY(0.5px);
+}
+.slogan-together .wm-prefix { color: var(--brand) !important; -webkit-text-fill-color: var(--brand) !important; }
+.slogan-together .wm-mark { color: #0a0a0a !important; -webkit-text-fill-color: #0a0a0a !important; }
+.slogan-together .wm-accent::before { background: #e040fb !important; }
+.slogan-together .wm-accent::after { background: #ff6b00 !important; }
+.slogan-together:hover { background: linear-gradient(135deg, rgba(124,58,237,0.22), rgba(255,107,0,0.22)) !important; }
+
+/* Mobile - stack pills vertically, hide diamond seps */
+@media (max-width: 640px) {
+  .slogan-bar {
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px 12px;
+    border-radius: 22px;
+  }
+  .slogan-sep { display: none; }
+  .slogan-pill { width: 100%; text-align: center; padding: 6px 12px; }
+  .slogan-together { justify-content: center; }
+}
+
+/* ===== Hero buttons - premium static ===== */
+.btn-primary, .btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 24px;
+  border-radius: 14px;
+  font-family: var(--font-bricolage), "Bricolage Grotesque", var(--font-noto-georgian), "Noto Sans Georgian", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: -0.005em;
+  text-decoration: none;
+  /* Interruptible press feedback, transform/filter only, no layout thrash. */
+  transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform;
+}
+.btn-primary:active, .btn-ghost:active { transform: scale(0.97); }
+@media (prefers-reduced-motion: reduce) {
+  .btn-primary, .btn-ghost { transition: none; }
+  .btn-primary:active, .btn-ghost:active { transform: none; }
+}
+.btn-primary {
+  color: var(--primary-foreground, #fff);
+  background: linear-gradient(135deg, var(--brand-cta, var(--brand)) 0%, var(--accent-cta, var(--accent)) 100%);
+  box-shadow:
+    0 10px 24px -6px color-mix(in srgb, var(--brand) 45%, transparent),
+    inset 0 1px 0 rgba(255,255,255,0.18);
+}
+.btn-ghost {
+  color: #0a0a0a;
+  background: rgba(255,255,255,0.7);
+  border: 1.5px solid rgba(0,0,0,0.12);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+.btn-ghost svg { color: var(--brand); }
+
+@media (prefers-reduced-motion: reduce) {
+  .split-char { opacity: 1 !important; transform: none !important; animation: none !important; }
+}

@@ -1,0 +1,24 @@
+# Normalize all text to LF, in the repo AND on checkout.
+# Without this, a Windows working tree (CRLF) against an LF template makes every
+# synced file look like 100% churn, and real drift becomes invisible.
+* text=auto eol=lf
+
+# Binary: never touch.
+*.png   -text
+*.jpg   -text
+*.jpeg  -text
+*.gif   -text
+*.webp  -text
+*.ico   -text
+*.woff  -text
+*.woff2 -text
+*.ttf   -text
+*.pdf   -text
+*.mp4   -text
+*.mp3   -text
+
+# NOTE: package-lock.json is deliberately NOT marked -text. It is already stored
+# with LF in the index; marking it binary would make git adopt the CRLF bytes
+# from a Windows working tree and rewrite the whole file for nothing.
+# The lockfile's real hazard is `npm install` on Windows (it prunes the 51
+# os:["linux"] optional deps and CI `npm ci` then fails), not git.

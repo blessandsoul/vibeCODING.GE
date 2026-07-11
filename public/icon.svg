@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none">
+  <!-- aiNOW family mark: the three skewed wordmark accent stripes
+       (pink / blue / emerald), bare on a transparent ground. Same mark as
+       ainow.ge and aistaff.ge. -->
+  <g transform="translate(120 96) skewX(-15)">
+    <rect x="0" y="0"   width="368" height="72" rx="16" fill="#ec4899"/>
+    <rect x="0" y="120" width="368" height="72" rx="16" fill="#2563eb"/>
+    <rect x="0" y="240" width="368" height="72" rx="16" fill="#10b981"/>
+  </g>
+</svg>

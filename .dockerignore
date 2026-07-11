@@ -1,0 +1,16 @@
+node_modules
+.next
+out
+.env*
+!.env.local.example
+.git
+.gitignore
+.vscode
+.idea
+.claude
+*.log
+*.tsbuildinfo
+README.md
+REFF
+Thumbs.db
+.DS_Store

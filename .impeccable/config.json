@@ -1,0 +1,41 @@
+{
+  "_comment": "Brand whitelist for vibecoding. The product hue is the brand, not AI slop. Read by .claude/hooks/frontend_design_gate.py via the vendored impeccable detector.",
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "ai-color-palette",
+        "value": "#ef4444",
+        "files": [
+          "src/**"
+        ],
+        "reason": "vibecoding brand colour, locked in src/config/site.ts"
+      },
+      {
+        "rule": "ai-color-palette",
+        "value": "#fecaca",
+        "files": [
+          "src/**"
+        ],
+        "reason": "vibecoding brand colour, locked in src/config/site.ts"
+      },
+      {
+        "rule": "ai-color-palette",
+        "value": "#ef4444",
+        "files": [
+          "src/**"
+        ],
+        "reason": "vibecoding brand colour, locked in src/config/site.ts"
+      },
+      {
+        "rule": "ai-color-palette",
+        "value": "#f87171",
+        "files": [
+          "src/**"
+        ],
+        "reason": "vibecoding brand colour, locked in src/config/site.ts"
+      }
+    ]
+  }
+}

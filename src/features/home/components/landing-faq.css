@@ -1,0 +1,39 @@
+/* =========================================================================
+   LandingFaq, "#faq" accordion section.
+   Ported verbatim from ainow_handoff/index.html. .brand-mark comes from
+   landing-team.css; .fade-up from landing-flagships.css. Token swaps in
+   markup: text-muted → #525252, border-border → #e5e5e5, bg-panel → #fafafa.
+   The accordion open/close is JS-driven (see LandingFaq.tsx), animating
+   max-height + opacity + margin-top.
+   ========================================================================= */
+
+/* FAQ accordion, JS-driven smooth open/close via max-height + opacity */
+details.faq-item {
+  transition: background 320ms ease;
+  cursor: pointer; /* whole card is clickable to toggle */
+}
+/* Reading the open answer feels normal (and clicking it won't close the card) */
+details.faq-item .faq-body { cursor: auto; }
+details.faq-item summary { list-style: none; cursor: pointer; }
+details.faq-item summary::-webkit-details-marker { display: none; }
+details.faq-item summary svg {
+  transition: transform 380ms cubic-bezier(0.16, 1, 0.3, 1);
+  flex-shrink: 0;
+}
+details.faq-item[open] summary svg { transform: rotate(45deg); }
+details.faq-item .faq-body {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  margin-top: 0;
+  transition:
+    max-height 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 280ms ease,
+    margin-top 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: max-height, opacity;
+}
+details.faq-item.is-opening .faq-body,
+details.faq-item[open].is-open .faq-body {
+  opacity: 1;
+  margin-top: 1rem;
+}
