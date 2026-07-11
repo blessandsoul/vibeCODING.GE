@@ -145,7 +145,7 @@ const FIX_FRAMES = {
     clean: false,
   },
   clean: {
-    browserKey: REDACTED_BROWSER_KEY,
+    browserKey: null,
     revoked: true,
     replacementLocation: 'server',
     rescanComplete: true,

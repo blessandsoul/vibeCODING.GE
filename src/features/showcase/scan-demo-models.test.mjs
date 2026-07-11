@@ -94,6 +94,14 @@ test('the repair becomes clean only after revoke, server-side move, and rescan',
   assert.equal(clean.findingCount, 0);
 });
 
+test('the clean repair frame removes historical browser-key evidence', () => {
+  const clean = fixFrame('clean');
+
+  assert.equal(clean.browserKey, null);
+  assert.equal(clean.findingCount, 0);
+  assert.equal(clean.clean, true);
+});
+
 test('the timeline completes one automatic pass in exactly 7,200 ms', () => {
   const clock = createFakeClock();
   const seen = [];
