@@ -105,7 +105,7 @@ export function LandingNav() {
   ];
 
   return (
-    <nav className={navClassName}>
+    <nav className={navClassName} data-family-header="true">
       <div className="glass-nav-bg" />
 
       <div className="glass-nav-inner">
@@ -122,7 +122,7 @@ export function LandingNav() {
           <span />
         </button>
 
-        <Link href="/" className="nav-logo" aria-label={`${SITE.wordmark.prefix}${SITE.wordmark.mark} home`}>
+        <Link href="/" className="nav-logo nav-logo-slot" aria-label={`${SITE.wordmark.prefix}${SITE.wordmark.mark} home`}>
           <Wordmark />
         </Link>
 

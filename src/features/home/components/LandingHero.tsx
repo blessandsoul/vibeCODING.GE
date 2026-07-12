@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { SITE } from '@/config/site';
 import { MagneticButton } from '@/components/common/MagneticButton';
+import { Ico } from '@/components/common/Ico';
 // PER-SITE. The one thing in this shared component that every landing must supply for itself:
 // the product, in a single frame, above the fold. See src/features/showcase/HeroProof.tsx.
 import { HeroProof } from '@/features/showcase/HeroProof';
@@ -19,17 +20,6 @@ const hexToRgb = (hex: string): [number, number, number] => {
 /* Hero, ported 1:1 from ainow_handoff/index.html (#hero section).
    Copy is i18n-ized via the home.hero namespace. The typewriter word list and
    its prefill are a single comma-joined string per locale. */
-
-/* aiNOW-style wordmark (ai + NOW + diagonal accent bars) */
-function Wordmark({ prefix, mark }: { prefix: string; mark: string }) {
-  return (
-    <span className="wordmark-3d">
-      <span className="wm-prefix">{prefix}</span>
-      <span className="wm-mark">{mark}</span>
-      <span className="wm-accent" aria-hidden="true" />
-    </span>
-  );
-}
 
 /* Hero-lead text style (stable reference so the memoized SplitText below never
    re-renders and the imperative split is never clobbered). */
@@ -582,11 +572,17 @@ void main(){vec4 o=vec4(0.0); mainImage(o,gl_FragCoord.xy); fragColor=o;}`;
                 className="typewriter"
                 data-words={typewriterWords}
                 data-prefill={typewriterPrefill}
+                /* THE INK, NOT THE FILL. This is the single biggest word on the page and it
+                   was painted in --brand, which measured 1.51:1 on aiAPP's lime and 1.60:1 on
+                   aiTAXI's yellow: below even the large-text bar, and it read like a highlighter
+                   that had run out. --brand-ink is the same hue, darkened until a letterform
+                   survives on the page. On aiDOCS and vibecoding, whose brands are already dark
+                   enough, the two tokens are the same colour and nothing changes. */
                 style={{
                   fontFamily:
                     "'DachiLynx', var(--font-noto-georgian), 'Noto Sans Georgian', sans-serif",
-                  color: 'var(--brand)',
-                  WebkitTextFillColor: 'var(--brand)',
+                  color: 'var(--brand-ink, var(--brand))',
+                  WebkitTextFillColor: 'var(--brand-ink, var(--brand))',
                 }}
               >
                 <span className="tw-text">{typewriterPrefill}</span>
@@ -638,12 +634,7 @@ void main(){vec4 o=vec4(0.0); mainImage(o,gl_FragCoord.xy); fragColor=o;}`;
                 lives in the footer, where somebody who wants it will go and look. */}
           </div>
 
-          {/* THE COMMITMENT, and the person who is bound by it.
-              Every conventional landing answers "why should I act now" with a fake countdown or a
-              fake scarcity badge. Those are banned here, so the answer has to be a promise the
-              owner is actually bound to keep, it has to sit above the fold, and it has to have a
-              name on it. A promise with a face is a different object from a promise without one,
-              and on this market it is the whole difference. */}
+          {/* THE COMMITMENT. aiNOW owns the process check, setup, and result shown here. */}
           <div className="hero-commitment mx-auto mt-8 max-w-xl text-center lg:mx-0 lg:text-left">
             <p className="text-pretty text-[14px] leading-relaxed text-neutral-900/60 md:text-[15px]">
               <span
@@ -655,42 +646,16 @@ void main(){vec4 o=vec4(0.0); mainImage(o,gl_FragCoord.xy); fragColor=o;}`;
             </p>
             <p className="mt-3 flex items-center justify-center gap-2.5 text-[13px] text-neutral-900/45 lg:justify-start">
               <span
-                className="inline-flex h-7 w-7 items-center justify-center rounded-full text-[11px] font-bold text-white"
+                className="inline-flex h-7 w-7 items-center justify-center rounded-full text-white"
                 style={{ background: 'var(--brand)' }}
                 aria-hidden="true"
               >
-                AA
+                <Ico name="solar:shield-check-bold-duotone" className="h-4 w-4" />
               </span>
               {t('signedBy')}
             </p>
           </div>
 
-          {/* The aiNOW family strip.
-              It used to sit ABOVE the buttons, which meant the most valuable pixels on a page
-              selling THIS product were spent advertising four other ones, and it pushed the
-              commitment (the entire answer to "why act now") below the fold. It now comes last.
-              The family still gets its strip. It just stops getting the seat above the offer. */}
-          <div className="slogan-bar mt-11 mx-auto opacity-75 lg:mx-0">
-            <span className="slogan-pill slogan-content">
-              <Wordmark prefix="ai" mark="CONTENT" /> {t('sloganCreates')}
-            </span>
-            <span className="slogan-sep" aria-hidden="true" />
-            <span className="slogan-pill slogan-ads">
-              <Wordmark prefix="ai" mark="ADS" /> {t('sloganAds')}
-            </span>
-            <span className="slogan-sep" aria-hidden="true" />
-            <span className="slogan-pill slogan-staff">
-              <Wordmark prefix="ai" mark="STAFF" /> {t('sloganSells')}
-            </span>
-            <span className="slogan-sep" aria-hidden="true" />
-            <span className="slogan-pill slogan-iai">
-              <Wordmark prefix="i" mark="AI" /> {t('sloganManages')}
-            </span>
-            <span className="slogan-sep slogan-sep-strong" aria-hidden="true" />
-            <span className="slogan-pill slogan-together">
-              {t('sloganTogether')} <Wordmark prefix="ai" mark="NOW" />
-            </span>
-            </div>
           </div>
           </div>
         </div>

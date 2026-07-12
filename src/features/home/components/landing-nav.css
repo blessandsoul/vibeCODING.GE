@@ -144,9 +144,13 @@
   font-family: var(--font-bricolage), 'Bricolage Grotesque', var(--font-noto-georgian), 'Noto Sans Georgian', sans-serif;
 }
 
+@media (max-width: 768px) {
+  .glass-nav-inner { height: 44px; }
+}
+
 @media (max-width: 640px) {
   .glass-nav { padding: 4px; }
-  .glass-nav-inner { padding: 0 8px 0 16px; height: 44px; gap: 8px; }
+  .glass-nav-inner { padding: 0 8px 0 16px; gap: 8px; }
   .glass-cta { padding: 7px 12px; font-size: 10px; letter-spacing: 0.06em; }
 }
 
@@ -155,6 +159,12 @@
   opacity: 1;
   transition: opacity 420ms cubic-bezier(0.22, 1, 0.36, 1);
   will-change: opacity;
+}
+.nav-logo-slot {
+  block-size: 24px;
+  display: inline-flex;
+  align-items: center;
+  line-height: 0.92;
 }
 .glass-nav.is-top .nav-logo {
   opacity: 0;

@@ -34,7 +34,7 @@
     "showcase": "Scan your app",
     "process": "How it works",
     "faq": "Questions",
-    "cta": "Get the audit"
+    "cta": "Get an audit"
   },
   "landingFooter": {
     "company": "AI NOW LLC, Tbilisi, Georgia",
@@ -46,7 +46,7 @@
     "sectionShowcase": "Scan your app",
     "sectionWork": "How it works",
     "sectionFaq": "Questions",
-    "ctaHuge": "Scan it. It takes a minute and costs nothing.",
+    "ctaHuge": "Scan your app",
     "copyright": "© {year} vibecoding.ge, an aiNOW product. All rights reserved."
   },
   "product": {
@@ -60,17 +60,12 @@
       "taglineWorks": "rescue",
       "typewriterWords": "database,users,API keys,payments,uploads",
       "typewriterPrefill": "database",
-      "sloganCreates": "creates",
-      "sloganAds": "advertises",
-      "sloganSells": "sells",
-      "sloganManages": "manages",
-      "sloganTogether": "together",
       "ctaResults": "Scan my app, free",
       "ctaCall": "Get the audit",
       "commitment": "If the audit finds nothing above minor severity, you pay nothing. That is safe to promise because 85% of scanned Lovable apps were missing row-level security and 62% had API keys sitting in the browser.",
       "audience": "For founders who shipped with Lovable, Bolt, Replit, v0, Base44 or Cursor",
       "sub": "In a scan of over 1,430 apps built this way, 85% were missing row-level security and 62% had API keys sitting in the browser. Paste your URL. We will show you your own key, and we will not keep it.",
-      "signedBy": "Andrew Altair. I am the one who reads your code."
+      "signedBy": "aiNOW checks this process on your data, sets it up, and shows you the result."
     },
     "work": {
       "eyebrow": "How it works",

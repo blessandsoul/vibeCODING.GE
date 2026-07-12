@@ -38,7 +38,7 @@ export function LandingFooter(): React.ReactElement {
   const family = FAMILY.filter((m) => m.live && m.domain !== SITE.domain);
 
   const copyright = (
-    <span className="block whitespace-nowrap text-[12px] uppercase tracking-wide text-neutral-900/40">
+    <span className="block whitespace-normal break-words text-[12px] uppercase tracking-wide text-neutral-900/40 lg:whitespace-nowrap">
       {t('copyright', { year })}
     </span>
   );
@@ -47,15 +47,29 @@ export function LandingFooter(): React.ReactElement {
     <footer className="landing-footer border-t border-[#e5e5e5]/60 bg-white px-6 pb-8 pt-12 text-neutral-900 md:px-10 md:py-16">
       <div className="mx-auto w-full max-w-[1280px]">
         <div className="grid lg:grid-cols-[minmax(460px,600px)_1fr] lg:gap-16">
-          {/* LEFT, wordmark + link columns */}
+          {/* LEFT, wordmark + link columns.
+
+              THE PARENT SIGNS THE PAGE. This slot used to render the PRODUCT's wordmark while
+              its aria-label said "aiNOW", so the mark and the label disagreed and the footer
+              repeated a logo the reader had already seen twice on the way down.
+
+              The product owns the page and it owns the oversized band above this (LandingWordmark).
+              The footer is where a page says who is behind it, and that is aiNOW. It links OUT to
+              ainow.ge, not back to this landing's own root, because a reader who reaches the footer
+              wanting to know "who are these people" is asking about the company, not the product. */}
           <div>
-            <Link href="/" aria-label="aiNOW" className="inline-flex">
-              <span className="wordmark-3d footer-wordmark text-[40px] leading-none md:text-[52px]">
-                <span className="wm-prefix">{SITE.wordmark.prefix}</span>
-                <span className="wm-mark">{SITE.wordmark.mark}</span>
+            <a
+              href="https://ainow.ge"
+              aria-label="aiNOW"
+              className="inline-flex"
+              rel="noopener"
+            >
+              <span className="wordmark-3d ainow-parent footer-wordmark text-[40px] leading-none md:text-[52px]">
+                <span className="wm-prefix">ai</span>
+                <span className="wm-mark">NOW</span>
                 <span className="wm-accent" aria-hidden="true" />
               </span>
-            </Link>
+            </a>
 
             {/* Family directory stacks under the wordmark below the 2-col breakpoint */}
             <div className="mt-10 lg:hidden">
@@ -64,7 +78,7 @@ export function LandingFooter(): React.ReactElement {
             </div>
 
             {/* Link columns */}
-            <div className="mt-10 grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 lg:mt-16">
+            <div className="mt-10 grid grid-cols-1 gap-x-4 gap-y-10 sm:grid-cols-2 sm:gap-x-6 lg:mt-16">
               <FooterColumn title={t('companyHeading')}>
                 <FooterRouteLink href="/contact">{t('contact')}</FooterRouteLink>
                 <FooterAnchorLink href="#showcase">{t('sectionShowcase')}</FooterAnchorLink>
@@ -76,7 +90,7 @@ export function LandingFooter(): React.ReactElement {
                 <span className="whitespace-nowrap text-[12px] uppercase tracking-wide text-neutral-900/40">
                   {t('socialHeading')}
                 </span>
-                <SocialLinks className="mt-5 gap-3 sm:mt-4" size={18} round />
+                <SocialLinks className="mt-5 flex-wrap gap-3 sm:mt-4" size={18} round />
                 <div className="mt-8">
                   <span className="whitespace-nowrap text-[12px] uppercase tracking-wide text-neutral-900/40">
                     {t('languageHeading')}
@@ -101,7 +115,7 @@ export function LandingFooter(): React.ReactElement {
           <MagneticButton className="block w-full">
             <a
               href="#cta"
-              className="flex h-[100px] w-full items-center justify-center whitespace-nowrap rounded-full px-5 text-center text-sm font-semibold uppercase leading-5 tracking-[0.02em] text-white [transition:transform_.18s_cubic-bezier(.2,.8,.2,1)] will-change-transform active:scale-[0.99] md:h-[120px] md:text-base 2xl:h-[140px]"
+              className="flex h-[100px] w-full items-center justify-center whitespace-normal rounded-full px-5 text-center text-sm font-semibold uppercase leading-5 tracking-[0.02em] text-white lg:whitespace-nowrap [transition:transform_.18s_cubic-bezier(.2,.8,.2,1)] will-change-transform active:scale-[0.99] md:h-[120px] md:text-base 2xl:h-[140px]"
               style={{ background: 'linear-gradient(135deg, var(--brand), var(--accent))' }}
             >
               {t('ctaHuge')}

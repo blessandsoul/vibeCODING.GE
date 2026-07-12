@@ -153,7 +153,11 @@
   color: #0a0a0a;
 }
 .hero-tagline .ht-works {
-  background: linear-gradient(90deg, var(--brand), var(--accent));
+  /* The tail was --accent, which on six of the nine landings is a near-white tint: the last
+     word of the tagline literally faded out and read as clipped text. A gradient that PAINTS
+     TEXT has to end somewhere a letterform survives, so it now deepens into --brand-ink
+     instead of dissolving into the page. */
+  background: linear-gradient(90deg, var(--brand), var(--brand-ink, var(--brand)));
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -171,7 +175,7 @@
   .hero-tagline { margin-top: 20px; }
 }
 
-/* hero-extras (slogan-bar + buttons), visible by default; during the intro load
+/* Hero actions are visible by default; during the intro load
    the html.is-loading rules above hide them, then fade them in with the rest. This
    base rule is the no-JS fallback (loader script never runs → stays visible). */
 .hero-extras { opacity: 1; }
@@ -198,138 +202,6 @@
   animation: tw-blink 800ms steps(2) infinite;
 }
 @keyframes tw-blink { 50% { opacity: 0; } }
-
-/* ===== Slogan bar, single rounded shell wrapping 4 pills with diamond seps ===== */
-.slogan-bar {
-  display: inline-flex;
-  align-items: center;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.55);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(124,58,237,0.18);
-  box-shadow: 0 8px 28px -10px rgba(124,58,237,0.18), inset 0 0 0 1px rgba(255,255,255,0.5);
-  max-width: 100%;
-  font-size: 14px;
-}
-@media (max-width: 640px) {
-  .slogan-bar { gap: 6px; padding: 8px; }
-}
-
-/* Diamond separator between pills */
-.slogan-sep {
-  width: 6px; height: 6px;
-  transform: rotate(45deg);
-  background: linear-gradient(135deg, var(--brand), var(--accent));
-  border-radius: 1px;
-  flex-shrink: 0;
-  opacity: 0.55;
-}
-.slogan-sep-strong {
-  width: 8px; height: 8px;
-  background: linear-gradient(135deg, var(--accent), var(--brand));
-  opacity: 0.85;
-}
-
-/* Slogan pills - verb-mapping */
-.slogan-pill {
-  display: inline-block;
-  padding: 4px 12px;
-  border-radius: 999px;
-  font-family: var(--font-noto-georgian), "Noto Sans Georgian", var(--font-bricolage), "Bricolage Grotesque", sans-serif;
-  font-weight: 600;
-  letter-spacing: -0.005em;
-  white-space: nowrap;
-  background: rgba(0,0,0,0.04);
-  transition: background 240ms, transform 240ms;
-}
-.slogan-pill:hover { transform: translateY(-1px); }
-.slogan-pill b {
-  font-family: var(--font-bricolage), "Bricolage Grotesque", sans-serif;
-  font-weight: 900;
-  letter-spacing: -0.03em;
-}
-/* aiCONTENT - pink → rose */
-.slogan-content { background: linear-gradient(135deg, rgba(236,72,153,0.08), rgba(244,63,94,0.08)); color: #ec4899; }
-.slogan-content b { color: #0a0a0a; }
-.slogan-content:hover { background: linear-gradient(135deg, rgba(236,72,153,0.16), rgba(244,63,94,0.16)); }
-/* aiSTAFF - royal blue → cyan */
-.slogan-staff { background: linear-gradient(135deg, rgba(37,99,235,0.08), rgba(6,182,212,0.08)); color: #2563eb; }
-.slogan-staff b { color: #0a0a0a; }
-.slogan-staff:hover { background: linear-gradient(135deg, rgba(37,99,235,0.16), rgba(6,182,212,0.16)); }
-/* aiADS - emerald → teal (green freed from iAI for the ads product) */
-.slogan-ads { background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(6,214,160,0.08)); color: #10b981; }
-.slogan-ads b { color: #0a0a0a; }
-.slogan-ads:hover { background: linear-gradient(135deg, rgba(16,185,129,0.16), rgba(6,214,160,0.16)); }
-/* iAI - premium unifier (tricolor, ties content + ads + staff together) */
-.slogan-iai { background: linear-gradient(135deg, rgba(236,72,153,0.07), rgba(16,185,129,0.07)); color: #2563eb; }
-.slogan-iai b { color: #0a0a0a; }
-.slogan-iai:hover { background: linear-gradient(135deg, rgba(236,72,153,0.14), rgba(16,185,129,0.14)); }
-
-/* Per-pill wordmark color theming - stripes & prefix tuned to each brand */
-.slogan-pill .wordmark-3d { display: inline-flex; vertical-align: baseline; line-height: 0.92 !important; font-size: 1em; }
-.slogan-pill .wordmark-3d .wm-mark { color: #0a0a0a !important; -webkit-text-fill-color: #0a0a0a !important; }
-/* aiCONTENT - pink prefix + pink/rose stripes */
-.slogan-content .wm-prefix { color: #ec4899 !important; -webkit-text-fill-color: #ec4899 !important; }
-.slogan-content .wm-accent::before { background: #f43f5e !important; }
-.slogan-content .wm-accent::after  { background: #ec4899 !important; }
-/* aiSTAFF - blue prefix + blue/cyan stripes */
-.slogan-staff .wm-prefix { color: #2563eb !important; -webkit-text-fill-color: #2563eb !important; }
-.slogan-staff .wm-accent::before { background: #06b6d4 !important; }
-.slogan-staff .wm-accent::after  { background: #2563eb !important; }
-/* aiADS - emerald prefix + emerald/teal stripes */
-.slogan-ads .wm-prefix { color: #10b981 !important; -webkit-text-fill-color: #10b981 !important; }
-.slogan-ads .wm-accent::before { background: #06d6a0 !important; }
-.slogan-ads .wm-accent::after  { background: #10b981 !important; }
-/* iAI - premium tricolor wordmark (unifies all three) */
-.slogan-iai .wordmark-3d .wm-prefix,
-.slogan-iai .wordmark-3d .wm-mark {
-  background: linear-gradient(120deg, #ec4899, #2563eb, #10b981) !important;
-  -webkit-background-clip: text !important;
-  background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-  color: transparent !important;
-}
-.slogan-iai .wm-accent::before { background: #ec4899 !important; }
-.slogan-iai .wm-accent::after  { background: #10b981 !important; }
-
-/* Together-pill - light gradient, frames aiNOW logo */
-.slogan-together {
-  background: linear-gradient(135deg, rgba(124,58,237,0.12), rgba(255,107,0,0.12)) !important;
-  color: #0a0a0a !important;
-  padding: 6px 14px;
-  font-weight: 700;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  border: 1px solid rgba(124,58,237,0.25);
-}
-.slogan-together .wordmark-3d {
-  font-size: 1.05em;
-  line-height: 0.92 !important;
-  transform: translateY(0.5px);
-}
-.slogan-together .wm-prefix { color: var(--brand) !important; -webkit-text-fill-color: var(--brand) !important; }
-.slogan-together .wm-mark { color: #0a0a0a !important; -webkit-text-fill-color: #0a0a0a !important; }
-.slogan-together .wm-accent::before { background: #e040fb !important; }
-.slogan-together .wm-accent::after { background: #ff6b00 !important; }
-.slogan-together:hover { background: linear-gradient(135deg, rgba(124,58,237,0.22), rgba(255,107,0,0.22)) !important; }
-
-/* Mobile - stack pills vertically, hide diamond seps */
-@media (max-width: 640px) {
-  .slogan-bar {
-    flex-direction: column;
-    gap: 6px;
-    padding: 10px 12px;
-    border-radius: 22px;
-  }
-  .slogan-sep { display: none; }
-  .slogan-pill { width: 100%; text-align: center; padding: 6px 12px; }
-  .slogan-together { justify-content: center; }
-}
 
 /* ===== Hero buttons - premium static ===== */
 .btn-primary, .btn-ghost {

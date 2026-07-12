@@ -18,6 +18,14 @@
   --font-mono: 'JetBrains Mono', 'Noto Sans Georgian', monospace;
 }
 
+.landing-footer .wordmark-3d.ainow-parent .wm-prefix {
+  background: linear-gradient(130deg, #2f6bff 0%, #8b3dff 45%, #e040fb 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
 /* ===== Inline brand mark - matches logo recipe (mirrors landing-team.css) ===== */
 .brand-mark {
   display: inline-flex;
