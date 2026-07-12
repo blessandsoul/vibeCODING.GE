@@ -41,6 +41,16 @@ function Chevron({ className }: { className: string }) {
   );
 }
 
+function Wordmark() {
+  return (
+    <div className="wordmark-3d text-lg leading-none">
+      <span className="wm-prefix">{SITE.wordmark.prefix}</span>
+      <span className="wm-mark">{SITE.wordmark.mark}</span>
+      <span className="wm-accent" aria-hidden="true" />
+    </div>
+  );
+}
+
 export function LandingNav() {
   const t = useTranslations('landingNav');
   const locale = useLocale();
@@ -73,8 +83,6 @@ export function LandingNav() {
     };
   }, [menuOpen]);
 
-  const closeMenu = () => setMenuOpen(false);
-
   // Smooth-scroll on home; on other pages let <Link> navigate to /#id.
   const handleSection = (e: MouseEvent<HTMLAnchorElement>, id: string) => {
     setMenuOpen(false);
@@ -89,14 +97,6 @@ export function LandingNav() {
   const navClassName = ['glass-nav', atTop && 'is-top', menuOpen && 'menu-open']
     .filter(Boolean)
     .join(' ');
-
-  const Wordmark = () => (
-    <div className="wordmark-3d text-lg leading-none">
-      <span className="wm-prefix">{SITE.wordmark.prefix}</span>
-      <span className="wm-mark">{SITE.wordmark.mark}</span>
-      <span className="wm-accent" aria-hidden="true" />
-    </div>
-  );
 
   const sectionLinks = [
     { id: SECTIONS.showcase, label: t('showcase') },
