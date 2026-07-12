@@ -9,6 +9,7 @@ import {
   createTimelinePlayer,
   fixFrame,
 } from '@/features/showcase/scan-demo-models.mjs';
+import { playTimelineWhenVisible } from '@/features/showcase/scan-demo-visibility.mjs';
 import { cn } from '@/lib/utils';
 
 const STAGE_LABELS = {
@@ -33,6 +34,7 @@ export function ScanFixRescan() {
   const t = useTranslations('product.fix');
   const reduced = useReducedMotion();
   const [stage, setStage] = useState(FIX_STAGES[0]);
+  const demoRef = useRef<HTMLDivElement>(null);
   const timeline = useRef<ReturnType<typeof createTimelinePlayer> | null>(null);
 
   useEffect(() => {
@@ -42,10 +44,15 @@ export function ScanFixRescan() {
       onStage: setStage,
     });
     timeline.current = player;
-    player.play();
+    const cleanupVisibility = playTimelineWhenVisible({
+      element: demoRef.current,
+      reducedMotion: Boolean(reduced),
+      play: player.play,
+      stop: player.stop,
+    });
 
     return () => {
-      player.stop();
+      cleanupVisibility();
       if (timeline.current === player) timeline.current = null;
     };
   }, [reduced]);
@@ -91,7 +98,10 @@ export function ScanFixRescan() {
         </button>
       </div>
 
-      <div className="mt-10 overflow-hidden rounded-3xl bg-white shadow-[0_0_0_1px_rgba(0,0,0,0.09),0_24px_50px_-38px_rgba(0,0,0,0.45)]">
+      <div
+        ref={demoRef}
+        className="mt-10 overflow-hidden rounded-3xl bg-white shadow-[0_0_0_1px_rgba(0,0,0,0.09),0_24px_50px_-38px_rgba(0,0,0,0.45)]"
+      >
         <ol className="grid grid-cols-2 border-b border-[#ececec] bg-[#fafafa] sm:grid-cols-3 lg:grid-cols-6">
           {FIX_STAGES.map((item, index) => {
             const active = item === stage;

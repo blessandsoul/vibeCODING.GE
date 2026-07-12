@@ -10,6 +10,7 @@ import {
   createTimelinePlayer,
   rlsFrame,
 } from '@/features/showcase/scan-demo-models.mjs';
+import { playTimelineWhenVisible } from '@/features/showcase/scan-demo-visibility.mjs';
 import { cn } from '@/lib/utils';
 
 /* =========================================================================
@@ -76,6 +77,7 @@ export function ScanRls() {
   const [rls, setRls] = useState(false);
   const [phase, setPhase] = useState<Phase>('idle');
   const [shown, setShown] = useState(0);
+  const demoRef = useRef<HTMLDivElement>(null);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const timeline = useRef<ReturnType<typeof createTimelinePlayer> | null>(null);
 
@@ -108,10 +110,15 @@ export function ScanRls() {
       onStage: applyTimelineStage,
     });
     timeline.current = player;
-    player.play();
+    const cleanupVisibility = playTimelineWhenVisible({
+      element: demoRef.current,
+      reducedMotion: Boolean(reduced),
+      play: player.play,
+      stop: player.stop,
+    });
 
     return () => {
-      player.stop();
+      cleanupVisibility();
       clear();
       if (timeline.current === player) timeline.current = null;
     };
@@ -182,7 +189,10 @@ export function ScanRls() {
         </p>
       </div>
 
-      <div className="mt-10 overflow-hidden rounded-3xl bg-white shadow-[0_0_0_1px_rgba(0,0,0,0.09),0_24px_50px_-38px_rgba(0,0,0,0.45)]">
+      <div
+        ref={demoRef}
+        className="mt-10 overflow-hidden rounded-3xl bg-white shadow-[0_0_0_1px_rgba(0,0,0,0.09),0_24px_50px_-38px_rgba(0,0,0,0.45)]"
+      >
         {/* the table, and the one setting that decides everything about it */}
         <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-4 border-b border-[#ececec] bg-[#fafafa] px-5 py-3.5 md:px-6">
           <div className="flex items-center gap-3">
