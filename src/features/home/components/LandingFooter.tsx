@@ -54,22 +54,20 @@ export function LandingFooter(): React.ReactElement {
               repeated a logo the reader had already seen twice on the way down.
 
               The product owns the page and it owns the oversized band above this (LandingWordmark).
-              The footer is where a page says who is behind it, and that is aiNOW. It links OUT to
-              ainow.ge, not back to this landing's own root, because a reader who reaches the footer
-              wanting to know "who are these people" is asking about the company, not the product. */}
+              The footer is where a page says who is behind it, and that is aiNOW. Its wordmark
+              keeps the original local home route so locale-aware navigation stays on this site. */}
           <div>
-            <a
-              href="https://ainow.ge"
+            <Link
+              href="/"
               aria-label="aiNOW"
               className="inline-flex"
-              rel="noopener"
             >
               <span className="wordmark-3d ainow-parent footer-wordmark text-[40px] leading-none md:text-[52px]">
                 <span className="wm-prefix">ai</span>
                 <span className="wm-mark">NOW</span>
                 <span className="wm-accent" aria-hidden="true" />
               </span>
-            </a>
+            </Link>
 
             {/* Family directory stacks under the wordmark below the 2-col breakpoint */}
             <div className="mt-10 lg:hidden">

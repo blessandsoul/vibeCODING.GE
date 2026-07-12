@@ -46,8 +46,8 @@ export function createDemoLoop({
     if (!canRepeat()) return;
     const callbackGeneration = generation;
 
-    repeatTimer = schedule(() => {
-      repeatTimer = null;
+    const scheduledTimer = schedule(() => {
+      if (repeatTimer === scheduledTimer) repeatTimer = null;
       if (callbackGeneration !== generation || !canRepeat()) return;
 
       active = false;
@@ -59,6 +59,7 @@ export function createDemoLoop({
       play();
       scheduleRepeat();
     }, cycleMs + holdMs);
+    repeatTimer = scheduledTimer;
   };
 
   const stopAndReset = () => {
