@@ -101,7 +101,7 @@ export function ScanScorecard() {
               placeholder={t('placeholder')}
               inputMode="url"
               autoComplete="url"
-              className="h-14 min-w-0 flex-1 rounded-xl bg-[#fafafa] px-4 font-mono text-[14px] text-neutral-900 shadow-[0_0_0_1px_rgba(0,0,0,0.09)] outline-none transition-shadow placeholder:text-neutral-900/30 focus-visible:shadow-[0_0_0_2px_var(--brand)]"
+              className="h-14 min-h-14 min-w-0 flex-none rounded-xl bg-[#fafafa] px-4 font-mono text-[14px] text-neutral-900 shadow-[0_0_0_1px_rgba(0,0,0,0.09)] outline-none transition-shadow placeholder:text-neutral-900/30 focus-visible:shadow-[0_0_0_2px_var(--brand)] sm:flex-1"
             />
             <button
               type="submit"

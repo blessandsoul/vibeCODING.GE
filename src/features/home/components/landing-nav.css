@@ -131,6 +131,10 @@
 }
 /* ===== Nav CTA - gradient pill, static ===== */
 .glass-cta {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 9px 18px;
   font-size: 11px;
   font-weight: 700;

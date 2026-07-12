@@ -151,3 +151,22 @@ test('mobile navigation and section headlines stay within the 342 pixel content 
     );
   }
 });
+
+test('reviewed Georgian and Russian business copy avoids access and browser calques', () => {
+  const ka = loadLocale('ka').product;
+  const ru = loadLocale('ru').product;
+
+  assert.doesNotMatch(
+    JSON.stringify(ka),
+    /ლოკალურ გეგმის მნიშვნელობას|ხელმისაწვდომ წვდომას|მონაცემთა ბაზას ამოიცნობდეს|პროექტს ამოიცნობს|საჯარო ხელახალი სკანირება სუფთაა/u,
+  );
+  assert.equal(
+    ka.paywall.subtitle,
+    'ეს ნიმუში ბრაუზერში შენახულ მონაცემს ცვლის და აჩვენებს, რატომ უნდა ამოწმებდეს ფასიან წვდომას სერვერი.',
+  );
+  assert.doesNotMatch(
+    JSON.stringify(ru),
+    /доступного уровня доступа|Платный доступ решает клиент/u,
+  );
+  assert.equal(ru.ten.t4, 'Доступ к платной функции проверяет только браузер.');
+});

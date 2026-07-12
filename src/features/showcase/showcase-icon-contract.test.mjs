@@ -85,6 +85,11 @@ test('professional showcase geometry keeps wide visuals and accessible controls'
 
   const scorecard = readFileSync(new URL('ScanScorecard.tsx', import.meta.url), 'utf8');
   assert.doesNotMatch(scorecard, /variantA|variantB|variantNote/u);
+  assert.match(
+    scorecard,
+    /className="[^"]*\bmin-h-14\b[^"]*\bflex-none\b[^"]*\bsm:flex-1\b/u,
+    'the URL input must retain its 56px height while the mobile form uses flex-col',
+  );
 
   const paywall = readFileSync(new URL('ScanPaywall.tsx', import.meta.url), 'utf8');
   assert.match(paywall, /min-h-\[44px\]/u);
@@ -118,6 +123,11 @@ test('the narrow header keeps its primary action available in the mobile drawer'
     css,
     /@media \(max-width: 389px\)[\s\S]*?\.nav-actions \.glass-cta\s*\{\s*display: none;\s*\}/u,
     'the redundant top-bar CTA must not force the 342px header wider than its bar',
+  );
+  assert.match(
+    css,
+    /\.glass-cta\s*\{[^}]*\bmin-height:\s*44px;/su,
+    'the visible top-bar CTA must keep a 44px touch target at 390px',
   );
   assert.match(
     nav,
