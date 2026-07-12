@@ -69,24 +69,26 @@ function toggleFaq(e: MouseEvent<HTMLDetailsElement>) {
   }
 }
 
-const makeBrandMark = (prefix: string, mark: string) => () => (
-  <span className="brand-mark"><span className="bm-prefix">{prefix}</span><span className="bm-mark">{mark}</span></span>
-);
+function renderBrandMark() {
+  return (
+    <span className="brand-mark"><span className="bm-prefix">{SITE.wordmark.prefix}</span><span className="bm-mark">{SITE.wordmark.mark}</span></span>
+  );
+}
 
 export function LandingFaq() {
   const t = useTranslations('product.faq');
-  const brandMark = makeBrandMark(SITE.wordmark.prefix, SITE.wordmark.mark);
-  const FAQS: Faq[] = [
-    // q1 is rendered on its own because it is the one that can carry the inline brand
-    // wordmark. The loop then covers q2..q14, so the contract is 14 pairs, not 15. It
-    // used to run to 15 while the message files only carried 14, which threw a
-    // MISSING_MESSAGE on every build.
-    { q: t.rich('q1', { brand: brandMark }), a: t('a1') },
-    ...Array.from({ length: 13 }, (_, i) => {
-      const n = i + 2;
-      return { q: t(`q${n}`), a: t(`a${n}`) };
-    }),
-  ];
+
+  // HOW MANY QUESTIONS IS A PER-SITE FACT, so it is counted, not declared. This loop was a
+  // hardcoded 14 and it broke twice for the same reason: once when it ran to 15 against 14 keys
+  // (MISSING_MESSAGE on every build), and again when aiTAXI arrived with 10. A shared component
+  // that hardcodes the length of a per-site list is a coupling that will keep breaking, so it
+  // now walks until the copy runs out.
+  const FAQS: Faq[] = [];
+  // q1 alone: it is the one that can carry the inline brand wordmark.
+  FAQS.push({ q: t.rich('q1', { brand: renderBrandMark }), a: t('a1') });
+  for (let n = 2; t.has(`q${n}`) && t.has(`a${n}`); n += 1) {
+    FAQS.push({ q: t(`q${n}`), a: t(`a${n}`) });
+  }
   const rootRef = useRef<HTMLElement>(null);
 
   // Scroll-triggered fade-up (source-exact), scoped to this section.
