@@ -5,6 +5,7 @@ import test from 'node:test';
 import * as lifecycle from './scan-demo-visibility.mjs';
 
 const NARRATIVE_COMPONENTS = [
+  'ScanScorecard.tsx',
   'ScanRls.tsx',
   'ScanPaywall.tsx',
   'ScanFixRescan.tsx',
@@ -201,9 +202,25 @@ test('all narrative scan demonstrations consume the managed loop and expose repl
 });
 
 test('interactive demonstrations yield to visitor input until explicit replay', () => {
-  for (const component of ['ScanRls.tsx', 'ScanPaywall.tsx', 'ScanTenWays.tsx']) {
+  for (const component of ['ScanScorecard.tsx', 'ScanRls.tsx', 'ScanPaywall.tsx', 'ScanTenWays.tsx']) {
     const source = readFileSync(new URL(component, import.meta.url), 'utf8');
     assert.match(source, /\.takeControl\(\)/u, `${component} must yield to manual input`);
     assert.match(source, /\.replay\(\)/u, `${component} must keep explicit replay`);
   }
+});
+
+test('the scorecard autoplay is a safe sample and reserves the real scan for form submission', () => {
+  const source = readFileSync(new URL('ScanScorecard.tsx', import.meta.url), 'utf8');
+
+  assert.match(source, /const SCORECARD_CYCLE_MS = 7_200/u);
+  assert.match(source, /createTimelinePlayer\(\{/u);
+  assert.match(source, /durationMs: SCORECARD_CYCLE_MS/u);
+  assert.match(source, /cycleMs: SCORECARD_CYCLE_MS/u);
+  assert.match(source, /https:\/\/sample-app\.example/u);
+  assert.match(source, /onSubmit=\{[\s\S]{0,200}void scan\(\)/u);
+  assert.equal(source.match(/fetch\('\/api\/scan'/gu)?.length, 1);
+  const scanStart = source.indexOf('const scan = useCallback');
+  const scanEnd = source.indexOf('\n  }, [', scanStart);
+  const fetchCall = source.indexOf("fetch('/api/scan'");
+  assert.ok(scanStart >= 0 && fetchCall > scanStart && fetchCall < scanEnd);
 });

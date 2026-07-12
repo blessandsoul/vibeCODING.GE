@@ -34,14 +34,19 @@ test('the five below-hero demonstrations remain wired in their approved order', 
   }
 });
 
-test('the real URL scorecard stays empty and submits only from its visitor-controlled form', () => {
+test('the scorecard starts empty, shows a safe sample, and submits real URLs only from its form', () => {
   const source = readFileSync(new URL('ScanScorecard.tsx', import.meta.url), 'utf8');
 
   assert.match(source, /const \[url, setUrl\] = useState\(''\);/u);
   assert.match(source, /<form[\s\S]*?onSubmit=\{/u);
+  assert.match(source, /onSubmit=\{[\s\S]{0,200}void scan\(\)/u);
+  assert.match(source, /const SAMPLE_URL = 'https:\/\/sample-app\.example';/u);
   assert.match(source, /body: JSON\.stringify\(\{ url: url\.trim\(\) \}\)/u);
-  assert.doesNotMatch(source, /useEffect\([\s\S]*?\bscan\(/u);
-  assert.doesNotMatch(source, /setUrl\((?!e\.target\.value)/u);
+  assert.equal(source.match(/fetch\('\/api\/scan'/gu)?.length, 1);
+  const scanStart = source.indexOf('const scan = useCallback');
+  const scanEnd = source.indexOf('\n  }, [', scanStart);
+  const fetchCall = source.indexOf("fetch('/api/scan'");
+  assert.ok(scanStart >= 0 && fetchCall > scanStart && fetchCall < scanEnd);
 });
 
 test('showcase status meaning uses bundled Solar Ico components, not glyphs or lucide', () => {

@@ -1,10 +1,12 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { Ico } from '@/components/common/Ico';
 import { SectionContainer } from '@/components/layout/SectionContainer';
+import { createTimelinePlayer } from '@/features/showcase/scan-demo-models.mjs';
+import { createScanDemoLoop } from '@/features/showcase/scan-demo-visibility.mjs';
 import { cn } from '@/lib/utils';
 
 type Severity = 'critical' | 'major' | 'minor';
@@ -22,22 +24,71 @@ type Result = {
 };
 
 const SEVERITIES: Severity[] = ['critical', 'major', 'minor'];
+const SCORECARD_STAGES = ['ready', 'scanning', 'result'] as const;
+const SCORECARD_CYCLE_MS = 7_200;
+const SAMPLE_URL = 'https://sample-app.example';
 const SEVERITY_TONE: Record<Severity, { badge: string; icon: string }> = {
   critical: { badge: 'bg-[#fee2e2] text-[#991b1b]', icon: 'text-[#b91c1c]' },
   major: { badge: 'bg-[#fef3c7] text-[#92400e]', icon: 'text-[#b45309]' },
   minor: { badge: 'bg-neutral-900/[0.06] text-neutral-900/55', icon: 'text-neutral-900/45' },
 };
+type ScorecardStage = (typeof SCORECARD_STAGES)[number];
+type DemoController = ReturnType<typeof createScanDemoLoop>;
 
 export function ScanScorecard() {
   const t = useTranslations('product.scan');
-  const reduced = useReducedMotion();
+  const proof = useTranslations('product.proof');
+  const reduced = Boolean(useReducedMotion());
   const [url, setUrl] = useState('');
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const demoRef = useRef<HTMLDivElement>(null);
+  const controllerRef = useRef<DemoController | null>(null);
+  const requestGenerationRef = useRef(0);
+  const sampleScoreNote = proof('scoreNote');
+  const sampleFindingOne = proof('f1');
+  const sampleFindingTwo = proof('f2');
+  const sampleFindingThree = proof('f3');
+  const sampleResult = useMemo<Result>(() => ({
+    score: 42,
+    counts: { critical: 1, major: 2, minor: 0 },
+    findings: [
+      {
+        id: 'sample-database-access',
+        severity: 'critical',
+        title: sampleFindingOne,
+        detail: sampleScoreNote,
+      },
+      {
+        id: 'sample-public-key',
+        severity: 'major',
+        title: sampleFindingTwo,
+        detail: sampleScoreNote,
+        evidence: 'sk_live_••••••••••••2VwQ',
+      },
+      {
+        id: 'sample-security-header',
+        severity: 'major',
+        title: sampleFindingThree,
+        detail: sampleScoreNote,
+      },
+    ],
+  }), [sampleFindingOne, sampleFindingThree, sampleFindingTwo, sampleScoreNote]);
+
+  const showDemoStage = useCallback((stage: ScorecardStage) => {
+    setUrl(SAMPLE_URL);
+    setBusy(stage === 'scanning');
+    setError(null);
+    setResult(stage === 'result' ? sampleResult : null);
+  }, [sampleResult]);
 
   const scan = useCallback(async () => {
-    if (!url.trim() || busy) return;
+    controllerRef.current?.takeControl();
+    if (!url.trim()) return;
+
+    const requestGeneration = requestGenerationRef.current + 1;
+    requestGenerationRef.current = requestGeneration;
     setBusy(true);
     setError(null);
     setResult(null);
@@ -49,6 +100,7 @@ export function ScanScorecard() {
         body: JSON.stringify({ url: url.trim() }),
       });
       const data = await response.json();
+      if (requestGenerationRef.current !== requestGeneration) return;
       if (!response.ok) {
         const messages: Record<string, string> = {
           url: t('errorUrl'),
@@ -61,15 +113,54 @@ export function ScanScorecard() {
       }
       setResult(data as Result);
     } catch {
-      setError(t('errorFetch'));
+      if (requestGenerationRef.current === requestGeneration) setError(t('errorFetch'));
     } finally {
-      setBusy(false);
+      if (requestGenerationRef.current === requestGeneration) setBusy(false);
     }
-  }, [busy, t, url]);
+  }, [t, url]);
+
+  useEffect(() => {
+    const player = createTimelinePlayer({
+      stages: SCORECARD_STAGES,
+      durationMs: SCORECARD_CYCLE_MS,
+      onStage: showDemoStage,
+    });
+    const controller = createScanDemoLoop({
+      target: demoRef.current,
+      reducedMotion: reduced,
+      cycleMs: SCORECARD_CYCLE_MS,
+      play: player.play,
+      showFinal: () => showDemoStage('result'),
+      reset: () => showDemoStage('ready'),
+      stop: player.stop,
+    });
+    controllerRef.current = controller;
+
+    return () => {
+      requestGenerationRef.current += 1;
+      controller.cleanup();
+      player.stop();
+      if (controllerRef.current === controller) controllerRef.current = null;
+    };
+  }, [reduced, showDemoStage]);
+
+  const changeUrl = useCallback((nextUrl: string) => {
+    controllerRef.current?.takeControl();
+    requestGenerationRef.current += 1;
+    setBusy(false);
+    setError(null);
+    setResult(null);
+    setUrl(nextUrl);
+  }, []);
+
+  const replay = useCallback(() => {
+    requestGenerationRef.current += 1;
+    controllerRef.current?.replay();
+  }, []);
 
   return (
     <SectionContainer className="py-20 md:py-28">
-      <div className="overflow-hidden rounded-3xl bg-white shadow-[0_0_0_1px_rgba(0,0,0,0.09),0_24px_54px_-42px_rgba(0,0,0,0.45)]">
+      <div ref={demoRef} className="overflow-hidden rounded-3xl bg-white shadow-[0_0_0_1px_rgba(0,0,0,0.09),0_24px_54px_-42px_rgba(0,0,0,0.45)]">
         <div className="border-b border-[#ececec] px-5 py-7 sm:px-7 md:px-10 md:py-9">
           <div className="flex size-12 items-center justify-center rounded-2xl bg-[color-mix(in_srgb,var(--brand)_12%,white)] text-[var(--brand-ink)]">
             <Ico name="solar:scanner-bold-duotone" className="size-6" />
@@ -97,7 +188,7 @@ export function ScanScorecard() {
             <input
               id="scan-url"
               value={url}
-              onChange={(e) => setUrl(e.target.value)}
+              onChange={(event) => changeUrl(event.target.value)}
               placeholder={t('placeholder')}
               inputMode="url"
               autoComplete="url"
@@ -110,6 +201,14 @@ export function ScanScorecard() {
             >
               <Ico name="solar:scanner-bold-duotone" className={cn('size-5', busy && 'animate-pulse')} />
               {busy ? t('scanning') : result ? t('again') : t('go')}
+            </button>
+            <button
+              type="button"
+              onClick={replay}
+              className="inline-flex h-14 items-center justify-center gap-2 rounded-xl bg-white px-5 text-[13px] font-bold text-neutral-900 shadow-[0_0_0_1px_rgba(0,0,0,0.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2"
+            >
+              <Ico name="solar:refresh-bold-duotone" className="size-4" />
+              {proof('replay')}
             </button>
           </form>
 
