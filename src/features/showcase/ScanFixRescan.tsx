@@ -3,13 +3,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { Ico } from '@/components/common/Ico';
 import { SectionContainer } from '@/components/layout/SectionContainer';
 import {
   FIX_STAGES,
   createTimelinePlayer,
   fixFrame,
 } from '@/features/showcase/scan-demo-models.mjs';
-import { playTimelineWhenVisible } from '@/features/showcase/scan-demo-visibility.mjs';
+import { createScanDemoLoop } from '@/features/showcase/scan-demo-visibility.mjs';
 import { cn } from '@/lib/utils';
 
 const STAGE_LABELS = {
@@ -30,35 +31,54 @@ const STAGE_COPY = {
   clean: 'cleanText',
 } as const;
 
+const STAGE_ICONS = {
+  scanning: 'solar:scanner-bold-duotone',
+  exposed: 'solar:shield-warning-bold-duotone',
+  revoking: 'solar:key-bold-duotone',
+  'server-side': 'solar:server-square-bold-duotone',
+  rescanning: 'solar:scanner-bold-duotone',
+  clean: 'solar:shield-check-bold-duotone',
+} as const;
+
+const FIX_CYCLE_MS = 7200;
+type DemoController = ReturnType<typeof createScanDemoLoop>;
+
 export function ScanFixRescan() {
   const t = useTranslations('product.fix');
   const reduced = useReducedMotion();
   const [stage, setStage] = useState(FIX_STAGES[0]);
   const demoRef = useRef<HTMLDivElement>(null);
   const timeline = useRef<ReturnType<typeof createTimelinePlayer> | null>(null);
+  const controllerRef = useRef<DemoController | null>(null);
 
   useEffect(() => {
     const player = createTimelinePlayer({
       stages: FIX_STAGES,
-      reducedMotion: Boolean(reduced),
+      durationMs: FIX_CYCLE_MS,
       onStage: setStage,
     });
     timeline.current = player;
-    const cleanupVisibility = playTimelineWhenVisible({
-      element: demoRef.current,
+    const controller = createScanDemoLoop({
+      target: demoRef.current,
       reducedMotion: Boolean(reduced),
+      cycleMs: FIX_CYCLE_MS,
       play: player.play,
+      showFinal: () => setStage(FIX_STAGES[FIX_STAGES.length - 1]),
+      reset: () => setStage(FIX_STAGES[0]),
       stop: player.stop,
     });
+    controllerRef.current = controller;
 
     return () => {
-      cleanupVisibility();
+      controller.cleanup();
+      player.stop();
       if (timeline.current === player) timeline.current = null;
+      if (controllerRef.current === controller) controllerRef.current = null;
     };
   }, [reduced]);
 
   const replay = useCallback(() => {
-    timeline.current?.replay();
+    controllerRef.current?.replay();
   }, []);
 
   const frame = fixFrame(stage);
@@ -70,7 +90,8 @@ export function ScanFixRescan() {
       <div className="flex flex-col items-start justify-between gap-5 sm:flex-row sm:items-end">
         <div className="max-w-2xl">
           <div className="flex flex-wrap items-center gap-3">
-            <span className="text-[12px] uppercase tracking-wide text-neutral-900/40">
+            <span className="inline-flex items-center gap-2 text-[12px] font-semibold tracking-wide text-neutral-900/40">
+              <Ico name="solar:scanner-bold-duotone" className="size-5 text-[var(--brand-ink)]" />
               {t('eyebrow')}
             </span>
             <span className="rounded-full bg-neutral-900/[0.06] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-neutral-900/45">
@@ -94,6 +115,7 @@ export function ScanFixRescan() {
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2',
           )}
         >
+          <Ico name="solar:refresh-bold-duotone" className="mr-2 size-4" />
           {t('replay')}
         </button>
       </div>
@@ -127,7 +149,14 @@ export function ScanFixRescan() {
                   )}
                   aria-hidden="true"
                 >
-                  {complete ? '✓' : index + 1}
+                  {complete || active ? (
+                    <Ico
+                      name={complete ? 'solar:shield-check-bold-duotone' : STAGE_ICONS[item as keyof typeof STAGE_ICONS]}
+                      className="size-4"
+                    />
+                  ) : (
+                    index + 1
+                  )}
                 </span>
                 <span>{t(STAGE_LABELS[item as keyof typeof STAGE_LABELS])}</span>
               </li>
@@ -143,19 +172,22 @@ export function ScanFixRescan() {
                   {t('browserBundle')}
                 </span>
                 {frame.findingCount === 1 && (
-                  <span className="rounded-full bg-[#fee2e2] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-[#991b1b]">
-                    ! {t('exposedBadge')}
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#fee2e2] px-2.5 py-1 text-[10px] font-bold tracking-wide text-[#991b1b]">
+                    <Ico name="solar:shield-warning-bold-duotone" className="size-4" />
+                    {t('exposedBadge')}
                   </span>
                 )}
                 {frame.findingCount === 0 && (
-                  <span className="rounded-full bg-[#d1fae5] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-[#065f46]">
-                    ✓ {t('cleanBadge')}
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#d1fae5] px-2.5 py-1 text-[10px] font-bold tracking-wide text-[#065f46]">
+                    <Ico name="solar:shield-check-bold-duotone" className="size-4" />
+                    {t('cleanBadge')}
                   </span>
                 )}
               </div>
 
               <div className="bg-[#0b0b0e] px-4 py-5 md:px-5">
-                <span className="block text-[10px] font-semibold uppercase tracking-wide text-white/30">
+                <span className="flex items-center gap-2 text-[10px] font-semibold tracking-wide text-white/35">
+                  <Ico name="solar:key-bold-duotone" className="size-4" />
                   {t('keyLabel')}
                 </span>
                 <code
@@ -165,29 +197,32 @@ export function ScanFixRescan() {
                     frame.revoked && 'line-through decoration-white/45',
                   )}
                 >
-                  {frame.browserKey ?? '—'}
+                  {frame.browserKey ?? t('notPresent')}
                 </code>
                 {frame.browserKey && (
                   <p className="mt-2 text-[11px] leading-relaxed text-white/40">{t('redacted')}</p>
                 )}
                 {frame.revoked && (
-                  <p className="mt-3 font-mono text-[11px] font-bold uppercase tracking-wide text-[#86efac]">
-                    ✓ {t('revoked')}
+                  <p className="mt-3 flex items-center gap-2 font-mono text-[11px] font-bold tracking-wide text-[#86efac]">
+                    <Ico name="solar:shield-check-bold-duotone" className="size-4" />
+                    {t('revoked')}
                   </p>
                 )}
               </div>
             </div>
 
             <div className="mt-4 rounded-2xl bg-[#fafafa] px-4 py-4 shadow-[0_0_0_1px_rgba(0,0,0,0.07)] md:px-5">
-              <span className="block text-[10px] font-bold uppercase tracking-wide text-neutral-900/35">
+              <span className="flex items-center gap-2 text-[10px] font-bold tracking-wide text-neutral-900/40">
+                <Ico name="solar:server-square-bold-duotone" className="size-4" />
                 {t('serverEnvironment')}
               </span>
               <code className="mt-2 block break-all font-mono text-[13px] font-bold text-neutral-900">
-                {frame.replacementLocation === 'server' ? 'process.env.PAYMENTS_KEY' : '—'}
+                {frame.replacementLocation === 'server' ? 'process.env.PAYMENTS_KEY' : t('notPresent')}
               </code>
               {frame.replacementLocation === 'server' && (
-                <p className="mt-2 text-[12px] font-semibold text-[#065f46]">
-                  ✓ {t('serverOnly')}
+                <p className="mt-2 flex items-center gap-2 text-[12px] font-semibold text-[#065f46]">
+                  <Ico name="solar:lock-keyhole-bold-duotone" className="size-4" />
+                  {t('serverOnly')}
                 </p>
               )}
             </div>
@@ -213,7 +248,10 @@ export function ScanFixRescan() {
                   transition={{ duration: 1.1, repeat: Infinity, ease: 'easeInOut' }}
                   aria-hidden="true"
                 >
-                  {frame.clean ? '✓' : isBusy ? '…' : '!'}
+                  <Ico
+                    name={frame.clean ? 'solar:shield-check-bold-duotone' : isBusy ? 'solar:scanner-bold-duotone' : 'solar:shield-warning-bold-duotone'}
+                    className="size-5"
+                  />
                 </motion.span>
                 <span className="text-[11px] font-bold uppercase tracking-wide text-white/45">
                   {t(STAGE_LABELS[stage as keyof typeof STAGE_LABELS])}
@@ -242,7 +280,10 @@ export function ScanFixRescan() {
                   transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
                   className="mt-5 rounded-2xl bg-[#f0fdf4] px-5 py-4 text-pretty text-[14px] font-semibold leading-relaxed text-[#065f46] shadow-[0_0_0_1px_#a7f3d0]"
                 >
-                  {t('outcome')}
+                  <span className="flex items-start gap-2">
+                    <Ico name="solar:shield-check-bold-duotone" className="mt-0.5 size-5 shrink-0" />
+                    <span>{t('outcome')}</span>
+                  </span>
                 </motion.p>
               )}
             </AnimatePresence>

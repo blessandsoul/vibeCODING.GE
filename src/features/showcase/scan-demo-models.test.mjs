@@ -157,3 +157,26 @@ test('reduced motion emits only the final frame and schedules no timers', () => 
   assert.deepEqual(seen, ['clean']);
   assert.equal(clock.jobs.length, 0);
 });
+
+test('timeline reset and final-state controls cancel timers before rendering', () => {
+  const clock = createFakeClock();
+  const seen = [];
+  const player = createTimelinePlayer({
+    stages: RLS_STAGES,
+    schedule: clock.schedule,
+    cancel: clock.cancel,
+    onStage: (stage) => seen.push(stage),
+  });
+
+  player.play();
+  const playIds = clock.jobs.map(({ id }) => id);
+  player.reset();
+  assert.equal(seen.at(-1), RLS_STAGES[0]);
+  assert.ok(playIds.every((id) => clock.cancelled.has(id)));
+
+  player.play();
+  const finalIds = clock.jobs.slice(playIds.length).map(({ id }) => id);
+  player.showFinal();
+  assert.equal(seen.at(-1), RLS_STAGES.at(-1));
+  assert.ok(finalIds.every((id) => clock.cancelled.has(id)));
+});

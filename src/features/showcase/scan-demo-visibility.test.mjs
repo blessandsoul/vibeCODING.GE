@@ -1,187 +1,209 @@
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
+import { readFileSync } from 'node:fs';
 import test from 'node:test';
 
-import {
-  FIX_STAGES,
-  createTimelinePlayer,
-} from './scan-demo-models.mjs';
+import * as lifecycle from './scan-demo-visibility.mjs';
 
-const HELPER_URL = new URL('./scan-demo-visibility.mjs', import.meta.url);
-
-async function loadVisibilityHelper() {
-  try {
-    const helper = await import(HELPER_URL.href);
-    assert.equal(
-      typeof helper.playTimelineWhenVisible,
-      'function',
-      'the production visibility helper must export playTimelineWhenVisible',
-    );
-    return helper.playTimelineWhenVisible;
-  } catch (error) {
-    if (error?.code === 'ERR_MODULE_NOT_FOUND') {
-      assert.fail('the production scan-demo-visibility helper must exist');
-    }
-    throw error;
-  }
-}
+const NARRATIVE_COMPONENTS = [
+  'ScanRls.tsx',
+  'ScanPaywall.tsx',
+  'ScanFixRescan.tsx',
+  'ScanTenWays.tsx',
+  'HeroProof.tsx',
+];
 
 function createObserverHarness() {
-  let callback;
-  let options;
-  const observed = [];
-  let disconnectCount = 0;
+  const instances = [];
+
+  class Observer {
+    constructor(callback, options) {
+      this.callback = callback;
+      this.options = options;
+      this.observed = [];
+      this.disconnectCalls = 0;
+      instances.push(this);
+    }
+
+    observe(target) {
+      this.observed.push(target);
+    }
+
+    disconnect() {
+      this.disconnectCalls += 1;
+    }
+
+    emit(target, intersectionRatio, isIntersecting = intersectionRatio > 0) {
+      this.callback([{ target, intersectionRatio, isIntersecting }]);
+    }
+  }
+
+  return { Observer, instances };
+}
+
+function createDocumentHarness() {
+  const listeners = new Map();
 
   return {
-    createObserver(nextCallback, nextOptions) {
-      callback = nextCallback;
-      options = nextOptions;
-      return {
-        disconnect() {
-          disconnectCount += 1;
-        },
-        observe(element) {
-          observed.push(element);
-        },
-      };
+    hidden: false,
+    addEventListener(type, callback) {
+      listeners.set(type, callback);
     },
-    emit(entry) {
-      assert.equal(typeof callback, 'function', 'observer callback must be registered');
-      callback([entry]);
+    removeEventListener(type, callback) {
+      if (listeners.get(type) === callback) listeners.delete(type);
     },
-    get disconnectCount() {
-      return disconnectCount;
-    },
-    get observed() {
-      return observed;
-    },
-    get options() {
-      return options;
+    setHidden(hidden) {
+      this.hidden = hidden;
+      listeners.get('visibilitychange')?.();
     },
   };
 }
 
-test('autoplay stays idle before a meaningful intersection', async () => {
-  const playTimelineWhenVisible = await loadVisibilityHelper();
+function createTimerHarness() {
+  let nextId = 1;
+  const tasks = new Map();
+
+  return {
+    schedule(callback, delay) {
+      const id = nextId++;
+      tasks.set(id, { callback, delay, cancelled: false, fired: false });
+      return id;
+    },
+    cancel(id) {
+      const task = tasks.get(id);
+      if (task) task.cancelled = true;
+    },
+    fire(id) {
+      const task = tasks.get(id);
+      assert.ok(task, `unknown timer ${id}`);
+      if (task.cancelled || task.fired) return;
+      task.fired = true;
+      task.callback();
+    },
+    pending() {
+      return [...tasks.entries()].filter(([, task]) => !task.cancelled && !task.fired);
+    },
+  };
+}
+
+function createHarness(overrides = {}) {
+  const target = { id: 'scan-story' };
   const observer = createObserverHarness();
-  const element = { id: 'scan-box' };
-  let playCount = 0;
+  const pageDocument = createDocumentHarness();
+  const timers = createTimerHarness();
+  const calls = [];
 
-  const cleanup = playTimelineWhenVisible({
-    element,
-    play: () => {
-      playCount += 1;
-    },
-    stop: () => undefined,
-    createObserver: observer.createObserver,
+  assert.equal(typeof lifecycle.createScanDemoLoop, 'function');
+  const controller = lifecycle.createScanDemoLoop({
+    target,
+    cycleMs: 7200,
+    play: () => calls.push('play'),
+    showFinal: () => calls.push('showFinal'),
+    reset: () => calls.push('reset'),
+    stop: () => calls.push('stop'),
+    Observer: observer.Observer,
+    pageDocument,
+    schedule: timers.schedule,
+    cancelScheduled: timers.cancel,
+    ...overrides,
   });
 
-  assert.equal(playCount, 0);
-  assert.deepEqual(observer.observed, [element]);
-  assert.deepEqual(observer.options, { threshold: 0.35 });
+  return { target, observer, pageDocument, timers, calls, controller };
+}
 
-  observer.emit({ intersectionRatio: 0, isIntersecting: false });
-  observer.emit({ intersectionRatio: 0.34, isIntersecting: true });
-  assert.equal(playCount, 0);
+test('scan stories start at 35 percent visibility and repeat after a 2 second final hold', () => {
+  const harness = createHarness();
+  const observed = harness.observer.instances[0];
 
-  cleanup();
+  assert.deepEqual(observed.options, { threshold: 0.35 });
+  observed.emit(harness.target, 0.34, true);
+  assert.deepEqual(harness.calls, []);
+
+  observed.emit(harness.target, 0.35, true);
+  assert.deepEqual(harness.calls, ['play']);
+  assert.equal(harness.timers.pending()[0][1].delay, 9200);
+
+  harness.timers.fire(harness.timers.pending()[0][0]);
+  assert.deepEqual(harness.calls, ['play', 'stop', 'reset', 'play']);
 });
 
-test('the first meaningful intersection starts exactly one automatic pass', async () => {
-  const playTimelineWhenVisible = await loadVisibilityHelper();
-  const observer = createObserverHarness();
-  let playCount = 0;
+test('the shared scan lifecycle cannot weaken its threshold or final hold', () => {
+  const harness = createHarness({ threshold: 0.9, holdMs: 1 });
+  const observed = harness.observer.instances[0];
 
-  const cleanup = playTimelineWhenVisible({
-    element: { id: 'scan-box' },
-    play: () => {
-      playCount += 1;
-    },
-    stop: () => undefined,
-    createObserver: observer.createObserver,
-  });
-
-  observer.emit({ intersectionRatio: 0.35, isIntersecting: true });
-  observer.emit({ intersectionRatio: 1, isIntersecting: true });
-
-  assert.equal(playCount, 1);
-  assert.equal(observer.disconnectCount, 1);
-
-  cleanup();
+  assert.deepEqual(observed.options, { threshold: 0.35 });
+  observed.emit(harness.target, 0.35, true);
+  assert.equal(harness.timers.pending()[0][1].delay, 9200);
 });
 
-test('cleanup before visibility disconnects and prevents a late play', async () => {
-  const playTimelineWhenVisible = await loadVisibilityHelper();
-  const observer = createObserverHarness();
-  let playCount = 0;
-  let stopCount = 0;
+test('offscreen and hidden scan stories stop, reset, and restart cleanly', () => {
+  const harness = createHarness();
+  const observed = harness.observer.instances[0];
 
-  const cleanup = playTimelineWhenVisible({
-    element: { id: 'scan-box' },
-    play: () => {
-      playCount += 1;
-    },
-    stop: () => {
-      stopCount += 1;
-    },
-    createObserver: observer.createObserver,
-  });
+  observed.emit(harness.target, 0.8);
+  observed.emit(harness.target, 0, false);
+  assert.deepEqual(harness.calls, ['play', 'stop', 'reset']);
+  assert.equal(harness.timers.pending().length, 0);
 
-  cleanup();
-  observer.emit({ intersectionRatio: 1, isIntersecting: true });
+  observed.emit(harness.target, 0.8);
+  harness.pageDocument.setHidden(true);
+  assert.deepEqual(harness.calls, ['play', 'stop', 'reset', 'play', 'stop', 'reset']);
 
-  assert.equal(playCount, 0);
-  assert.equal(stopCount, 1);
-  assert.equal(observer.disconnectCount, 1);
+  harness.pageDocument.setHidden(false);
+  assert.equal(harness.calls.at(-1), 'play');
 });
 
-test('reduced motion immediately emits the real final repair frame', async () => {
-  const playTimelineWhenVisible = await loadVisibilityHelper();
-  const seen = [];
-  const player = createTimelinePlayer({
-    stages: FIX_STAGES,
-    reducedMotion: true,
-    schedule: () => assert.fail('reduced motion must not schedule timers'),
-    cancel: () => undefined,
-    onStage: (stage) => seen.push(stage),
-  });
+test('reduced motion renders the final scan state without observers or timers', () => {
+  const harness = createHarness({ reducedMotion: true });
 
-  const cleanup = playTimelineWhenVisible({
-    element: { id: 'scan-box' },
-    reducedMotion: true,
-    play: player.play,
-    stop: player.stop,
-    createObserver: () => assert.fail('reduced motion must not create an observer'),
-  });
-
-  assert.deepEqual(seen, ['clean']);
-  cleanup();
+  assert.deepEqual(harness.calls, ['showFinal']);
+  assert.equal(harness.observer.instances.length, 0);
+  assert.equal(harness.timers.pending().length, 0);
 });
 
-test('both components wire the visibility helper to their real demo boxes', async () => {
-  for (const filename of ['ScanRls.tsx', 'ScanFixRescan.tsx']) {
-    const source = await readFile(new URL(`./${filename}`, import.meta.url), 'utf8');
+test('manual control cancels repetition without resetting visitor input', () => {
+  const harness = createHarness();
+  const observed = harness.observer.instances[0];
 
-    assert.match(source, /playTimelineWhenVisible/u, `${filename} must use the production helper`);
-    assert.match(
-      source,
-      /const demoRef = useRef<HTMLDivElement>\(null\);/u,
-      `${filename} must own a ref for its rendered box`,
-    );
-    assert.match(
-      source,
-      /playTimelineWhenVisible\(\{[\s\S]*?element: demoRef\.current,/u,
-      `${filename} must pass the rendered box to the helper`,
-    );
-    assert.match(
-      source,
-      /<div\s+ref=\{demoRef\}\s+className="mt-10 overflow-hidden rounded-3xl bg-white/u,
-      `${filename} must observe the real visual demo box`,
-    );
-    assert.doesNotMatch(
-      source,
-      /^\s*player\.play\(\);/mu,
-      `${filename} must not autoplay directly from mount`,
-    );
+  observed.emit(harness.target, 0.8);
+  harness.controller.takeControl();
+
+  assert.deepEqual(harness.calls, ['play', 'stop']);
+  assert.equal(harness.timers.pending().length, 0);
+
+  observed.emit(harness.target, 0, false);
+  observed.emit(harness.target, 0.8);
+  assert.deepEqual(harness.calls, ['play', 'stop', 'stop']);
+});
+
+test('explicit replay releases manual ownership and restarts the visible loop', () => {
+  const harness = createHarness();
+  const observed = harness.observer.instances[0];
+
+  observed.emit(harness.target, 0.8);
+  harness.controller.takeControl();
+  harness.controller.replay();
+
+  assert.deepEqual(harness.calls, ['play', 'stop', 'stop', 'reset', 'play']);
+  assert.equal(harness.timers.pending().length, 1);
+  assert.equal(harness.timers.pending()[0][1].delay, 9200);
+});
+
+test('all narrative scan demonstrations consume the managed loop and expose replay', () => {
+  for (const component of NARRATIVE_COMPONENTS) {
+    const source = readFileSync(new URL(component, import.meta.url), 'utf8');
+
+    assert.match(source, /createScanDemoLoop/u, `${component} must use the shared scan loop`);
+    assert.match(source, /\.replay\(\)/u, `${component} must expose replay`);
+    assert.match(source, /showFinal:/u, `${component} must define a reduced-motion final state`);
+    assert.match(source, /reset:/u, `${component} must define an offscreen reset state`);
+    assert.doesNotMatch(source, /playTimelineWhenVisible|setInterval/u);
+  }
+});
+
+test('interactive demonstrations yield to visitor input until explicit replay', () => {
+  for (const component of ['ScanRls.tsx', 'ScanPaywall.tsx', 'ScanTenWays.tsx']) {
+    const source = readFileSync(new URL(component, import.meta.url), 'utf8');
+    assert.match(source, /\.takeControl\(\)/u, `${component} must yield to manual input`);
+    assert.match(source, /\.replay\(\)/u, `${component} must keep explicit replay`);
   }
 });

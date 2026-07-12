@@ -154,6 +154,13 @@
   .glass-cta { padding: 7px 12px; font-size: 10px; letter-spacing: 0.06em; }
 }
 
+/* The same primary action remains in the mobile drawer. Hiding only the
+   duplicate pill at the narrowest width leaves room for the 44px menu and
+   language controls without shortening localized labels into abbreviations. */
+@media (max-width: 389px) {
+  .nav-actions .glass-cta { display: none; }
+}
+
 /* ===== Nav top state - logo hidden at scroll 0 (opacity only) ===== */
 .nav-logo {
   opacity: 1;

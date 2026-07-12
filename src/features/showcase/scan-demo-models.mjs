@@ -197,7 +197,7 @@ export function createTimelinePlayer({
     const activeRun = runId;
 
     if (reducedMotion || stages.length === 1) {
-      onStage(stages.at(-1));
+      showFinal();
       return;
     }
 
@@ -212,9 +212,21 @@ export function createTimelinePlayer({
     });
   }
 
+  function reset() {
+    stop();
+    onStage(stages[0]);
+  }
+
+  function showFinal() {
+    stop();
+    onStage(stages.at(-1));
+  }
+
   return {
     play,
     replay: play,
+    reset,
+    showFinal,
     stop,
   };
 }

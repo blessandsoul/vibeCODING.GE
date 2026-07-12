@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { Ico } from '@/components/common/Ico';
 import { SectionContainer } from '@/components/layout/SectionContainer';
 import {
   RLS_REQUEST,
@@ -10,7 +11,7 @@ import {
   createTimelinePlayer,
   rlsFrame,
 } from '@/features/showcase/scan-demo-models.mjs';
-import { playTimelineWhenVisible } from '@/features/showcase/scan-demo-visibility.mjs';
+import { createScanDemoLoop } from '@/features/showcase/scan-demo-visibility.mjs';
 import { cn } from '@/lib/utils';
 
 /* =========================================================================
@@ -58,7 +59,7 @@ const COLS = ['id', 'name', 'email', 'phone', 'total'] as const;
 const ROWS = rlsFrame('open-result').rows as FictionalRow[];
 const REQUEST_PATH = RLS_REQUEST.replace(/^GET /u, '');
 
-const GRID = 'grid-cols-[44px_1.25fr_1.7fr_1.05fr_0.8fr]';
+const GRID = 'grid-cols-[36px_minmax(0,1fr)] sm:grid-cols-[36px_minmax(0,1fr)_minmax(0,1.35fr)] lg:grid-cols-[44px_1.25fr_1.7fr_1.05fr_0.8fr]';
 
 const FIRST_ROW_MS = 240;
 const ROW_MS = 150;
@@ -69,6 +70,9 @@ const LOCKED_MS = 620;
    3.76:1 and the vivid emerald is worse, and a label nobody can read is not a warning. */
 const SEG_OFF = 'var(--brand-cta)';
 const SEG_ON = '#047857';
+const RLS_CYCLE_MS = 7200;
+
+type DemoController = ReturnType<typeof createScanDemoLoop>;
 
 export function ScanRls() {
   const t = useTranslations('product.rls');
@@ -80,6 +84,7 @@ export function ScanRls() {
   const demoRef = useRef<HTMLDivElement>(null);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const timeline = useRef<ReturnType<typeof createTimelinePlayer> | null>(null);
+  const controllerRef = useRef<DemoController | null>(null);
 
   const clear = useCallback(() => {
     timers.current.forEach(clearTimeout);
@@ -106,25 +111,37 @@ export function ScanRls() {
   useEffect(() => {
     const player = createTimelinePlayer({
       stages: RLS_STAGES,
-      reducedMotion: Boolean(reduced),
+      durationMs: RLS_CYCLE_MS,
       onStage: applyTimelineStage,
     });
     timeline.current = player;
-    const cleanupVisibility = playTimelineWhenVisible({
-      element: demoRef.current,
+    const controller = createScanDemoLoop({
+      target: demoRef.current,
       reducedMotion: Boolean(reduced),
+      cycleMs: RLS_CYCLE_MS,
       play: player.play,
+      showFinal: () => applyTimelineStage(RLS_STAGES[RLS_STAGES.length - 1]),
+      reset: () => {
+        clear();
+        setRls(false);
+        setPhase('idle');
+        setShown(0);
+      },
       stop: player.stop,
     });
+    controllerRef.current = controller;
 
     return () => {
-      cleanupVisibility();
+      controller.cleanup();
+      player.stop();
       clear();
       if (timeline.current === player) timeline.current = null;
+      if (controllerRef.current === controller) controllerRef.current = null;
     };
   }, [applyTimelineStage, clear, reduced]);
 
   const read = useCallback(() => {
+    controllerRef.current?.takeControl();
     timeline.current?.stop();
     clear();
     setShown(0);
@@ -157,6 +174,7 @@ export function ScanRls() {
      behaves differently, so he has to send it again to see that. */
   const setRules = useCallback(
     (on: boolean) => {
+      controllerRef.current?.takeControl();
       timeline.current?.stop();
       clear();
       setRls(on);
@@ -168,7 +186,7 @@ export function ScanRls() {
 
   const replay = useCallback(() => {
     clear();
-    timeline.current?.replay();
+    controllerRef.current?.replay();
   }, [clear]);
 
   const open = phase === 'done' && !rls;
@@ -178,7 +196,8 @@ export function ScanRls() {
   return (
     <SectionContainer className="py-20 md:py-28">
       <div className="max-w-2xl">
-        <span className="text-[12px] uppercase tracking-wide text-neutral-900/40">
+        <span className="inline-flex items-center gap-2 text-[12px] font-semibold tracking-wide text-neutral-900/40">
+          <Ico name="solar:database-bold-duotone" className="size-5 text-[var(--brand-ink)]" />
           {t('eyebrow')}
         </span>
         <h2 className="mt-4 text-balance font-display text-3xl font-extrabold leading-[1.1] tracking-tight text-neutral-900 md:text-4xl">
@@ -195,17 +214,20 @@ export function ScanRls() {
       >
         {/* the table, and the one setting that decides everything about it */}
         <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-4 border-b border-[#ececec] bg-[#fafafa] px-5 py-3.5 md:px-6">
-          <div className="flex items-center gap-3">
+          <div className="flex min-w-0 items-center gap-3">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-white text-[var(--brand-ink)] shadow-[0_0_0_1px_rgba(0,0,0,0.08)]">
+              <Ico name="solar:database-bold-duotone" className="size-5" />
+            </span>
             <code className="font-mono text-[14px] font-bold text-neutral-900">customers</code>
             <span className="rounded-full bg-neutral-900/[0.06] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-neutral-900/45">
               {t('mock')}
             </span>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex w-full min-w-0 flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:items-center sm:gap-3">
             <span className="text-[12px] font-semibold text-neutral-900/50">{t('rlsLabel')}</span>
             <div
-              className="flex gap-1 rounded-full bg-white p-1 shadow-[0_0_0_1px_rgba(0,0,0,0.08)]"
+              className="flex w-full min-w-0 gap-1 rounded-2xl bg-white p-1 shadow-[0_0_0_1px_rgba(0,0,0,0.08)] sm:w-auto sm:rounded-full"
               role="group"
               aria-label={t('rlsLabel')}
             >
@@ -216,13 +238,17 @@ export function ScanRls() {
                   onClick={() => setRules(on)}
                   aria-pressed={rls === on}
                   className={cn(
-                    'min-h-[44px] rounded-full px-4 text-[13px] font-bold',
+                    'min-h-[44px] min-w-0 flex-1 rounded-xl px-4 text-[13px] font-bold sm:flex-none sm:rounded-full',
                     'transition-[transform,background-color,color] duration-150 ease-out active:scale-[0.96]',
                     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2',
                     rls === on ? 'text-white' : 'text-neutral-900/45 md:hover:text-neutral-900',
                   )}
                   style={rls === on ? { background: on ? SEG_ON : SEG_OFF } : undefined}
                 >
+                  <Ico
+                    name={on ? 'solar:lock-keyhole-bold-duotone' : 'solar:lock-keyhole-unlocked-bold-duotone'}
+                    className="mr-1.5 inline-block size-4"
+                  />
                   {t(on ? 'on' : 'off')}
                 </button>
               ))}
@@ -232,11 +258,12 @@ export function ScanRls() {
 
         {/* the request. it never changes, and that is the point of the whole widget. */}
         <div className="bg-[#0b0b0e] px-5 py-5 md:px-6">
-          <span className="block text-[10px] font-semibold uppercase tracking-wide text-white/30">
+          <span className="flex items-center gap-2 text-[10px] font-semibold tracking-wide text-white/35">
+            <Ico name="solar:key-bold-duotone" className="size-4" />
             {t('request')}
           </span>
-          <pre className="mt-2.5 overflow-x-auto font-mono text-[13px] leading-relaxed text-white/80">
-            <code>
+          <pre className="mt-2.5 max-w-full overflow-x-auto whitespace-pre-wrap break-all font-mono text-[13px] leading-relaxed text-white/80">
+            <code className="block max-w-full whitespace-pre-wrap break-all">
               <span className="text-[#93c5fd]">GET</span> {REQUEST_PATH}{'\n'}
               <span className="text-white/35">apikey:</span> eyJhbGciOiJIUzI1NiJ9.
               {'•'.repeat(16)}
@@ -290,6 +317,7 @@ export function ScanRls() {
               )}
               style={{ background: 'var(--brand-cta)' }}
             >
+              <Ico name="solar:scanner-bold-duotone" className="mr-2 size-5" />
               {phase === 'reading' ? t('reading') : phase === 'done' ? t('again') : t('read')}
             </button>
 
@@ -302,6 +330,7 @@ export function ScanRls() {
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2',
               )}
             >
+              <Ico name="solar:refresh-bold-duotone" className="mr-2 size-4" />
               {t('replay')}
             </button>
 
@@ -322,18 +351,20 @@ export function ScanRls() {
           </div>
 
           {/* the response, as a spreadsheet, because that is what he thinks his customers are */}
-          <div className="mt-6 overflow-x-auto rounded-2xl shadow-[0_0_0_1px_rgba(0,0,0,0.07)]">
-            <div role="table" aria-label={t('tableAria')} className={cn('min-w-[620px]')}>
+          <div className="mt-6 overflow-hidden rounded-2xl shadow-[0_0_0_1px_rgba(0,0,0,0.07)]">
+            <div role="table" aria-label={t('tableAria')} className="min-w-0">
               <div
                 role="row"
                 className={cn('grid gap-x-4 bg-[#fafafa] px-4 py-2.5', GRID)}
               >
-                {COLS.map((c) => (
+                {COLS.map((c, index) => (
                   <span
                     key={c}
                     role="columnheader"
                     className={cn(
                       'font-mono text-[11px] tracking-wide text-neutral-900/35',
+                      index === 2 && 'hidden sm:block',
+                      index > 2 && 'hidden lg:block',
                       c === 'total' && 'text-right',
                     )}
                   >
@@ -369,15 +400,15 @@ export function ScanRls() {
                     <span role="cell" className="truncate text-[14px] font-semibold text-neutral-900">
                       {r.name}
                     </span>
-                    <span role="cell" className="truncate font-mono text-[12.5px] text-[#525252]">
+                    <span role="cell" className="hidden truncate font-mono text-[12.5px] text-[#525252] sm:block">
                       {r.email}
                     </span>
-                    <span role="cell" className="truncate font-mono text-[12.5px] text-[#525252]">
+                    <span role="cell" className="hidden truncate font-mono text-[12.5px] text-[#525252] lg:block">
                       {r.phone}
                     </span>
                     <span
                       role="cell"
-                      className="text-right font-mono text-[12.5px] font-semibold tabular-nums text-neutral-900"
+                      className="hidden text-right font-mono text-[12.5px] font-semibold tabular-nums text-neutral-900 lg:block"
                     >
                       ${r.total}
                     </span>
@@ -422,6 +453,10 @@ export function ScanRls() {
                     : 'bg-[#f0fdf4] text-[#065f46] shadow-[0_0_0_1px_#a7f3d0]',
                 )}
               >
+                <Ico
+                  name={open ? 'solar:shield-warning-bold-duotone' : 'solar:shield-check-bold-duotone'}
+                  className="mr-2 inline-block size-5 align-text-bottom"
+                />
                 {open ? t('verdictOpen', { n: ROWS.length }) : t('verdictLocked')}
               </motion.p>
             )}
@@ -430,7 +465,7 @@ export function ScanRls() {
       </div>
 
       {/* what it means, and the one thing the free scan honestly cannot tell him */}
-      <div className="mt-12 grid gap-8 md:grid-cols-[1.1fr_1fr] md:gap-14">
+      <div className="mt-12 grid min-w-0 gap-8 lg:grid-cols-[1.1fr_1fr] lg:gap-14">
         <p className="text-balance font-display text-2xl font-extrabold leading-[1.2] tracking-tight text-neutral-900 md:text-[30px]">
           {t('punch')}
         </p>

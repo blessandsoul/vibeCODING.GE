@@ -3,35 +3,9 @@
 import { useCallback, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { Ico } from '@/components/common/Ico';
 import { SectionContainer } from '@/components/layout/SectionContainer';
 import { cn } from '@/lib/utils';
-
-/* =========================================================================
-   ScanScorecard: the signature, and the only widget in this fleet with a real backend.
-
-   The buyer here is a non-technical founder who cannot see the problem. No paragraph is going
-   to make him feel it. But if he pastes his own URL and his own API key appears on screen,
-   redacted, sixty seconds later, the sale is essentially done and we have not made a single
-   claim.
-
-   THE REDACTION IS THE PRODUCT. We show him `sk-******3f2a` and we say, in the same breath,
-   that we kept nothing. Finding the key proves competence; not keeping it proves character,
-   and in a security purchase the second one is what he is actually buying.
-
-   TWO DIRECTIONS, because the visual register for this page was a real decision and the user is
-   choosing:
-
-     A, THE REPORT. Paper white, severity chips, a findings register, an OWASP column. The
-        subject's world is not a terminal, it is the DOCUMENT he forwards to his investor. This
-        is the non-default direction and it is the one I would ship.
-
-     B, THE TERMINAL. Near-black, alarm red, monospace scan output. It is the category
-        vernacular (every security tool looks like this) and it is also, precisely, one of the
-        three looks that give AI-generated design away. Built so the difference can be seen
-        rather than argued about.
-
-   Delete the loser once the choice is made.
-   ========================================================================= */
 
 type Severity = 'critical' | 'major' | 'minor';
 type Finding = {
@@ -47,15 +21,16 @@ type Result = {
   counts: Record<Severity, number>;
 };
 
-type Variant = 'a' | 'b';
-
-const SEV_ORDER: Severity[] = ['critical', 'major', 'minor'];
+const SEVERITIES: Severity[] = ['critical', 'major', 'minor'];
+const SEVERITY_TONE: Record<Severity, { badge: string; icon: string }> = {
+  critical: { badge: 'bg-[#fee2e2] text-[#991b1b]', icon: 'text-[#b91c1c]' },
+  major: { badge: 'bg-[#fef3c7] text-[#92400e]', icon: 'text-[#b45309]' },
+  minor: { badge: 'bg-neutral-900/[0.06] text-neutral-900/55', icon: 'text-neutral-900/45' },
+};
 
 export function ScanScorecard() {
   const t = useTranslations('product.scan');
   const reduced = useReducedMotion();
-
-  const [variant, setVariant] = useState<Variant>('a');
   const [url, setUrl] = useState('');
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
@@ -66,21 +41,22 @@ export function ScanScorecard() {
     setBusy(true);
     setError(null);
     setResult(null);
+
     try {
-      const res = await fetch('/api/scan', {
+      const response = await fetch('/api/scan', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url: url.trim() }),
       });
-      const data = await res.json();
-      if (!res.ok) {
-        const map: Record<string, string> = {
+      const data = await response.json();
+      if (!response.ok) {
+        const messages: Record<string, string> = {
           url: t('errorUrl'),
           private: t('errorPrivate'),
           fetch: t('errorFetch'),
           rate: t('errorRate'),
         };
-        setError(map[data?.error] ?? t('errorFetch'));
+        setError(messages[data?.error] ?? t('errorFetch'));
         return;
       }
       setResult(data as Result);
@@ -89,298 +65,164 @@ export function ScanScorecard() {
     } finally {
       setBusy(false);
     }
-  }, [url, busy, t]);
-
-  const dark = variant === 'b';
+  }, [busy, t, url]);
 
   return (
     <SectionContainer className="py-20 md:py-28">
-      {/* the direction switch. this block is temporary and goes when the choice is made. */}
-      <div className="mb-8 flex flex-wrap items-center gap-3 rounded-2xl bg-[#fafafa] px-4 py-3 shadow-[0_0_0_1px_rgba(0,0,0,0.06)]">
-        {(['a', 'b'] as Variant[]).map((v) => (
-          <button
-            key={v}
-            type="button"
-            onClick={() => setVariant(v)}
-            aria-pressed={variant === v}
-            className={cn(
-              'min-h-[40px] rounded-full px-4 text-[13px] font-semibold',
-              'transition-[transform,background-color,color] duration-150 ease-out active:scale-[0.96]',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2',
-              variant === v
-                ? 'bg-neutral-900 text-white'
-                : 'bg-white text-neutral-900/55 shadow-[0_0_0_1px_rgba(0,0,0,0.07)]',
-            )}
-          >
-            {t(v === 'a' ? 'variantA' : 'variantB')}
-          </button>
-        ))}
-        <span className="text-[12px] text-neutral-900/40">{t('variantNote')}</span>
-      </div>
-
-      <div
-        className={cn(
-          'overflow-hidden rounded-3xl',
-          dark ? 'bg-[#0b0b0e]' : 'bg-white shadow-[0_0_0_1px_rgba(0,0,0,0.09)]',
-        )}
-      >
-        {/* header */}
-        <div
-          className={cn(
-            'px-6 py-7 md:px-10 md:py-9',
-            dark ? 'border-b border-white/8' : 'border-b border-[#ececec]',
-          )}
-        >
-          <span
-            className={cn(
-              'text-[12px] uppercase tracking-wide',
-              dark ? 'text-white/35' : 'text-neutral-900/40',
-            )}
-          >
+      <div className="overflow-hidden rounded-3xl bg-white shadow-[0_0_0_1px_rgba(0,0,0,0.09),0_24px_54px_-42px_rgba(0,0,0,0.45)]">
+        <div className="border-b border-[#ececec] px-5 py-7 sm:px-7 md:px-10 md:py-9">
+          <div className="flex size-12 items-center justify-center rounded-2xl bg-[color-mix(in_srgb,var(--brand)_12%,white)] text-[var(--brand-ink)]">
+            <Ico name="solar:scanner-bold-duotone" className="size-6" />
+          </div>
+          <span className="mt-5 block text-[12px] font-semibold tracking-wide text-neutral-900/40">
             {t('eyebrow')}
           </span>
-          <h2
-            className={cn(
-              'mt-3 max-w-2xl text-balance font-display text-3xl font-extrabold leading-[1.1] tracking-tight md:text-4xl',
-              dark ? 'text-white' : 'text-neutral-900',
-            )}
-          >
+          <h2 className="mt-3 max-w-3xl text-balance font-display text-3xl font-extrabold leading-[1.1] tracking-tight text-neutral-900 md:text-4xl">
             {t('heading')}
           </h2>
-          <p
-            className={cn(
-              'mt-3 max-w-xl text-pretty text-[15px] leading-relaxed',
-              dark ? 'text-white/50' : 'text-[#525252]',
-            )}
-          >
+          <p className="mt-3 max-w-2xl text-pretty text-[15px] leading-relaxed text-[#525252]">
             {t('subtitle')}
           </p>
 
           <form
-            onSubmit={(e) => {
-              e.preventDefault();
+            onSubmit={(event) => {
+              event.preventDefault();
               void scan();
             }}
             className="mt-7 flex flex-col gap-3 sm:flex-row"
           >
+            <label htmlFor="scan-url" className="sr-only">
+              {t('urlLabel')}
+            </label>
             <input
+              id="scan-url"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder={t('placeholder')}
               inputMode="url"
-              className={cn(
-                'h-14 min-w-0 flex-1 rounded-xl px-4 font-mono text-[14px] outline-none',
-                'transition-[box-shadow] duration-150 ease-out',
-                dark
-                  ? 'bg-white/[0.06] text-white placeholder:text-white/25 focus-visible:shadow-[0_0_0_2px_var(--brand)]'
-                  : 'bg-[#fafafa] text-neutral-900 shadow-[0_0_0_1px_rgba(0,0,0,0.09)] placeholder:text-neutral-900/30 focus-visible:shadow-[0_0_0_2px_var(--brand)]',
-              )}
+              autoComplete="url"
+              className="h-14 min-w-0 flex-1 rounded-xl bg-[#fafafa] px-4 font-mono text-[14px] text-neutral-900 shadow-[0_0_0_1px_rgba(0,0,0,0.09)] outline-none transition-shadow placeholder:text-neutral-900/30 focus-visible:shadow-[0_0_0_2px_var(--brand)]"
             />
             <button
               type="submit"
-              disabled={busy}
-              className={cn(
-                'inline-flex h-14 items-center justify-center rounded-xl px-8 text-[15px] font-bold text-white',
-                'transition-[transform,filter] duration-150 ease-out active:scale-[0.96] md:hover:brightness-110',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2',
-                busy && 'opacity-70',
-              )}
-              style={{ background: 'var(--brand)' }}
+              disabled={busy || !url.trim()}
+              className="inline-flex h-14 items-center justify-center gap-2 rounded-xl bg-[var(--brand-cta)] px-7 text-[15px] font-bold text-white transition-[transform,filter] active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-55 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2 md:hover:brightness-110"
             >
+              <Ico name="solar:scanner-bold-duotone" className={cn('size-5', busy && 'animate-pulse')} />
               {busy ? t('scanning') : result ? t('again') : t('go')}
             </button>
           </form>
 
           {error && (
-            <p className={cn('mt-4 text-[14px]', dark ? 'text-[#fca5a5]' : 'text-[#b91c1c]')}>
-              {error}
+            <p role="alert" className="mt-4 flex items-start gap-2 text-[14px] leading-relaxed text-[#991b1b]">
+              <Ico name="solar:shield-warning-bold-duotone" className="mt-0.5 size-5" />
+              <span>{error}</span>
             </p>
           )}
         </div>
 
-        {/* result */}
         <AnimatePresence mode="wait">
           {result && (
             <motion.div
-              key={variant}
-              initial={reduced ? false : { opacity: 0, y: 14 }}
+              key={`${result.score}-${result.findings.length}`}
+              initial={reduced ? false : { opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10, filter: 'blur(4px)' }}
-              transition={{ duration: 0.32, ease: [0.23, 1, 0.32, 1] }}
-              className="px-6 py-7 md:px-10 md:py-9"
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
+              className="px-5 py-7 sm:px-7 md:px-10 md:py-9"
             >
-              {/* score + counts */}
-              <div className="flex flex-wrap items-center gap-x-10 gap-y-5">
-                <div>
-                  <span
-                    className={cn(
-                      'block text-[11px] uppercase tracking-wide',
-                      dark ? 'text-white/35' : 'text-neutral-900/40',
-                    )}
-                  >
+              <div className="grid min-w-0 gap-4 lg:grid-cols-[minmax(280px,0.8fr)_minmax(0,1.2fr)] lg:items-end">
+                <div className="rounded-2xl bg-[#fafafa] p-5 shadow-[0_0_0_1px_rgba(0,0,0,0.06)]">
+                  <span className="flex items-center gap-2 text-[11px] font-semibold tracking-wide text-neutral-900/40">
+                    <Ico name="solar:shield-warning-bold-duotone" className="size-5 text-[var(--brand-ink)]" />
                     {t('score')}
                   </span>
                   <span
-                    className={cn(
-                      'font-display text-6xl font-extrabold tabular-nums leading-none md:text-7xl',
-                      dark ? 'text-white' : 'text-neutral-900',
-                    )}
-                    style={{
-                      color:
-                        result.score < 50
-                          ? '#ef4444'
-                          : result.score < 80
-                            ? '#f59e0b'
-                            : undefined,
-                    }}
+                    className="mt-3 block font-display text-6xl font-extrabold tabular-nums leading-none"
+                    style={{ color: result.score < 50 ? '#b91c1c' : result.score < 80 ? '#b45309' : '#047857' }}
                   >
                     {result.score}
                   </span>
                 </div>
 
-                <div className="flex gap-3">
-                  {SEV_ORDER.map((s) => (
-                    <div
-                      key={s}
-                      className={cn(
-                        'rounded-xl px-4 py-3',
-                        dark ? 'bg-white/[0.05]' : 'bg-[#fafafa] shadow-[0_0_0_1px_rgba(0,0,0,0.05)]',
-                      )}
-                    >
-                      <span
-                        className={cn(
-                          'block text-[10px] uppercase tracking-wide',
-                          s === 'critical'
-                            ? 'text-[#ef4444]'
-                            : s === 'major'
-                              ? 'text-[#f59e0b]'
-                              : dark
-                                ? 'text-white/35'
-                                : 'text-neutral-900/35',
-                        )}
-                      >
-                        {t(s)}
+                <div className="grid min-w-0 grid-cols-3 gap-2 sm:gap-3">
+                  {SEVERITIES.map((severity) => (
+                    <div key={severity} className="min-w-0 rounded-2xl bg-white p-3 shadow-[0_0_0_1px_rgba(0,0,0,0.08)] sm:p-4">
+                      <Ico name="solar:shield-warning-bold-duotone" className={cn('size-5', SEVERITY_TONE[severity].icon)} />
+                      <span className="mt-2 block break-words text-[10px] font-bold tracking-wide text-neutral-900/45">
+                        {t(severity)}
                       </span>
-                      <span
-                        className={cn(
-                          'mt-1 block font-display text-2xl font-extrabold tabular-nums',
-                          dark ? 'text-white' : 'text-neutral-900',
-                        )}
-                      >
-                        {result.counts[s]}
+                      <span className="mt-1 block font-display text-2xl font-extrabold tabular-nums text-neutral-900">
+                        {result.counts[severity]}
                       </span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* findings register */}
               {result.findings.length > 0 ? (
-                <ul className="mt-8 flex flex-col gap-3">
-                  {result.findings.map((f, i) => (
+                <ul className="mt-7 flex flex-col gap-3">
+                  {result.findings.map((finding, index) => (
                     <motion.li
-                      key={f.id}
-                      initial={reduced ? false : { opacity: 0, y: 10 }}
+                      key={finding.id}
+                      initial={reduced ? false : { opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: reduced ? 0 : i * 0.06, duration: 0.28, ease: [0.23, 1, 0.32, 1] }}
-                      className={cn(
-                        'rounded-2xl px-5 py-4',
-                        dark
-                          ? 'bg-white/[0.04]'
-                          : 'bg-white shadow-[0_0_0_1px_rgba(0,0,0,0.08)]',
-                        f.severity === 'critical' &&
-                          (dark ? 'shadow-[inset_3px_0_0_0_#ef4444]' : 'shadow-[0_0_0_1px_#ef4444]'),
-                      )}
+                      transition={{ delay: reduced ? 0 : index * 0.05, duration: 0.25 }}
+                      className="min-w-0 rounded-2xl bg-white p-5 shadow-[0_0_0_1px_rgba(0,0,0,0.08)]"
                     >
-                      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                        <span
-                          className={cn(
-                            'rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide',
-                            f.severity === 'critical'
-                              ? 'bg-[#ef4444]/15 text-[#ef4444]'
-                              : f.severity === 'major'
-                                ? 'bg-[#f59e0b]/16 text-[#f59e0b]'
-                                : dark
-                                  ? 'bg-white/8 text-white/45'
-                                  : 'bg-neutral-900/7 text-neutral-900/45',
-                          )}
-                        >
-                          {t(f.severity)}
+                      <div className="flex min-w-0 items-start gap-3">
+                        <span className={cn('flex size-10 shrink-0 items-center justify-center rounded-xl', SEVERITY_TONE[finding.severity].badge)}>
+                          <Ico name="solar:shield-warning-bold-duotone" className="size-5" />
                         </span>
-                        <span
-                          className={cn(
-                            'text-pretty text-[15px] font-bold leading-snug',
-                            dark ? 'text-white' : 'text-neutral-900',
-                          )}
-                        >
-                          {f.title}
-                        </span>
-                      </div>
-
-                      <p
-                        className={cn(
-                          'mt-2 text-pretty text-[14px] leading-relaxed',
-                          dark ? 'text-white/55' : 'text-[#525252]',
-                        )}
-                      >
-                        {f.detail}
-                      </p>
-
-                      {/* THE MOMENT. his own key, on his own screen, with the secret gone. */}
-                      {f.evidence && (
-                        <div
-                          className={cn(
-                            'mt-4 rounded-xl px-4 py-3',
-                            dark ? 'bg-black/40' : 'bg-[#0b0b0e]',
-                          )}
-                        >
-                          <span className="block text-[10px] uppercase tracking-wide text-white/30">
-                            {t('found')}
+                        <div className="min-w-0 flex-1">
+                          <span className={cn('inline-flex rounded-full px-2.5 py-1 text-[10px] font-bold tracking-wide', SEVERITY_TONE[finding.severity].badge)}>
+                            {t(finding.severity)}
                           </span>
-                          <code className="mt-1 block break-all font-mono text-[14px] text-[#fca5a5]">
-                            {f.evidence}
-                          </code>
-                          <span className="mt-2 block text-[11px] leading-relaxed text-white/40">
-                            {t('redacted')}
-                          </span>
+                          <h3 className="mt-2 text-pretty text-[16px] font-bold leading-snug text-neutral-900">
+                            {finding.title}
+                          </h3>
+                          <p className="mt-2 text-pretty text-[14px] leading-relaxed text-[#525252]">
+                            {finding.detail}
+                          </p>
+                          {finding.evidence && (
+                            <div className="mt-4 rounded-xl bg-[#0b0b0e] px-4 py-3 text-white">
+                              <span className="flex items-center gap-2 text-[10px] font-semibold tracking-wide text-white/40">
+                                <Ico name="solar:key-bold-duotone" className="size-4" />
+                                {t('found')}
+                              </span>
+                              <code className="mt-2 block break-all font-mono text-[13px] text-[#fca5a5]">
+                                {finding.evidence}
+                              </code>
+                              <span className="mt-2 block text-[11px] leading-relaxed text-white/45">
+                                {t('redacted')}
+                              </span>
+                            </div>
+                          )}
                         </div>
-                      )}
+                      </div>
                     </motion.li>
                   ))}
                 </ul>
               ) : (
-                <p
-                  className={cn(
-                    'mt-8 max-w-2xl text-pretty text-[15px] leading-relaxed',
-                    dark ? 'text-white/60' : 'text-[#404040]',
-                  )}
-                >
-                  {t('clean')}
-                </p>
+                <div className="mt-7 flex items-start gap-3 rounded-2xl bg-[#f0fdf4] p-5 text-[#065f46] shadow-[0_0_0_1px_#a7f3d0]">
+                  <Ico name="solar:shield-check-bold-duotone" className="size-6" />
+                  <p className="text-pretty text-[14px] leading-relaxed">{t('clean')}</p>
+                </div>
               )}
 
-              {/* the promise we have to be telling the truth about */}
-              <p
-                className={cn(
-                  'mt-7 border-t pt-5 text-[12px] leading-relaxed',
-                  dark ? 'border-white/8 text-white/35' : 'border-[#ececec] text-[#737373]',
-                )}
-              >
-                {t('nostore')}
-              </p>
-
-              <a
-                href="#cta"
-                className={cn(
-                  'mt-6 inline-flex min-h-[52px] flex-wrap items-center gap-x-3 rounded-full px-7 text-[15px] font-bold text-white',
-                  'transition-[transform,filter] duration-150 ease-out active:scale-[0.96] md:hover:brightness-110',
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2',
-                )}
-                style={{ background: 'var(--brand)' }}
-              >
-                {t('cta')}
-                <span className="text-[13px] font-medium text-white/70">{t('ctaSub')}</span>
-              </a>
+              <div className="mt-7 flex flex-col items-start justify-between gap-5 border-t border-[#ececec] pt-6 sm:flex-row sm:items-center">
+                <p className="flex max-w-2xl items-start gap-2 text-pretty text-[12px] leading-relaxed text-[#737373]">
+                  <Ico name="solar:lock-keyhole-bold-duotone" className="mt-0.5 size-5 shrink-0" />
+                  <span>{t('nostore')}</span>
+                </p>
+                <a
+                  href="#cta"
+                  className="inline-flex min-h-[48px] shrink-0 items-center gap-2 rounded-xl bg-neutral-900 px-5 text-[13px] font-bold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2"
+                >
+                  <Ico name="solar:document-text-bold-duotone" className="size-5" />
+                  {t('cta')}
+                </a>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
