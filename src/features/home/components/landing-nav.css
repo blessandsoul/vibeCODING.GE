@@ -201,6 +201,7 @@
   justify-content: center;
   align-items: center;
   gap: 4px;
+  flex: 0 0 44px;
   width: 44px;
   height: 44px;
   border-radius: 50%;
