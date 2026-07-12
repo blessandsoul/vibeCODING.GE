@@ -12,6 +12,7 @@ const nextConfig: NextConfig = {
   // the app dir, not an inferred monorepo root.
   outputFileTracingRoot: __dirname,
   skipTrailingSlashRedirect: false,
+  skipProxyUrlNormalize: true,
   poweredByHeader: false,
 
   images: {
