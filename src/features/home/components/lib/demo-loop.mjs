@@ -82,14 +82,18 @@ export function createDemoLoop({
   };
 
   const handleVisibilityChange = () => {
-    if (cleaned || controlled) return;
+    if (cleaned) return;
 
     if (pageIsHidden()) {
+      if (controlled) {
+        stop();
+        return;
+      }
       if (active) stopAndReset();
       return;
     }
 
-    startVisiblePass();
+    if (!controlled) startVisiblePass();
   };
 
   const replay = () => {
@@ -148,7 +152,10 @@ export function createDemoLoop({
     const wasInViewport = inViewport;
     inViewport = entry.isIntersecting !== false && entry.intersectionRatio >= threshold;
 
-    if (controlled) return;
+    if (controlled) {
+      if (wasInViewport && !inViewport) stop();
+      return;
+    }
     if (!inViewport) {
       if (wasInViewport || active) stopAndReset();
       return;
