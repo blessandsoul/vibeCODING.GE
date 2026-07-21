@@ -2,34 +2,27 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { motion, useReducedMotion } from 'framer-motion';
+import { useReducedMotion } from 'framer-motion';
 import { Ico } from '@/components/common/Ico';
 import { SectionContainer } from '@/components/layout/SectionContainer';
 import { createTimelinePlayer } from '@/features/showcase/scan-demo-models.mjs';
 import { createScanDemoLoop } from '@/features/showcase/scan-demo-visibility.mjs';
+import { BusinessResult, DemoIntro } from '@/features/showcase/ShowcaseStory';
 import { cn } from '@/lib/utils';
 
-const ITEMS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
-const SAMPLE_STAGES = [1, 4, 7, 10] as const;
-const TEN_CYCLE_MS = 8000;
-const ITEM_ICONS = [
-  'solar:database-bold-duotone',
-  'solar:key-bold-duotone',
-  'solar:lock-keyhole-bold-duotone',
-  'solar:server-square-bold-duotone',
-  'solar:server-square-bold-duotone',
-  'solar:database-bold-duotone',
-  'solar:shield-warning-bold-duotone',
-  'solar:server-square-bold-duotone',
-  'solar:code-file-bold-duotone',
-  'solar:documents-bold-duotone',
+const GROUPS = [
+  { id: 1, label: 'groupData', summary: 'groupDataSummary', icon: 'solar:database-bold-duotone', items: [1, 2, 5, 6] },
+  { id: 2, label: 'groupMoney', summary: 'groupMoneySummary', icon: 'solar:wallet-money-bold-duotone', items: [3, 4, 8] },
+  { id: 3, label: 'groupLaunch', summary: 'groupLaunchSummary', icon: 'solar:rocket-bold-duotone', items: [7, 9, 10] },
 ] as const;
+const SAMPLE_STAGES = [1, 2, 3] as const;
+const TEN_CYCLE_MS = 8000;
 type DemoController = ReturnType<typeof createScanDemoLoop>;
 
 export function ScanTenWays() {
   const t = useTranslations('product.ten');
   const reduced = Boolean(useReducedMotion());
-  const [open, setOpen] = useState<number | null>(1);
+  const [open, setOpen] = useState<number>(1);
   const demoRef = useRef<HTMLDivElement>(null);
   const controllerRef = useRef<DemoController | null>(null);
 
@@ -44,7 +37,7 @@ export function ScanTenWays() {
       reducedMotion: reduced,
       cycleMs: TEN_CYCLE_MS,
       play: player.play,
-      showFinal: () => setOpen(10),
+      showFinal: () => setOpen(3),
       reset: () => setOpen(1),
       stop: player.stop,
     });
@@ -57,101 +50,134 @@ export function ScanTenWays() {
     };
   }, [reduced]);
 
-  const chooseItem = useCallback((item: number) => {
+  const chooseGroup = useCallback((group: number) => {
     controllerRef.current?.takeControl();
-    setOpen((current) => (current === item ? null : item));
+    setOpen(group);
   }, []);
 
   const replay = useCallback(() => controllerRef.current?.replay(), []);
 
   return (
-    <SectionContainer className="py-20 md:py-28">
-      <div ref={demoRef} className="min-w-0">
-        <div className="mb-10 flex flex-col items-start justify-between gap-5 sm:flex-row sm:items-end">
-          <div className="max-w-2xl">
-            <span className="inline-flex items-center gap-2 text-[12px] font-semibold tracking-wide text-neutral-900/40">
-              <Ico name="solar:shield-warning-bold-duotone" className="size-5 text-[var(--brand-ink)]" />
-              {t('eyebrow')}
-            </span>
-            <h2 className="mt-4 text-balance font-display text-3xl font-extrabold leading-[1.1] tracking-tight text-neutral-900 md:text-4xl">
-              {t('heading')}
-            </h2>
-            <p className="mt-3 text-pretty text-[15px] leading-relaxed text-[#525252]">
-              {t('subtitle')}
-            </p>
-          </div>
-
+    <SectionContainer
+      className="py-16 md:py-24 lg:py-28"
+      data-landing-demo="true"
+      data-demo-id="scan-ten"
+      data-demo-detail={`group-${open}`}
+      aria-live="off"
+    >
+      <div ref={demoRef} className="min-w-0" aria-live="off">
+        <div className="flex flex-col items-start justify-between gap-5 sm:flex-row sm:items-end">
+          <DemoIntro
+            icon="solar:shield-warning-bold-duotone"
+            eyebrow={t('eyebrow')}
+            title={t('heading')}
+            description={t('subtitle')}
+          />
           <button
             type="button"
             onClick={replay}
-            className="inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-5 text-[13px] font-bold text-neutral-900 shadow-[0_0_0_1px_rgba(0,0,0,0.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2"
+            data-demo-replay="scan-ten"
+            className="inline-flex min-h-[44px] shrink-0 flex-wrap items-center justify-center gap-2 rounded-xl bg-white px-5 py-2 text-center text-[13px] font-bold text-[#111827] shadow-[0_0_0_1px_rgba(0,0,0,0.12)] transition-transform duration-150 active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2"
           >
             <Ico name="solar:refresh-bold-duotone" className="size-4" />
             {t('replay')}
           </button>
         </div>
 
-        <ul className="overflow-hidden rounded-3xl bg-white shadow-[0_0_0_1px_rgba(0,0,0,0.09)]">
-          {ITEMS.map((item, index) => {
-            const active = open === item;
-            return (
-              <li key={item} className={index === 0 ? '' : 'border-t border-[#ececec]'}>
+        <div className="mt-10 overflow-hidden rounded-3xl bg-white shadow-[0_0_0_1px_rgba(0,0,0,0.09),0_24px_50px_-38px_rgba(0,0,0,0.45)]">
+          <div className="grid gap-px bg-[#e5e7eb] lg:grid-cols-3" role="group" aria-label={t('categoryLabel')}>
+            {GROUPS.map((group) => {
+              const active = group.id === open;
+              return (
                 <button
+                  key={group.id}
                   type="button"
-                  onClick={() => chooseItem(item)}
-                  aria-expanded={active}
-                  className="grid min-h-[64px] w-full min-w-0 grid-cols-[40px_minmax(0,1fr)_40px] items-center gap-3 px-4 py-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--brand)] sm:gap-4 sm:px-5"
+                  onClick={() => chooseGroup(group.id)}
+                  aria-pressed={active}
+                  aria-controls={`scan-ten-detail-${group.id}`}
+                  className={cn(
+                    'min-h-[116px] min-w-0 bg-white px-5 py-4 text-left transition-[transform,background-color] duration-150 active:scale-[0.98] focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--brand)]',
+                    active && 'bg-[color-mix(in_srgb,var(--brand)_8%,white)]',
+                  )}
                 >
-                  <span
-                    className={cn(
-                      'flex size-10 items-center justify-center rounded-xl transition-colors',
-                      active ? 'bg-[var(--brand-cta)] text-white' : 'bg-[#fafafa] text-neutral-900/45',
-                    )}
-                  >
-                    <Ico name={ITEM_ICONS[index]} className="size-5" />
-                  </span>
-                  <span className="min-w-0">
-                    <span className="block font-mono text-[10px] tabular-nums text-neutral-900/35">
-                      {String(item).padStart(2, '0')}
+                  <span className="flex items-start gap-3">
+                    <span className={cn(
+                      'grid size-10 shrink-0 place-items-center rounded-xl',
+                      active ? 'bg-[var(--brand-cta)] text-white' : 'bg-[#fafafa] text-[#667085] shadow-[0_0_0_1px_rgba(0,0,0,0.07)]',
+                    )}>
+                      <Ico name={group.icon} className="size-5" />
                     </span>
-                    <span className={cn('mt-1 block text-pretty text-[16px] font-bold leading-snug sm:text-[18px]', active ? 'text-neutral-900' : 'text-neutral-900/70')}>
-                      {t(`t${item}`)}
+                    <span className="min-w-0">
+                      <span className="block text-pretty text-[15px] font-extrabold leading-5 text-[#111827]">{t(group.label)}</span>
+                      <span className="mt-1.5 block text-pretty text-[12px] leading-5 text-[#4B5563]">{t(group.summary)}</span>
                     </span>
-                  </span>
-                  <span className={cn('flex size-10 items-center justify-center rounded-xl transition-[transform,background-color,color]', active ? 'rotate-180 bg-[var(--brand-cta)] text-white' : 'bg-[#fafafa] text-neutral-900/40')}>
-                    <Ico name="solar:alt-arrow-down-bold-duotone" className="size-5" />
                   </span>
                 </button>
+              );
+            })}
+          </div>
 
-                {active && (
-                  <motion.div
-                    initial={reduced ? false : { opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.24, ease: [0.23, 1, 0.32, 1] }}
-                    className="grid min-w-0 grid-cols-[40px_minmax(0,1fr)] gap-3 px-4 pb-6 sm:gap-4 sm:px-5"
+          <div data-ten-detail-shell="true" className="border-t border-[#ececec]">
+            <div
+              data-ten-detail-slot="true"
+              className="grid h-[760px] min-h-[320px] min-w-0 overflow-hidden bg-[#fafafa] sm:h-[520px] sm:min-h-[160px] lg:h-[430px]"
+            >
+              {GROUPS.map((group) => {
+                const active = group.id === open;
+                return (
+                  <div
+                    key={group.id}
+                    id={`scan-ten-detail-${group.id}`}
+                    data-ten-detail-panel={group.id}
+                    role="region"
+                    aria-label={`${t('detailLabel')}: ${t(group.label)}`}
+                    aria-hidden={!active}
+                    inert={!active}
+                    tabIndex={active ? 0 : -1}
+                    className={cn(
+                      'col-start-1 row-start-1 h-full min-h-0 min-w-0 overflow-y-auto px-5 py-6 transition-opacity duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--brand)] motion-reduce:transition-none md:px-7 md:py-7',
+                      active ? 'opacity-100' : 'pointer-events-none opacity-0',
+                    )}
                   >
-                    <span aria-hidden="true" />
-                    <div className="min-w-0 max-w-3xl">
-                      <p className="text-pretty text-[15px] leading-relaxed text-[#404040]">
-                        {t(`b${item}`)}
-                      </p>
-                      <p className="mt-3 text-[12px] leading-relaxed text-neutral-900/45">
-                        <span className="font-semibold tracking-wide">{t('source')}: </span>
-                        {t(`s${item}`)}
-                      </p>
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <div>
+                        <span className="text-[11px] font-bold tracking-wide text-[#667085]">{t('selectedGroup')}</span>
+                        <h3 className="mt-2 text-[20px] font-extrabold leading-6 text-[#111827]">{t(group.label)}</h3>
+                      </div>
+                      <span className="rounded-full bg-white px-3 py-1.5 text-[11px] font-bold text-[#4B5563] shadow-[0_0_0_1px_rgba(0,0,0,0.08)]">
+                        {t('checksCount', { count: group.items.length })}
+                      </span>
                     </div>
-                  </motion.div>
-                )}
-              </li>
-            );
-          })}
-        </ul>
 
-        <p className="mt-8 flex max-w-2xl items-start gap-2 text-pretty text-[13px] leading-relaxed text-[#737373]">
+                    <ul className="mt-5 grid gap-3 lg:grid-cols-2" role="list">
+                      {group.items.map((item) => (
+                        <li key={item} className="min-w-0 rounded-2xl bg-white p-4 shadow-[0_0_0_1px_rgba(0,0,0,0.08)]">
+                          <div className="flex items-start gap-3">
+                            <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-[color-mix(in_srgb,var(--brand)_10%,white)] font-mono text-[11px] font-extrabold text-[var(--brand-ink)]">
+                              {String(item).padStart(2, '0')}
+                            </span>
+                            <div className="min-w-0">
+                              <h4 className="text-pretty text-[14px] font-extrabold leading-5 text-[#111827]">{t(`t${item}`)}</h4>
+                              <p className="mt-2 text-pretty text-[12px] leading-5 text-[#4B5563]">{t(`b${item}`)}</p>
+                            </div>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        <p className="mt-4 flex max-w-3xl items-start gap-2 text-pretty text-[12px] leading-5 text-[#667085]">
           <Ico name="solar:shield-check-bold-duotone" className="mt-0.5 size-5 shrink-0 text-[#047857]" />
           <span>{t('note')}</span>
         </p>
       </div>
+
+      <BusinessResult label={t('resultLabel')}>{t('result')}</BusinessResult>
     </SectionContainer>
   );
 }

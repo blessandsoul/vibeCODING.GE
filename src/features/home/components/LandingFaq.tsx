@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, type ReactNode, type MouseEvent } from 'react';
 import { useTranslations } from 'next-intl';
+import { Ico } from '@/components/common/Ico';
 import { SITE } from '@/config/site';
 import './landing-faq.css';
 
@@ -17,6 +18,7 @@ import './landing-faq.css';
 type Faq = { q: ReactNode; a: string };
 
 const DUR = 420;
+const FAQ_LIMIT = 5;
 
 // Whole-card toggle with the source's smooth max-height/opacity animation.
 function toggleFaq(e: MouseEvent<HTMLDetailsElement>) {
@@ -78,15 +80,11 @@ function renderBrandMark() {
 export function LandingFaq() {
   const t = useTranslations('product.faq');
 
-  // HOW MANY QUESTIONS IS A PER-SITE FACT, so it is counted, not declared. This loop was a
-  // hardcoded 14 and it broke twice for the same reason: once when it ran to 15 against 14 keys
-  // (MISSING_MESSAGE on every build), and again when aiTAXI arrived with 10. A shared component
-  // that hardcodes the length of a per-site list is a coupling that will keep breaking, so it
-  // now walks until the copy runs out.
+  // Keep the visible list aligned with the five-item semantic FAQ contract.
   const FAQS: Faq[] = [];
   // q1 alone: it is the one that can carry the inline brand wordmark.
   FAQS.push({ q: t.rich('q1', { brand: renderBrandMark }), a: t('a1') });
-  for (let n = 2; t.has(`q${n}`) && t.has(`a${n}`); n += 1) {
+  for (let n = 2; n <= FAQ_LIMIT && t.has(`q${n}`) && t.has(`a${n}`); n += 1) {
     FAQS.push({ q: t(`q${n}`), a: t(`a${n}`) });
   }
   const rootRef = useRef<HTMLElement>(null);
@@ -128,7 +126,7 @@ export function LandingFaq() {
             <details key={i} onClick={toggleFaq} className="faq-item group border border-[#e5e5e5] rounded-2xl p-6 bg-white open:bg-[#fafafa]">
               <summary className="flex items-center justify-between cursor-pointer">
                 <h3 className="font-display font-bold text-xl text-neutral-900">{f.q}</h3>
-                <svg className="w-5 h-5 text-[#525252] transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4"></path></svg>
+                <Ico name="solar:add-circle-linear" className="w-5 h-5 text-[#525252] transition-transform" />
               </summary>
               <div className="faq-body"><div><p className="text-[#525252] leading-relaxed">{f.a}</p></div></div>
             </details>

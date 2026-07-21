@@ -13,6 +13,13 @@ export function createDemoLoop({
   schedule = globalThis.setTimeout,
   cancelScheduled = globalThis.clearTimeout,
 }) {
+  const contractTarget = target?.matches?.('[data-demo-id]')
+    ? target
+    : (target?.closest?.('[data-demo-id]') ?? target);
+  const setDemoState = (state) => {
+    contractTarget?.setAttribute?.('data-landing-demo', 'true');
+    contractTarget?.setAttribute?.('data-demo-state', state);
+  };
   let observer = null;
   let repeatTimer = null;
   let generation = 0;
@@ -50,16 +57,43 @@ export function createDemoLoop({
       if (repeatTimer === scheduledTimer) repeatTimer = null;
       if (callbackGeneration !== generation || !canRepeat()) return;
 
-      active = false;
-      stop();
-      reset();
-      if (!canRepeat()) return;
+      setDemoState('final');
 
-      active = true;
-      play();
-      scheduleRepeat();
-    }, cycleMs + holdMs);
+      const holdGeneration = generation;
+      const holdTimer = schedule(() => {
+        if (repeatTimer === holdTimer) repeatTimer = null;
+        if (holdGeneration !== generation || !canRepeat()) return;
+
+        active = false;
+        stop();
+        reset();
+        if (!canRepeat()) return;
+
+        active = true;
+        setDemoState('playing');
+        play();
+        scheduleRepeat();
+      }, holdMs);
+      repeatTimer = holdTimer;
+    }, cycleMs);
     repeatTimer = scheduledTimer;
+  };
+
+  const scheduleDetachedFinal = () => {
+    const callbackGeneration = generation;
+    const completionTimer = schedule(() => {
+      if (repeatTimer === completionTimer) repeatTimer = null;
+      if (callbackGeneration !== generation || cleaned || controlled) return;
+      if (pageIsHidden()) {
+        stopAndReset();
+        return;
+      }
+
+      active = false;
+      detachedReplay = false;
+      setDemoState('final');
+    }, cycleMs);
+    repeatTimer = completionTimer;
   };
 
   const stopAndReset = () => {
@@ -69,6 +103,7 @@ export function createDemoLoop({
     detachedReplay = false;
     stop();
     reset();
+    setDemoState('paused');
   };
 
   const startVisiblePass = () => {
@@ -77,6 +112,7 @@ export function createDemoLoop({
     if (active) return;
     invalidateCallbacks();
     active = true;
+    setDemoState('playing');
     play();
     scheduleRepeat();
   };
@@ -105,21 +141,32 @@ export function createDemoLoop({
     active = false;
     stop();
 
-    if (staticFinalState) {
-      showFinal();
+    if (pageIsHidden()) {
+      detachedReplay = false;
+      reset();
+      setDemoState('paused');
       return;
     }
 
+    if (staticFinalState) {
+      showFinal();
+      setDemoState('final');
+      return;
+    }
+
+    detachedReplay = true;
     reset();
     active = true;
+    setDemoState('playing');
     play();
-    detachedReplay = !canRepeat();
-    scheduleRepeat();
+    if (canRepeat()) scheduleRepeat();
+    else scheduleDetachedFinal();
   };
 
   const takeControl = () => {
     if (cleaned || controlled) return;
     controlled = true;
+    setDemoState('manual');
     invalidateCallbacks();
     clearRepeatTimer();
     active = false;
@@ -137,12 +184,16 @@ export function createDemoLoop({
     observer?.disconnect();
     pageDocument?.removeEventListener?.('visibilitychange', handleVisibilityChange);
     stop();
+    setDemoState('paused');
   };
 
   if (staticFinalState) {
     showFinal();
+    setDemoState('final');
     return { replay, takeControl, cleanup };
   }
+
+  setDemoState('idle');
 
   observer = new Observer((entries) => {
     if (cleaned) return;
@@ -157,6 +208,11 @@ export function createDemoLoop({
       return;
     }
     if (!inViewport) {
+      // Replay is an explicit user request. If the observed visual is already
+      // below the threshold (common in tall mobile demos whose Replay control
+      // remains visible), let that one story run. It still cannot schedule a
+      // repeat, and a story that was visible is still paused when it leaves.
+      if (detachedReplay && active) return;
       if (wasInViewport || active) stopAndReset();
       return;
     }
@@ -164,6 +220,8 @@ export function createDemoLoop({
     if (!pageIsHidden()) startVisiblePass();
   }, { threshold });
 
+  // Keep the compact visibility sentinel separate from the surrounding contract root.
+  // Tall demos may never reach a 35% ratio when the whole section is observed.
   observer.observe(target);
   pageDocument?.addEventListener?.('visibilitychange', handleVisibilityChange);
 

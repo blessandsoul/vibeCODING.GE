@@ -15,6 +15,8 @@ const PUBLIC_NAMESPACES = [
   'rls',
   'fix',
   'proof',
+  'heroStory',
+  'capabilities',
 ];
 
 function loadLocale(locale) {
@@ -46,6 +48,17 @@ test('all rewritten public namespaces have exact KA, EN, and RU key parity', () 
     for (const locale of LOCALES) {
       const actual = leafPaths(messages[locale].product?.[namespace]).sort();
       assert.deepEqual(actual, expected, `${locale} product.${namespace}`);
+    }
+  }
+});
+
+test('each locale provides exactly five security capability outcomes', () => {
+  for (const locale of LOCALES) {
+    const capabilities = loadLocale(locale).product.capabilities;
+    assert.deepEqual(Object.keys(capabilities.items), ['1', '2', '3', '4', '5'], locale);
+    for (const item of Object.values(capabilities.items)) {
+      assert.deepEqual(Object.keys(item).sort(), ['description', 'result', 'title']);
+      assert.ok(Object.values(item).every((value) => typeof value === 'string' && value.length > 0));
     }
   }
 });
@@ -162,11 +175,11 @@ test('reviewed Georgian and Russian business copy avoids access and browser calq
   );
   assert.equal(
     ka.paywall.subtitle,
-    'ეს ნიმუში ბრაუზერში შენახულ მონაცემს ცვლის და აჩვენებს, რატომ უნდა ამოწმებდეს ფასიან წვდომას სერვერი.',
+    'გამოგონილი ანგარიში აჩვენებს, რა ხდება, როცა წვდომას მხოლოდ ბრაუზერი წყვეტს. aiNOW-ი ამოწმებს, ადასტურებს თუ არა გადახდას სერვერი.',
   );
   assert.doesNotMatch(
     JSON.stringify(ru),
     /доступного уровня доступа|Платный доступ решает клиент/u,
   );
-  assert.equal(ru.ten.t4, 'Доступ к платной функции проверяет только браузер.');
+  assert.equal(ru.ten.t4, 'Бесплатный аккаунт открывает платную функцию');
 });

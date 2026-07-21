@@ -14,8 +14,8 @@ import './landing-wordmark.css';
 export function LandingWordmark() {
   const t = useTranslations('product.wordmark');
   return (
-    <section className="px-6 pb-12">
-      <div className="max-w-[1280px] mx-auto flex flex-col items-center gap-6">
+    <section className="landing-product-wordmark-section px-4 pb-12 md:px-6">
+      <div data-family-shell="true" className="max-w-[1216px] mx-auto flex flex-col items-center gap-6">
         <div className="wordmark-3d footer-wordmark text-[clamp(2rem,12vw,7rem)] md:text-[clamp(4rem,14vw,16rem)] leading-none max-w-full"><span className="wm-prefix">{SITE.wordmark.prefix}</span><span className="wm-mark">{SITE.wordmark.mark}</span><span className="wm-accent" aria-hidden="true"></span></div>
         <p className="text-center text-lg md:text-xl text-[#525252]">{t('line')}</p>
       </div>

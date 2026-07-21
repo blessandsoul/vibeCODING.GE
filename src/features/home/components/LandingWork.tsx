@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
-import { SITE } from '@/config/site';
 import './landing-work.css';
 
 /* =========================================================================
@@ -51,21 +50,21 @@ export function LandingWork() {
   }, []);
 
   return (
-    <section ref={rootRef} id="work" className="py-20 md:py-32 px-6">
-      <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-16 md:mb-20">
-          <p className="text-xs font-mono uppercase tracking-[0.3em] text-[#525252] mb-4">{t('eyebrow')}</p>
-          <h2 className="fade-up font-display font-extrabold text-4xl md:text-6xl leading-[1.05] tracking-tight max-w-3xl mx-auto text-neutral-900">
+    <section ref={rootRef} id="work" className="mx-auto w-[calc(100%-48px)] max-w-[1216px] py-16 md:py-24 lg:py-28">
+      <div className="mx-auto max-w-5xl">
+        <div className="work-intro mb-12 text-center md:mb-16">
+          <p className="mb-4 font-mono text-xs tracking-[0.18em] text-[#667085]">{t('eyebrow')}</p>
+          <h2 className="fade-up mx-auto max-w-3xl font-display text-[30px] font-extrabold leading-[33px] tracking-tight text-[#111827] md:text-[36px] md:leading-[40px]">
             {t('headingPre')}<br /><span className="text-[#525252]">{t('headingAccent')}</span>
           </h2>
         </div>
-        <div className="space-y-px bg-[#e5e5e5]">
+        <div data-work-steps="true" className="space-y-px bg-[#e5e5e5]">
           {STEPS.map((s) => (
-            <div key={s.num} className="grid grid-cols-12 gap-4 md:gap-6 p-6 md:p-10 bg-white hover:bg-[#fafafa] transition">
-              <div className="col-span-1 font-mono text-[#525252] text-2xl">{s.num}</div>
+            <div data-work-step="true" key={s.num} className="grid grid-cols-12 gap-4 bg-white p-6 transition-colors hover:bg-[#fafafa] md:gap-6 md:p-10">
+              <div className="col-span-1 font-mono text-2xl text-[#667085]">{s.num}</div>
               <div className="col-span-11 md:col-span-3">
                 <h3 className="font-display font-bold text-2xl text-neutral-900">{s.title}</h3>
-                <span className="text-sm font-mono text-(--brand)">{s.tag}</span>
+                <span className="text-sm font-mono text-(--brand-ink)">{s.tag}</span>
               </div>
               <div className="col-span-12 md:col-span-8 text-base text-[#525252] leading-relaxed">{s.desc}</div>
             </div>

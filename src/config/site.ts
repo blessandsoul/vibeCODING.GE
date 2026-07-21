@@ -46,7 +46,7 @@ export const SITE = {
   manifest: {
     name: "vibeCODING",
     short: "vibeCODING",
-    description: "We fix what the AI built. Security and production audit for vibe-coded apps.",
+    description: "aiNOW reviews AI-built apps for security and production readiness.",
     background: "#fbfcfc",
     theme: "#ef4444",
   },
@@ -65,8 +65,8 @@ export const SITE = {
    */
   seo: {
     disambiguating:
-      "A security and production-readiness audit for applications built with AI coding tools such as Lovable, Bolt, Replit Agent, v0, Base44 and Cursor. It is a rescue and cleanup service. It does not sell vibe coding and it is not affiliated with any of those tools.",
-    serviceType: "Security and production-readiness audit for AI-generated applications",
+      "A security and production-readiness review for applications built with AI coding tools such as Lovable, Bolt, Replit Agent, v0, Base44 and Cursor. It reviews and helps scope repairs for existing applications. It does not sell vibe coding and it is not affiliated with any of those tools.",
+    serviceType: "Security and production-readiness review for AI-built applications",
     audienceName:
       "Non-technical founders who shipped an app with an AI coding tool and now have paying users, or an investor asking for technical due diligence",
     areaServed: "WORLD",
@@ -83,35 +83,25 @@ export const SITE = {
       "Production readiness",
     ],
     features: [
-      "A free 60-second scan of a live app URL, returning a 0 to 100 security scorecard",
-      "A fixed-fee audit: 2500 US dollars, 5 business days",
-      "A 12-page report with every finding graded critical, major or minor",
-      "Findings categorized by which AI tool produced them",
-      "An OWASP mapping with an hour estimate per fix",
-      "A fixed-price quote for the fix, given only after the code has been seen",
+      "A public-file scan that checks only what a normal visitor can download",
+      "Visible findings grouped by severity with secret-looking values redacted",
+      "A deeper review only after access and test boundaries are agreed",
+      "A prioritised report with business risk, evidence, repair and verification steps",
+      "A rescan and handover that records open items and ownership decisions",
     ],
     boundary:
-      "vibecoding.ge fixes what already exists. Building something new, and properly, from the start is aiapp.ge.",
+      "vibecoding.ge reviews what already exists and helps scope repairs. Building something new from the start is aiapp.ge.",
     limits: [
-      "We do not say we make an app secure or hack-proof. Security is not a state anyone can promise. We find and fix the top vulnerability classes and we publish exactly what we checked.",
-      "We do not quote a price for the fix before we have seen the code. The audit is fixed price. The fix is not.",
-      "We are not affiliated with or endorsed by Lovable, Replit, Bolt, Base44, Cursor or Anthropic.",
-      "We hold no compliance certification and do not claim one.",
-      "We store nothing from the free scan. No database, no log of your URL, no log of the finding.",
+      "aiNOW does not describe an app as hack-proof. The report states which vulnerability classes and surfaces were checked.",
+      "aiNOW scopes any repair only after reviewing confirmed evidence.",
+      "vibecoding.ge is not affiliated with or endorsed by Lovable, Replit, Bolt, Base44, Cursor or Anthropic.",
+      "aiNOW claims no compliance certification for vibecoding.ge.",
+      "The public scan does not store the submitted URL or finding in an application database.",
     ],
     commitment:
-      "If the audit finds nothing above minor severity, you pay nothing. That is safe to promise because the published evidence says it will almost never happen: in a scan of over 1,430 Lovable apps, 85% were missing row-level security and 62% had API keys exposed in the browser.",
-    // The scan is free and the audit has one price. Both are stated here so an assistant asked
-    // "who audits a Lovable app and what does it cost" can answer with a number.
-    offer: {
-      name: "Security and production-readiness audit",
-      price: "2500",
-      currency: "USD",
-      description:
-        "Five business days. A 12-page report graded by severity, mapped to the OWASP Top 10, and sorted by which AI tool caused each finding. If it finds nothing above minor severity, you pay nothing. The 60-second scan before it is free.",
-    },
+      "The public scan checks only public files. A deeper review starts only after aiNOW and the owner agree the access and test boundary.",
     summary:
-      "vibecoding.ge is a security and production-readiness audit for applications built with AI coding tools such as Lovable, Bolt, Replit Agent, v0, Base44 and Cursor. The entry point is a free 60-second scan of a live app URL that returns a security scorecard and, where it finds one, shows the founder his own exposed API key with the secret redacted. The paid audit is 2500 US dollars for five business days and ships a 12-page report graded by severity, mapped to the OWASP Top 10, and sorted by which AI tool caused each finding. If the audit finds nothing above minor severity, the customer pays nothing. It is a rescue service and it does not sell vibe coding. Built by the aiNOW agency in Tbilisi, Georgia.",
+      "vibecoding.ge is aiNOW's security and production-readiness review for applications built with AI coding tools. The public scan checks files a normal visitor can download, groups visible issues by severity and redacts secret-looking values. Private sign-in rules, database permissions, payments, uploads and service limits require agreed access and a clear test boundary. Each confirmed issue is explained as a business risk with evidence, a repair step and a verification step. The owner chooses whether its own developer or aiNOW scopes the repair.",
   },
 } as const;
 

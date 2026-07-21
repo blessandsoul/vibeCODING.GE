@@ -10,7 +10,6 @@ const NARRATIVE_COMPONENTS = [
   'ScanPaywall.tsx',
   'ScanFixRescan.tsx',
   'ScanTenWays.tsx',
-  'HeroProof.tsx',
 ];
 
 function createObserverHarness() {
@@ -121,8 +120,11 @@ test('scan stories start at 35 percent visibility and repeat after a 2 second fi
 
   observed.emit(harness.target, 0.35, true);
   assert.deepEqual(harness.calls, ['play']);
-  assert.equal(harness.timers.pending()[0][1].delay, 9200);
+  assert.equal(harness.timers.pending()[0][1].delay, 7200);
 
+  harness.timers.fire(harness.timers.pending()[0][0]);
+  assert.deepEqual(harness.calls, ['play']);
+  assert.equal(harness.timers.pending()[0][1].delay, 2000);
   harness.timers.fire(harness.timers.pending()[0][0]);
   assert.deepEqual(harness.calls, ['play', 'stop', 'reset', 'play']);
 });
@@ -133,7 +135,7 @@ test('the shared scan lifecycle cannot weaken its threshold or final hold', () =
 
   assert.deepEqual(observed.options, { threshold: 0.35 });
   observed.emit(harness.target, 0.35, true);
-  assert.equal(harness.timers.pending()[0][1].delay, 9200);
+  assert.equal(harness.timers.pending()[0][1].delay, 7200);
 });
 
 test('offscreen and hidden scan stories stop, reset, and restart cleanly', () => {
@@ -186,7 +188,7 @@ test('explicit replay releases manual ownership and restarts the visible loop', 
 
   assert.deepEqual(harness.calls, ['play', 'stop', 'stop', 'reset', 'play']);
   assert.equal(harness.timers.pending().length, 1);
-  assert.equal(harness.timers.pending()[0][1].delay, 9200);
+  assert.equal(harness.timers.pending()[0][1].delay, 7200);
 });
 
 test('all narrative scan demonstrations consume the managed loop and expose replay', () => {
@@ -199,6 +201,27 @@ test('all narrative scan demonstrations consume the managed loop and expose repl
     assert.match(source, /reset:/u, `${component} must define an offscreen reset state`);
     assert.doesNotMatch(source, /playTimelineWhenVisible|setInterval/u);
   }
+});
+
+test('autonomous hero delegates lifecycle and Replay to the family workflow component', () => {
+  const adapter = readFileSync(new URL('HeroProof.tsx', import.meta.url), 'utf8');
+  const workflow = readFileSync(
+    new URL('../home/components/HeroWorkflowStory.tsx', import.meta.url),
+    'utf8',
+  );
+
+  assert.match(adapter, /<HeroWorkflowStory/u);
+  assert.match(adapter, /mode="autonomous"/u);
+  assert.doesNotMatch(adapter, /bridgeLabel|bridge:/u);
+  assert.match(workflow, /import \{ createDemoLoop \} from '\.\/lib\/demo-loop\.mjs';/u);
+  assert.match(workflow, /createDemoLoop\(\{/u);
+  assert.match(workflow, /const CYCLE_MS = 6_400;/u);
+  assert.match(workflow, /threshold: 0\.35/u);
+  assert.match(workflow, /holdMs: 2_000/u);
+  assert.match(workflow, /showFinal,/u);
+  assert.match(workflow, /reset,/u);
+  assert.match(workflow, /stop,/u);
+  assert.match(workflow, /controllerRef\.current\?\.replay\(\)/u);
 });
 
 test('interactive demonstrations yield to visitor input until explicit replay', () => {

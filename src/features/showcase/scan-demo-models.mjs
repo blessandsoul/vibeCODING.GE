@@ -202,9 +202,13 @@ export function createTimelinePlayer({
     }
 
     onStage(stages[0]);
+    const transitionCount = stages.length - 1;
+    const firstChangeMs = Math.min(850, durationMs / transitionCount);
     stages.slice(1).forEach((stage, index) => {
       const position = index + 1;
-      const delay = Math.round((durationMs * position) / (stages.length - 1));
+      const delay = Math.round(transitionCount === 1
+        ? firstChangeMs
+        : firstChangeMs + ((durationMs - firstChangeMs) * (position - 1)) / (transitionCount - 1));
       const timerId = schedule(() => {
         if (runId === activeRun) onStage(stage);
       }, delay);

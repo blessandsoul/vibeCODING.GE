@@ -11,8 +11,7 @@ import { CONTACT_EMAIL, CONTACT_PHONE } from '@/lib/constants/app.constants';
 
    Three things make this graph work, and all three are easy to get wrong:
 
-   1. ENTITY EDGES. Every landing hangs off the same parent (ainow.ge#organization) and
-      the same founder (andrewaltair.ge/#person). Without those edges each domain is an
+   1. ENTITY EDGES. Every product points to the same aiNOW provider entity. Without that edge each domain is an
       orphan brand with no history, and an assistant treats it as an unknown.
 
    2. DISAMBIGUATION. `disambiguatingDescription` exists to say what we are NOT. It is the
@@ -28,9 +27,18 @@ import { CONTACT_EMAIL, CONTACT_PHONE } from '@/lib/constants/app.constants';
    contradicts the visible text is worse than none.
    ========================================================================= */
 
-const ORG_ID = `${SITE.baseUrl}/#organization`;
+const ORG_ID = 'https://ainow.ge#organization';
 const SERVICE_ID = `${SITE.baseUrl}/#service`;
 const SITE_ID = `${SITE.baseUrl}/#website`;
+const FAQ_LIMIT = 5;
+const CONTENT_MODIFIED = '2026-07-14';
+const AINOW_SAME_AS = [
+  'https://www.facebook.com/ainow.ge',
+  'https://www.instagram.com/ainow.ge/',
+  'https://t.me/ainow_ge',
+  'https://www.linkedin.com/company/ainowgeorgia',
+  'https://github.com/ainowgeorgia',
+] as const;
 
 const BRAND = SITE.wordmark.prefix + SITE.wordmark.mark;
 const LOCALE_TAGS = SITE.locales.map((l) => ({ ka: 'ka-GE', en: 'en-US', ru: 'ru-RU' }[l] ?? l));
@@ -49,19 +57,18 @@ const OFFER = (SITE.seo as { offer?: PublicOffer }).offer;
 const organization = {
   '@type': 'Organization',
   '@id': ORG_ID,
-  name: BRAND,
-  alternateName: [`${BRAND}.ge`, `${BRAND} by aiNOW`],
-  disambiguatingDescription: SITE.seo.disambiguating,
-  url: SITE.baseUrl,
+  name: 'aiNOW',
+  legalName: 'შპს ეი აი ნაუ',
+  alternateName: 'AI NOW Georgia',
+  disambiguatingDescription: 'AI agency in Georgia, the country, serving Georgian businesses.',
+  url: 'https://ainow.ge',
   logo: {
     '@type': 'ImageObject',
-    url: `${SITE.baseUrl}/logo.png`,
+    url: 'https://ainow.ge/logo.png',
     width: 192,
     height: 192,
   },
-  image: `${SITE.baseUrl}/og-image.png`,
-  description: SITE.manifest.description,
-  foundingDate: '2026',
+  sameAs: [...AINOW_SAME_AS],
   address: {
     '@type': 'PostalAddress',
     streetAddress: 'Tornike Eristavi St. 3',
@@ -75,26 +82,13 @@ const organization = {
     contactType: 'sales',
     availableLanguage: [...SITE.locales],
   },
-  // The edge that stops this domain being an orphan brand.
-  parentOrganization: {
-    '@type': 'Organization',
-    '@id': 'https://ainow.ge#organization',
-    name: 'aiNOW',
-    url: 'https://ainow.ge',
-  },
-  founder: {
-    '@type': 'Person',
-    '@id': 'https://andrewaltair.ge/#person',
-    name: 'Andrew Altair',
-    url: 'https://andrewaltair.ge/about',
-  },
-  knowsAbout: [...SITE.seo.knowsAbout],
 };
 
 const service = {
   '@type': 'Service',
   '@id': SERVICE_ID,
   name: BRAND,
+  brand: { '@type': 'Brand', name: BRAND },
   serviceType: SITE.seo.serviceType,
   url: SITE.baseUrl,
   image: `${SITE.baseUrl}/og-image.png`,
@@ -142,6 +136,8 @@ const website = {
   url: SITE.baseUrl,
   inLanguage: LOCALE_TAGS,
   publisher: { '@id': ORG_ID },
+  author: { '@id': ORG_ID },
+  dateModified: CONTENT_MODIFIED,
 };
 
 const graph = {
@@ -159,28 +155,27 @@ export function StructuredData() {
   );
 }
 
-/* The visible FAQ renders q1..q14 (LandingFaq: q1 on its own so it can carry the inline
-   wordmark, then a loop over q2..q14). This count must stay in step with it. */
-export const FAQ_COUNT = 14;
-
 export async function HomeFaqSchema({ locale }: { locale: string }) {
   const t = await getTranslations({ locale, namespace: 'product.faq' });
+
+  /* The visible FAQ and its semantic contract use the same five translated pairs. */
+  const items: object[] = [];
+  for (let n = 1; n <= FAQ_LIMIT && t.has(`q${n}`) && t.has(`a${n}`); n += 1) {
+    items.push({
+      '@type': 'Question',
+      // q1 can contain the <brand></brand> tag. markup() resolves it to plain text so the
+      // schema never leaks a JSX tag into a search result.
+      name: t.markup(`q${n}`, { brand: () => BRAND }),
+      acceptedAnswer: { '@type': 'Answer', text: t(`a${n}`) },
+    });
+  }
 
   const faq = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
     '@id': `${SITE.baseUrl}/#faq`,
     inLanguage: locale,
-    mainEntity: Array.from({ length: FAQ_COUNT }, (_, i) => {
-      const n = i + 1;
-      return {
-        '@type': 'Question',
-        // q1 can contain the <brand></brand> tag. markup() resolves it to plain text so the
-        // schema never leaks a JSX tag into a search result.
-        name: t.markup(`q${n}`, { brand: () => BRAND }),
-        acceptedAnswer: { '@type': 'Answer', text: t(`a${n}`) },
-      };
-    }),
+    mainEntity: items,
   };
 
   return (

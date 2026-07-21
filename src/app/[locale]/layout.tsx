@@ -13,6 +13,7 @@ import { StructuredData } from "@/components/seo/StructuredData";
 import { SITE } from "@/config/site";
 import "@/app/globals.css";
 import "@/app/site-new.css";
+import "@/app/family-premium.css";
 // brand.css must stay LAST: its :root wins over the base tokens by source order.
 import "@/app/brand.css";
 
@@ -166,6 +167,7 @@ export default async function LocaleLayout({
             Grotesque (opsz,wght axis) + Space Mono, not next/font's static cuts. */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* eslint-disable-next-line @next/next/no-page-custom-font -- shared live aiNOW font contract */}
         <link
           href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800;12..96,900&family=DM+Sans:wght@400;500;700&family=Noto+Sans+Georgian:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap"
           rel="stylesheet"

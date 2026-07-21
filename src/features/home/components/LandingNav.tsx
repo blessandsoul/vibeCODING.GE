@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useState, type MouseEvent } from 'react';
+import { useEffect, useRef, useState, type MouseEvent } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { Ico } from '@/components/common/Ico';
 import { Link, usePathname } from '@/i18n/navigation';
 import { routing } from '@/i18n/routing';
 import { SITE } from '@/config/site';
 import { MagneticButton } from '@/components/common/MagneticButton';
+import { LandingThemeToggle } from './LandingThemeToggle';
 import './landing-nav.css';
 
 /* Floating glass navbar, ported from the ainow handoff and trimmed to a single
@@ -15,8 +16,8 @@ import './landing-nav.css';
 
 // In-page sections (ids live on the home landing components).
 const SECTIONS = {
-  showcase: 'showcase',
-  work: 'work',
+  result: 'dashboard',
+  cases: 'cases',
   faq: 'faq',
   cta: 'cta',
 } as const;
@@ -32,14 +33,11 @@ const LOCALES = routing.locales.map((code) => ({
   code,
   label: LOCALE_LABELS[code] ?? code.toUpperCase(),
 }));
-
-function Chevron({ className }: { className: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <polyline points="6 9 12 15 18 9"></polyline>
-    </svg>
-  );
-}
+const NAV_A11Y = {
+  ka: { open: 'მენიუს გახსნა', close: 'მენიუს დახურვა', language: 'ენის შეცვლა', home: 'მთავარი', contact: 'დაგვიკავშირდით', blog: 'ბლოგი' },
+  en: { open: 'Open menu', close: 'Close menu', language: 'Switch language', home: 'home', contact: 'Contact us', blog: 'Blog' },
+  ru: { open: 'Открыть меню', close: 'Закрыть меню', language: 'Сменить язык', home: 'главная', contact: 'Связаться с нами', blog: 'Блог' },
+} as const;
 
 function Wordmark() {
   return (
@@ -59,6 +57,10 @@ export function LandingNav() {
 
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const langButtonRef = useRef<HTMLButtonElement>(null);
+  const a11y = NAV_A11Y[locale as keyof typeof NAV_A11Y] ?? NAV_A11Y.en;
 
   const sectionHref = (id: string) => ({ pathname: '/', hash: id });
 
@@ -71,17 +73,33 @@ export function LandingNav() {
 
   // Body scroll lock + ESC-to-close while the mobile drawer is open.
   useEffect(() => {
-    if (!menuOpen) return;
+    if (!menuOpen) return undefined;
+    const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setMenuOpen(false);
+      if (e.key === 'Escape') {
+        setMenuOpen(false);
+        menuButtonRef.current?.focus();
+      }
     };
     window.addEventListener('keydown', onKey);
     return () => {
       window.removeEventListener('keydown', onKey);
-      document.body.style.overflow = '';
+      document.body.style.overflow = originalOverflow;
     };
   }, [menuOpen]);
+
+  useEffect(() => {
+    if (!langOpen) return undefined;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setLangOpen(false);
+        langButtonRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [langOpen]);
 
   // Smooth-scroll on home; on other pages let <Link> navigate to /#id.
   const handleSection = (e: MouseEvent<HTMLAnchorElement>, id: string) => {
@@ -94,13 +112,14 @@ export function LandingNav() {
   };
 
   const atTop = isHome && !scrolled;
+  const logoHidden = atTop;
   const navClassName = ['glass-nav', atTop && 'is-top', menuOpen && 'menu-open']
     .filter(Boolean)
     .join(' ');
 
   const sectionLinks = [
-    { id: SECTIONS.showcase, label: t('showcase') },
-    { id: SECTIONS.work, label: t('process') },
+    { id: SECTIONS.result, label: t('showcase') },
+    { id: SECTIONS.cases, label: t('process') },
     { id: SECTIONS.faq, label: t('faq') },
   ];
 
@@ -110,9 +129,10 @@ export function LandingNav() {
 
       <div className="glass-nav-inner">
         <button
+          ref={menuButtonRef}
           type="button"
           className="nav-burger"
-          aria-label="Open menu"
+          aria-label={menuOpen ? a11y.close : a11y.open}
           aria-expanded={menuOpen}
           aria-controls="landing-nav-drawer"
           onClick={() => setMenuOpen(!menuOpen)}
@@ -122,7 +142,13 @@ export function LandingNav() {
           <span />
         </button>
 
-        <Link href="/" className="nav-logo nav-logo-slot" aria-label={`${SITE.wordmark.prefix}${SITE.wordmark.mark} home`}>
+        <Link
+          href="/"
+          className="nav-logo nav-logo-slot"
+          aria-label={`${SITE.wordmark.prefix}${SITE.wordmark.mark}: ${a11y.home}`}
+          aria-hidden={logoHidden || undefined}
+          tabIndex={logoHidden ? -1 : undefined}
+        >
           <Wordmark />
         </Link>
 
@@ -138,22 +164,41 @@ export function LandingNav() {
               </Link>
             </li>
           ))}
+          <li>
+            <Link href="/blog" className="nav-link">
+              {a11y.blog}
+            </Link>
+          </li>
         </ul>
 
         <div className="nav-actions">
-          <div className="nav-lang">
-            <button type="button" className="nav-lang-trigger" aria-haspopup="true" aria-label="Switch language">
+          <div className={`nav-lang${langOpen ? ' is-open' : ''}`}>
+            <button
+              ref={langButtonRef}
+              type="button"
+              className="nav-lang-trigger"
+              aria-expanded={langOpen}
+              aria-controls="landing-language-menu"
+              aria-label={a11y.language}
+              onClick={() => setLangOpen((value) => !value)}
+            >
               <Ico name="solar:global-bold-duotone" className="nav-lang-globe" />
               {locale.toUpperCase()}
-              <Chevron className="nav-lang-chevron" />
+              <Ico name="solar:alt-arrow-down-bold-duotone" className="nav-lang-chevron" />
             </button>
-            <ul className="nav-dropdown nav-lang-dropdown">
+            <ul
+              id="landing-language-menu"
+              className="nav-dropdown nav-lang-dropdown"
+              aria-hidden={!langOpen}
+              inert={!langOpen}
+            >
               {LOCALES.map((l) => (
                 <li key={l.code}>
                   <Link
                     href={pathname}
                     locale={l.code}
                     className={`nav-dd-link${l.code === locale ? ' is-current' : ''}`}
+                    onClick={() => setLangOpen(false)}
                   >
                     {l.label}
                   </Link>
@@ -163,15 +208,20 @@ export function LandingNav() {
           </div>
 
           <MagneticButton>
-            <Link href={sectionHref(SECTIONS.cta)} className="glass-cta" onClick={(e) => handleSection(e, SECTIONS.cta)}>
-              {t('cta')}
+            <Link href={sectionHref(SECTIONS.cta)} className="glass-cta nav-call-cta" aria-label={a11y.contact} onClick={(e) => handleSection(e, SECTIONS.cta)}>
+              <Ico name="solar:phone-calling-rounded-bold-duotone" className="nav-call-icon" aria-hidden="true" />
             </Link>
           </MagneticButton>
         </div>
       </div>
 
       {/* Mobile drawer */}
-      <div className="nav-drawer" id="landing-nav-drawer">
+      <div
+        className="nav-drawer"
+        id="landing-nav-drawer"
+        aria-hidden={!menuOpen}
+        inert={!menuOpen}
+      >
         <div className="nav-drawer-bg" />
         <ul className="nav-drawer-menu">
           {sectionLinks.map((s, i) => (
@@ -188,13 +238,26 @@ export function LandingNav() {
           ))}
           <li>
             <Link
-              href={sectionHref(SECTIONS.cta)}
+              href="/blog"
               className="nav-drawer-link"
               data-i={sectionLinks.length + 1}
+              onClick={() => setMenuOpen(false)}
+            >
+              {a11y.blog}
+            </Link>
+          </li>
+          <li>
+            <Link
+              href={sectionHref(SECTIONS.cta)}
+              className="nav-drawer-link"
+              data-i={sectionLinks.length + 2}
               onClick={(e) => handleSection(e, SECTIONS.cta)}
             >
               {t('cta')}
             </Link>
+          </li>
+          <li className="nav-drawer-theme-row">
+            <LandingThemeToggle className="nav-drawer-theme" />
           </li>
         </ul>
       </div>

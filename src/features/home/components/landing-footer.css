@@ -17,9 +17,11 @@
 .landing-footer {
   --font-mono: 'JetBrains Mono', 'Noto Sans Georgian', monospace;
 }
+.dark .landing-footer{border-color:#292d37!important;background:#101218!important;color:#f4f4f5!important}.dark .landing-footer .wordmark-3d .wm-mark{color:#f4f4f5}.dark .landing-footer a{color:#c7c9d1}.dark .landing-footer a:hover{color:#fff}.dark .landing-footer span{border-color:#292d37}.dark .landing-footer [class*="text-[#667085]"]{color:#b5b8c2!important}
 
 .landing-footer .wordmark-3d.ainow-parent .wm-prefix {
-  background: linear-gradient(130deg, #2f6bff 0%, #8b3dff 45%, #e040fb 100%);
+  background-color: transparent;
+  background-image: linear-gradient(130deg, #2f6bff 0%, #8b3dff 45%, #e040fb 100%) !important;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -40,15 +42,17 @@
   font-family: "Space Mono", monospace;
   font-style: italic;
   font-weight: 700;
-  color: var(--brand);
-  background: none !important;
-  -webkit-text-fill-color: var(--brand) !important;
+  color: transparent;
+  background-image: linear-gradient(130deg, #2f6bff 0%, #8b3dff 45%, #e040fb 100%) !important;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent !important;
 }
 .brand-mark .bm-mark {
   font-family: "Bricolage Grotesque", "Noto Sans Georgian", sans-serif;
   font-weight: 900;
-  color: #0a0a0a;
+  color: var(--brand-ink, #0a0a0a);
   background: none !important;
-  -webkit-text-fill-color: #0a0a0a !important;
+  -webkit-text-fill-color: var(--brand-ink, #0a0a0a) !important;
   letter-spacing: -0.02em;
 }

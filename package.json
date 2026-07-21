@@ -9,6 +9,7 @@
     "fetch-covers:force": "node scripts/fetch-covers.mjs --force",
     "indexnow": "node scripts/indexnow-ping.mjs",
     "test:showcase": "node --test src/features/showcase/*.test.mjs src/messages/*.test.mjs",
+    "test:scanner": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test src/app/api/scan/*.test.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"

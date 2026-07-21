@@ -25,7 +25,7 @@ export function FooterLanguageSwitcher() {
   const current = useLocale();
 
   return (
-    <ul className="space-y-2 text-neutral-900/70">
+    <ul className="space-y-2 text-[#4B5563]">
       {LOCALES.map((l) => (
         <li key={l.code}>
           <Link
@@ -33,7 +33,7 @@ export function FooterLanguageSwitcher() {
             locale={l.code}
             aria-current={current === l.code ? 'true' : undefined}
             className={cn(
-              'transition hover:text-neutral-900',
+              'inline-flex min-h-11 min-w-11 items-center break-words transition-colors hover:text-neutral-900',
               current === l.code && 'text-neutral-900 font-medium',
             )}
           >

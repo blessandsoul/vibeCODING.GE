@@ -1,0 +1,1121 @@
+/*
+ * aiNOW product-family visual system.
+ *
+ * This file is intentionally imported after the legacy landing CSS and before
+ * brand.css. It is a public-landing skin, not a second component library: the
+ * product stories, controls and data visualisations keep their own markup and
+ * behaviour while the family owns the canvas, geometry and surfaces.
+ */
+
+/* The current product homepage owns its visual contract through the aiNOW
+ * landing components. Keep this legacy skin available to existing secondary
+ * routes, but never let it override homepage chrome or geometry. */
+@scope (html[data-product]:not(:has(.landing-page))) {
+
+html[data-product] {
+  --family-shell: 1216px;
+  --family-gutter: 24px;
+  --family-canvas: #ffffff;
+  --family-foreground: #18181b;
+  --family-card: #ffffff;
+  --family-muted: #f4f4f5;
+  --family-muted-foreground: #71717a;
+  --family-subtle-foreground: #52525b;
+  --family-border: #e8e8ec;
+  --family-border-strong: #d4d4d8;
+  --family-graphite: #17181d;
+  --family-graphite-2: #24252b;
+  --family-success: #16834c;
+  --family-success-soft: #eef9f2;
+  --family-radius-sm: 10px;
+  --family-radius-md: 12px;
+  --family-radius-lg: 16px;
+  --family-radius-xl: 20px;
+  --family-shadow-border:
+    0 0 0 1px rgba(24, 24, 27, 0.055),
+    0 1px 2px -1px rgba(24, 24, 27, 0.08),
+    0 2px 5px -3px rgba(24, 24, 27, 0.1);
+  --family-shadow-panel:
+    0 0 0 1px rgba(24, 24, 27, 0.055),
+    0 1px 2px -1px rgba(24, 24, 27, 0.08),
+    0 20px 52px -36px rgba(24, 24, 27, 0.42);
+  --family-shadow-panel-dark:
+    0 0 0 1px rgba(255, 255, 255, 0.09),
+    0 20px 52px -34px rgba(9, 9, 11, 0.86);
+  --family-ease: cubic-bezier(0.23, 1, 0.32, 1);
+  --family-ease-move: cubic-bezier(0.77, 0, 0.175, 1);
+  --family-duration-fast: 150ms;
+  --family-duration-ui: 180ms;
+  --family-ai-gradient: linear-gradient(130deg, #2f6bff 0%, #8b3dff 45%, #e040fb 100%);
+  --product: var(--brand);
+  --product-ink: var(--brand-ink);
+  --product-display: var(--brand-display, var(--brand-ink));
+  --product-foreground: var(--primary-foreground);
+  color-scheme: light;
+  background: var(--family-canvas);
+}
+
+html[data-product] body {
+  overflow-x: clip;
+  background-color: var(--family-canvas) !important;
+  background-image: radial-gradient(circle, rgba(0, 0, 0, 0.07) 1px, transparent 1px) !important;
+  background-size: 28px 28px !important;
+  color: var(--family-foreground);
+  font-size: 15px;
+  line-height: 1.55;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html[data-product] .landing-page {
+  min-width: 0;
+  overflow: clip;
+  background: transparent;
+  color: var(--family-foreground);
+}
+
+html[data-product] .landing-page :where(h1, h2, h3, p) {
+  overflow-wrap: break-word;
+}
+
+html[data-product] .landing-page :where(h1, h2, h3) {
+  text-wrap: balance;
+}
+
+html[data-product] .landing-page :where(p, li, dd) {
+  text-wrap: pretty;
+}
+
+html[data-product] .landing-page :where(button, a, summary, input, select, textarea):focus-visible {
+  outline: 2px solid var(--product-ink);
+  outline-offset: 3px;
+}
+
+html[data-product] .landing-page :where(button, a, summary) {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html[data-product] [data-family-shell="true"] {
+  width: min(var(--family-shell), calc(100% - (var(--family-gutter) * 2))) !important;
+  max-width: var(--family-shell) !important;
+  margin-inline: auto !important;
+  padding-inline: 0 !important;
+}
+
+/* Canonical family mark: ai never changes; only the product suffix does. */
+html[data-product] .wordmark-3d .wm-prefix,
+html[data-product] .brand-mark .bm-prefix {
+  background: var(--family-ai-gradient) !important;
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+  font-family: var(--font-space-mono), "Space Mono", ui-monospace, monospace !important;
+  font-style: normal !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.02em !important;
+}
+
+html[data-product] .wordmark-3d:not(.ainow-parent) .wm-mark,
+html[data-product] .brand-mark .bm-mark {
+  display: inline-block;
+  margin-inline-start: 0.05em;
+  padding: 0;
+  border-radius: 0;
+  background: transparent !important;
+  color: var(--product) !important;
+  -webkit-text-fill-color: var(--product) !important;
+  text-shadow: none !important;
+}
+
+html[data-product] .wordmark-3d.ainow-parent .wm-mark {
+  color: var(--family-foreground) !important;
+  -webkit-text-fill-color: var(--family-foreground) !important;
+}
+
+/* Full-width, rectangular B2B navigation. */
+html[data-product] [data-family-header="true"].glass-nav {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 50;
+  width: 100%;
+  max-width: none;
+  padding: 0;
+  transform: none;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+html[data-product] .glass-nav-bg,
+html[data-product] .glass-nav.is-top .glass-nav-bg {
+  inset: 0;
+  border: 0;
+  border-bottom: 1px solid var(--family-border);
+  border-radius: 0;
+  background: var(--family-canvas);
+  box-shadow: none;
+  opacity: 1;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+html[data-product] .glass-nav-inner {
+  width: min(var(--family-shell), calc(100% - (var(--family-gutter) * 2)));
+  max-width: var(--family-shell);
+  height: 64px;
+  margin-inline: auto;
+  padding: 0;
+  gap: 24px;
+}
+
+html[data-product] .nav-logo,
+html[data-product] .glass-nav.is-top .nav-logo {
+  min-width: 44px;
+  min-height: 44px;
+  block-size: 44px;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+html[data-product] .nav-menu {
+  gap: 2px;
+  color: var(--family-subtle-foreground);
+  font-size: 13px;
+}
+
+html[data-product] .nav-link {
+  min-height: 44px;
+  padding-inline: 12px;
+  border-radius: var(--family-radius-sm);
+  transition: color var(--family-duration-fast) ease, background-color var(--family-duration-fast) ease;
+}
+
+html[data-product] .nav-link:hover {
+  background: var(--family-muted);
+  color: var(--family-foreground);
+}
+
+html[data-product] .glass-cta {
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid color-mix(in srgb, var(--product) 82%, var(--family-foreground));
+  border-radius: var(--family-radius-sm);
+  background: var(--product);
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--product) 24%, rgba(24, 24, 27, 0.16));
+  color: var(--product-foreground);
+  font-size: 12px;
+  letter-spacing: 0;
+  transition: background-color var(--family-duration-fast) ease, border-color var(--family-duration-fast) ease, box-shadow var(--family-duration-fast) ease, transform var(--family-duration-fast) var(--family-ease);
+}
+
+html[data-product] .glass-cta:hover {
+  border-color: color-mix(in srgb, var(--product) 72%, var(--family-foreground));
+  background: var(--product);
+  box-shadow: 0 6px 16px -10px color-mix(in srgb, var(--product) 68%, var(--family-foreground));
+  transform: translateY(-1px);
+}
+
+html[data-product] .glass-cta:active {
+  transform: scale(0.96);
+}
+
+html[data-product] .glass-cta :where(span, svg) {
+  color: var(--product-foreground) !important;
+  -webkit-text-fill-color: var(--product-foreground) !important;
+}
+
+html[data-product] :where(.nav-lang-trigger, .nav-burger, .nav-dd-link) {
+  min-height: 44px;
+  border-radius: var(--family-radius-sm);
+}
+
+html[data-product] :where(.nav-dropdown, .nav-drawer) {
+  border: 1px solid var(--family-border);
+  border-radius: var(--family-radius-lg);
+  background: var(--family-card);
+  box-shadow: var(--family-shadow-panel);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* Restrained hero: product proof remains the only visual event. */
+html[data-product] #hero {
+  min-height: auto;
+  padding-top: 80px;
+  padding-bottom: 48px;
+  border-bottom: 0;
+  background: transparent;
+}
+
+html[data-product] #hero [data-family-shell="true"] > .grid {
+  column-gap: clamp(40px, 4.4vw, 64px);
+  row-gap: 18px;
+}
+
+html[data-product] :where(.grainient-canvas, .grainient-canvas--static, .hero-3d-layer, .grainient-fade) {
+  display: none !important;
+}
+
+html[data-product] #hero::before {
+  content: none !important;
+}
+
+html[data-product] #hero :where(h1, p, .wordmark-3d, a) {
+  text-shadow: none !important;
+}
+
+html[data-product] .hero-wordmark,
+html[data-product] .hero-wordmark.scrolled,
+html[data-product] .hero-tagline,
+html[data-product] .hero-tagline.scrolled {
+  opacity: 1;
+}
+
+/* The lead must be readable on first paint. Per-letter opacity made the SSR text
+   look broken while hydration was still running, so the family skin keeps every
+   glyph fully painted and lets the typewriter carry the single hero motion. */
+html[data-product] #hero .hero-lead .split-char {
+  opacity: 1 !important;
+  transform: none !important;
+  animation: none !important;
+}
+
+html[data-product] .hero-tagline {
+  margin-top: 12px;
+  text-align: inherit;
+}
+
+html[data-product] .hero-tagline .ht-text {
+  color: var(--family-subtle-foreground);
+  font-size: clamp(0.95rem, 1.45vw, 1.2rem);
+  font-style: normal;
+  font-weight: 600;
+}
+
+html[data-product] .hero-tagline .ht-rule {
+  width: 36px;
+  height: 2px;
+  margin-top: 10px;
+  margin-inline: 0;
+  background: var(--product);
+}
+
+html[data-product] .hero-audience {
+  color: var(--family-muted-foreground) !important;
+  font-size: 12px !important;
+  letter-spacing: 0.02em !important;
+}
+
+html[data-product] #hero h1 {
+  color: var(--family-foreground) !important;
+  font-size: clamp(1.38rem, 1.85vw, 1.82rem) !important;
+  font-weight: 600;
+  letter-spacing: -0.02em !important;
+  line-height: 1.24 !important;
+}
+
+html[data-product] #hero .hero-lead {
+  max-width: 34ch;
+  color: var(--family-foreground) !important;
+  font-weight: 500 !important;
+  line-height: 1.24 !important;
+}
+
+html[data-product] .typewriter {
+  display: block;
+  width: 100%;
+  min-height: 1.08em;
+  margin: 16px 0 0;
+  padding-top: 0.06em;
+  color: var(--product-display) !important;
+  -webkit-text-fill-color: var(--product-display) !important;
+  font-size: clamp(3rem, 5vw, 4.8rem);
+  font-weight: 800;
+  letter-spacing: -0.045em !important;
+  line-height: 1.02;
+  font-variant-numeric: tabular-nums;
+  text-align: inherit;
+  white-space: nowrap;
+}
+
+html[data-product] .tw-text {
+  position: relative;
+  z-index: 0;
+  display: inline-block;
+  max-width: 100%;
+  margin-inline: -0.03em;
+  padding-inline: 0.03em;
+  color: var(--product-display) !important;
+  -webkit-text-fill-color: var(--product-display) !important;
+  filter: drop-shadow(0 10px 22px color-mix(in srgb, var(--product) 14%, transparent));
+  line-height: 1.02;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+html[data-product] .tw-text::after {
+  content: "";
+  position: absolute;
+  inset: auto -0.02em 0.02em;
+  z-index: -1;
+  height: 0.15em;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--product) 86%, white);
+  box-shadow: none;
+  transform: none;
+  transform-origin: left center;
+}
+
+html[data-product] .tw-caret {
+  color: var(--product);
+  -webkit-text-fill-color: var(--product);
+  margin-inline-start: 0.04em;
+  text-shadow: none;
+}
+
+html[data-product] .btn-primary,
+html[data-product] .btn-ghost {
+  min-height: 48px;
+  padding: 0 16px;
+  border-radius: var(--family-radius-sm);
+  box-shadow: none;
+  font-size: 13px;
+  transition: background-color var(--family-duration-fast) ease, border-color var(--family-duration-fast) ease, box-shadow var(--family-duration-fast) ease, transform var(--family-duration-fast) var(--family-ease);
+}
+
+html[data-product] .btn-primary {
+  border: 1px solid color-mix(in srgb, var(--product) 82%, var(--family-foreground));
+  background: var(--product);
+  color: var(--product-foreground);
+}
+
+html[data-product] .btn-primary:hover {
+  border-color: color-mix(in srgb, var(--product) 72%, var(--family-foreground));
+  background: var(--product);
+  box-shadow: 0 8px 20px -14px color-mix(in srgb, var(--product) 72%, var(--family-foreground));
+  transform: translateY(-1px);
+}
+
+html[data-product] :where(.btn-primary, .btn-ghost):active {
+  transform: scale(0.96);
+}
+
+html[data-product] .btn-primary :where(span, svg) {
+  color: var(--product-foreground) !important;
+  -webkit-text-fill-color: var(--product-foreground) !important;
+}
+
+/* Legacy demos used white labels with the old darkened CTA token. The family now keeps the
+   vivid fill, so every label sitting on that fill must inherit its measured foreground. */
+html[data-product] [class*="bg-[var(--brand-cta)]"],
+html[data-product] [style*="--brand-cta"] {
+  color: var(--product-foreground) !important;
+  -webkit-text-fill-color: var(--product-foreground) !important;
+}
+
+html[data-product] [class*="bg-[var(--brand-cta)]"] :where(span, svg),
+html[data-product] [style*="--brand-cta"] :where(span, svg) {
+  color: var(--product-foreground) !important;
+  -webkit-text-fill-color: var(--product-foreground) !important;
+}
+
+/* A brand fill is not safe as ink on white. Small values and labels keep the measured ink. */
+html[data-product] [class*="text-[var(--brand-cta)]"] {
+  color: var(--product-ink) !important;
+  -webkit-text-fill-color: var(--product-ink) !important;
+}
+
+html[data-product] .hero-commitment {
+  margin-top: 24px !important;
+  padding-top: 16px;
+  border-top: 1px solid var(--family-border);
+}
+
+html[data-product] #hero [data-landing-demo] {
+  min-width: 0;
+  isolation: isolate;
+  border-color: transparent !important;
+  border-radius: var(--family-radius-xl) !important;
+  box-shadow: var(--family-shadow-panel) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Shared section rhythm and operational demo surfaces. */
+html[data-product] .landing-showcase {
+  padding-block: clamp(24px, 3vw, 48px);
+  background: #f7f8fa;
+}
+
+html[data-product] .landing-showcase > section,
+html[data-product] .landing-showcase > [data-family-shell="true"] {
+  border-bottom: 0;
+}
+
+/* One repeated aiSTAFF-style reading frame: plain copy, one visual, one outcome.
+   The product-specific simulator keeps its own DOM and behaviour inside this shell. */
+html[data-product] .landing-showcase > section[data-family-shell="true"][data-landing-demo],
+html[data-product] .landing-showcase > section[data-family-shell="true"]:has(> [data-landing-demo]) {
+  margin-block: clamp(20px, 2.5vw, 36px) !important;
+  padding: clamp(28px, 4vw, 56px) !important;
+  overflow: hidden;
+  border: 0 !important;
+  border-radius: 32px;
+  background: var(--family-card) !important;
+  box-shadow: var(--family-shadow-panel);
+}
+
+/* aiCONTENT and aiADS use a full-width section with the 1216px shell as its first child. */
+html[data-product] .landing-showcase > section[data-landing-demo]:not([data-family-shell="true"]) {
+  padding-block: clamp(20px, 2.5vw, 36px) !important;
+  border-bottom: 0 !important;
+  background: transparent !important;
+}
+
+html[data-product] .landing-showcase > section[data-landing-demo]:not([data-family-shell="true"]) > :first-child {
+  padding: clamp(28px, 4vw, 56px);
+  overflow: hidden;
+  border-radius: 32px;
+  background: var(--family-card);
+  box-shadow: var(--family-shadow-panel);
+}
+
+html[data-product] section[data-landing-demo],
+html[data-product] [data-family-shell="true"][data-landing-demo] {
+  padding-block: 96px !important;
+}
+
+html[data-product] [data-landing-demo] {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
+
+html[data-product] [data-landing-demo] :where(h2, h3, h4) {
+  text-wrap: balance;
+}
+
+html[data-product] [data-landing-demo] :where(p, li, dd) {
+  text-wrap: pretty;
+}
+
+html[data-product] [data-demo-outcome] {
+  position: relative;
+  min-height: 64px;
+  margin-top: 24px !important;
+  padding: 38px 18px 16px;
+  border: 0 !important;
+  border-radius: var(--family-radius-lg) !important;
+  background: color-mix(in srgb, var(--product) 8%, white) !important;
+  box-shadow: inset 3px 0 var(--product);
+  color: color-mix(in srgb, var(--product-ink) 82%, var(--family-foreground)) !important;
+  font-size: 14px !important;
+  font-weight: 650 !important;
+  line-height: 1.55 !important;
+}
+
+html[data-product] [data-demo-outcome]::before {
+  content: "What the business gets";
+  position: absolute;
+  top: 13px;
+  inset-inline-start: 18px;
+  color: var(--product-ink);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+html[lang="ka"][data-product] [data-demo-outcome]::before {
+  content: "რას იღებს ბიზნესი";
+}
+
+html[lang="ru"][data-product] [data-demo-outcome]::before {
+  content: "Что получает бизнес";
+}
+
+html[data-product] [data-landing-demo][class*="rounded-3xl"],
+html[data-product] [data-landing-demo][class*="rounded-[32px]"],
+html[data-product] [data-landing-demo][class*="rounded-[2rem]"] {
+  border-radius: var(--family-radius-xl) !important;
+}
+
+html[data-product] [data-landing-demo][class*="rounded-2xl"] {
+  border-radius: var(--family-radius-lg) !important;
+}
+
+html[data-product] [data-landing-demo][class*="backdrop-blur"],
+html[data-product] [data-landing-demo] [class*="backdrop-blur"] {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html[data-product] [data-landing-demo][class*="shadow-["] {
+  box-shadow: var(--family-shadow-panel) !important;
+}
+
+html[data-product] [data-landing-demo][class*="bg-white/"] {
+  border-color: var(--family-border) !important;
+  background-color: var(--family-card) !important;
+}
+
+html[data-product] [data-landing-demo][class*="bg-[#0e0e11]"],
+html[data-product] [data-landing-demo][class*="bg-[#111214]"],
+html[data-product] [data-landing-demo][class*="bg-[#151518]"],
+html[data-product] [data-landing-demo][class*="bg-[#09090b]"],
+html[data-product] [data-landing-demo] [class*="bg-[#0e0e11]"],
+html[data-product] [data-landing-demo] [class*="bg-[#111214]"],
+html[data-product] [data-landing-demo] [class*="bg-[#151518]"],
+html[data-product] [data-landing-demo] [class*="bg-[#09090b]"] {
+  border-color: #2a2b31 !important;
+  background-color: var(--family-graphite) !important;
+}
+
+html[data-product] [data-landing-demo] :where(button, a, input, select, textarea) {
+  min-height: 44px;
+}
+
+html[data-product] [data-landing-demo] :where(button, a) {
+  transition-property: transform, opacity, color, background-color, border-color, box-shadow;
+  transition-duration: var(--family-duration-ui);
+  transition-timing-function: var(--family-ease);
+}
+
+/* Legacy catch-all transition utilities are constrained here so messages,
+   counters and panels never interpolate width, height, padding or position. */
+html[data-product] [data-landing-demo] :where([class~="transition\2d all"]) {
+  transition-property: transform, opacity, color, background-color, border-color, box-shadow !important;
+  transition-duration: var(--family-duration-ui) !important;
+  transition-timing-function: var(--family-ease) !important;
+}
+
+html[data-product] [data-landing-demo] :where(button, a):active {
+  transform: scale(0.96);
+}
+
+html[data-product] [data-landing-demo] :where([aria-live], [role="status"], [role="progressbar"]) {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Static product proof follows the same family skin without pretending to be interactive. */
+html[data-product] section[data-demo-static="true"] {
+  padding-block: 96px !important;
+  border-bottom: 1px solid var(--family-border);
+  background: var(--family-canvas) !important;
+}
+
+html[data-product] [data-demo-static="true"] [class*="rounded-3xl"],
+html[data-product] [data-demo-static="true"] [class*="rounded-[28px]"] {
+  border-radius: var(--family-radius-xl) !important;
+}
+
+html[data-product] [data-demo-static="true"] [class*="rounded-2xl"] {
+  border-radius: var(--family-radius-lg) !important;
+}
+
+html[data-product] [data-demo-static="true"] [class*="rounded-3xl"][class*="shadow-["]:not([class*="bg-neutral-950"]),
+html[data-product] [data-demo-static="true"] [class*="rounded-[28px]"][class*="shadow-["]:not([class*="bg-neutral-950"]),
+html[data-product] [data-demo-static="true"] .glass-card {
+  border: 1px solid var(--family-border) !important;
+  background-color: var(--family-card) !important;
+  box-shadow: var(--family-shadow-border) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html[data-product] [data-demo-static="true"] [class*="bg-neutral-950"][class*="text-white"] {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  background-color: var(--family-graphite) !important;
+  box-shadow: var(--family-shadow-panel-dark) !important;
+}
+
+html[data-product] [data-demo-static="true"] article {
+  transform: none !important;
+  transition-property: color, background-color, border-color, box-shadow !important;
+}
+
+html[data-product] [data-demo-static="true"] > div > .text-center {
+  margin-inline: 0 !important;
+  text-align: left !important;
+}
+
+/* Process section: one quiet bordered system, not a stack of floating cards. */
+html[data-product] #work {
+  width: 100% !important;
+  max-width: none !important;
+  margin-inline: 0 !important;
+  padding: 96px var(--family-gutter) !important;
+  border-top: 0;
+  border-bottom: 1px solid var(--family-border);
+  background: #f7f7f8;
+}
+
+html[data-product] #work > div {
+  width: min(var(--family-shell), 100%);
+  max-width: var(--family-shell) !important;
+  margin-inline: auto !important;
+}
+
+html[data-product] #work > div > .max-w-5xl {
+  width: 100% !important;
+  max-width: none !important;
+  margin-inline: 0 !important;
+}
+
+html[data-product] #work .work-intro {
+  max-width: 760px;
+  margin: 0 0 32px !important;
+  text-align: left;
+}
+
+html[data-product] #work h2 {
+  max-width: 760px !important;
+  margin-inline: 0 !important;
+  color: var(--family-foreground) !important;
+  font-size: clamp(32px, 2.8vw, 40px) !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.025em !important;
+  line-height: 1.1 !important;
+}
+
+html[data-product] #work .space-y-px {
+  overflow: hidden;
+  border: 1px solid var(--family-border);
+  border-radius: var(--family-radius-lg);
+  background: var(--family-border) !important;
+  box-shadow: var(--family-shadow-border);
+}
+
+html[data-product] #work .grid-cols-12 {
+  padding: 22px 24px !important;
+  background: var(--family-card) !important;
+}
+
+html[data-product] #work .grid-cols-12:hover {
+  background: #fafafa !important;
+}
+
+html[data-product] #work .grid-cols-12 h3 {
+  color: #27272a !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+}
+
+/* FAQ: editorial intro beside one precise accordion surface. */
+html[data-product] #faq {
+  padding: 96px var(--family-gutter) !important;
+  border-top: 0 !important;
+  border-bottom: 1px solid var(--family-border);
+  background: var(--family-canvas);
+}
+
+html[data-product] #faq > div {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.8fr) minmax(0, 1.2fr);
+  align-items: start;
+  gap: 80px;
+  width: min(var(--family-shell), 100%);
+  max-width: var(--family-shell) !important;
+}
+
+html[data-product] #faq > div > div:first-child {
+  position: sticky;
+  top: 96px;
+  margin: 0 !important;
+  text-align: left;
+}
+
+html[data-product] #faq h2 {
+  color: var(--family-foreground) !important;
+  font-size: clamp(32px, 2.8vw, 40px) !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.025em !important;
+  line-height: 1.1 !important;
+}
+
+html[data-product] #faq .space-y-4 {
+  overflow: hidden;
+  margin: 0 !important;
+  border: 1px solid var(--family-border);
+  border-radius: var(--family-radius-lg);
+  background: var(--family-card);
+  box-shadow: var(--family-shadow-border);
+}
+
+html[data-product] #faq details.faq-item {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--family-border) !important;
+  border-radius: 0 !important;
+  background: var(--family-card) !important;
+}
+
+html[data-product] #faq details.faq-item:last-child {
+  border-bottom: 0 !important;
+}
+
+html[data-product] #faq details.faq-item summary {
+  min-height: 64px;
+  gap: 24px;
+  padding: 15px 18px;
+}
+
+html[data-product] #faq details.faq-item summary h3 {
+  color: #27272a !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+}
+
+html[data-product] #faq details.faq-item .faq-body {
+  padding-inline: 18px 56px;
+}
+
+html[data-product] #faq details.faq-item.is-opening .faq-body,
+html[data-product] #faq details.faq-item[open].is-open .faq-body {
+  margin-top: 0;
+  padding-bottom: 18px;
+}
+
+html[data-product] #faq details.faq-item .faq-body p {
+  color: var(--family-muted-foreground) !important;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+html.dark[data-product]{--family-canvas:#101218;--family-foreground:#f4f4f5;--family-card:#181b23;--family-muted:#151820;--family-muted-foreground:#b8bdc9;--family-subtle-foreground:#c7c9d1;--family-border:#2a2e39;--family-border-strong:#3b4050;color-scheme:dark}
+html.dark[data-product] body{background-color:var(--family-canvas)!important;background-image:radial-gradient(circle,rgba(255,255,255,.09) 1px,transparent 1px)!important;color:var(--family-foreground)}
+
+/* Contact: graphite command panel with one product rail. */
+html[data-product] #cta {
+  padding: 64px var(--family-gutter) !important;
+  background: var(--family-canvas);
+}
+
+html[data-product] #cta > div {
+  width: min(var(--family-shell), 100%);
+  max-width: var(--family-shell) !important;
+  padding: 40px !important;
+  border: 1px solid #2a2b31 !important;
+  border-radius: var(--family-radius-xl) !important;
+  background: var(--family-graphite) !important;
+  box-shadow: var(--family-shadow-panel-dark) !important;
+  clip-path: none !important;
+}
+
+html[data-product] #cta > div::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 2;
+  height: 2px;
+  background: var(--product);
+}
+
+html[data-product] #cta > div > .absolute {
+  display: none !important;
+}
+
+html[data-product] #cta .relative.text-center {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 430px);
+  align-items: center;
+  gap: 24px 64px;
+  text-align: left;
+}
+
+html[data-product] #cta .relative.text-center > div:first-child {
+  align-self: end;
+}
+
+html[data-product] #cta h2 {
+  margin-inline: 0 !important;
+  color: #ffffff !important;
+  font-size: clamp(30px, 2.8vw, 40px) !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.025em !important;
+  line-height: 1.1 !important;
+}
+
+html[data-product] #cta h2 .gradient-text {
+  background: none !important;
+  -webkit-text-fill-color: #ffffff !important;
+  color: #ffffff !important;
+}
+
+html[data-product] #cta .relative.text-center > div:first-child p {
+  max-width: 660px !important;
+  margin-inline: 0 !important;
+  color: rgba(255, 255, 255, 0.72) !important;
+  font-size: 14px !important;
+}
+
+html[data-product] #cta form {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  width: 100%;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 24px !important;
+  border-color: var(--family-border) !important;
+  border-radius: var(--family-radius-lg) !important;
+  background: var(--family-card) !important;
+  box-shadow: none !important;
+}
+
+html[data-product] #cta form :where(input, button) {
+  min-height: 48px;
+  border-radius: var(--family-radius-sm) !important;
+}
+
+html[data-product] #cta .relative.text-center > p:last-child {
+  margin: 0 !important;
+  color: rgba(255, 255, 255, 0.72) !important;
+}
+
+html[data-product] #cta .relative.text-center > p:last-child a {
+  color: #ffffff !important;
+}
+
+/* The old billboard becomes a compact product signature. */
+html[data-product] .landing-page > section:last-child {
+  padding: 0 var(--family-gutter) 64px !important;
+  background: var(--family-canvas);
+}
+
+html[data-product] .landing-page > section:last-child > div {
+  width: min(var(--family-shell), 100%);
+  max-width: var(--family-shell) !important;
+  min-height: 88px;
+  padding-block: 20px;
+  flex-direction: row !important;
+  justify-content: space-between;
+  gap: 24px !important;
+  border-top: 1px solid var(--family-border);
+}
+
+html[data-product] .landing-page > section:last-child .footer-wordmark {
+  font-size: clamp(1.75rem, 3vw, 2.5rem) !important;
+  line-height: 0.92 !important;
+}
+
+html[data-product] .landing-page > section:last-child p {
+  max-width: 640px;
+  margin: 0;
+  color: var(--family-muted-foreground) !important;
+  font-size: 12px !important;
+  text-align: right !important;
+}
+
+/* Footer keeps every useful route but drops the billboard treatment. */
+html[data-product] .landing-footer {
+  padding-block: 48px 32px !important;
+  border-top: 1px solid var(--family-border) !important;
+  background: var(--family-card) !important;
+  color: var(--family-foreground) !important;
+}
+
+html[data-product] .landing-footer .footer-wordmark {
+  font-size: 30px !important;
+}
+
+html[data-product] .landing-footer [class*="mt-12"][class*="sm:mt-20"] {
+  margin-top: 32px !important;
+}
+
+html[data-product] .landing-footer a[class*="min-h-[100px]"] {
+  width: min(100%, 360px) !important;
+  min-height: 48px !important;
+  border: 1px solid color-mix(in srgb, var(--product) 82%, var(--family-foreground)) !important;
+  border-radius: var(--family-radius-sm) !important;
+  background: var(--product) !important;
+  color: var(--product-foreground) !important;
+  box-shadow: 0 8px 24px -18px color-mix(in srgb, var(--product) 72%, var(--family-foreground)) !important;
+  transition: background-color var(--family-duration-fast) ease, border-color var(--family-duration-fast) ease, box-shadow var(--family-duration-fast) ease, transform var(--family-duration-fast) var(--family-ease);
+}
+
+html[data-product] .landing-footer a[class*="min-h-[100px]"]:active {
+  transform: scale(0.96);
+}
+
+html[data-product] .landing-footer a[class*="min-h-[100px]"] :where(span, svg) {
+  color: var(--product-foreground) !important;
+  -webkit-text-fill-color: var(--product-foreground) !important;
+}
+
+@media (max-width: 980px) {
+  html[data-product] #faq > div {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  html[data-product] #faq > div > div:first-child {
+    position: static;
+    max-width: 680px;
+  }
+
+  html[data-product] #cta .relative.text-center {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  html[data-product] #cta form {
+    grid-column: 1;
+    grid-row: auto;
+    max-width: 560px !important;
+  }
+}
+
+@media (max-width: 767px) {
+  html[data-product] .glass-nav-inner {
+    width: calc(100% - 48px);
+    height: 60px;
+  }
+
+  html[data-product] #hero {
+    min-height: auto;
+    padding-top: 80px;
+    padding-bottom: 48px;
+  }
+
+  html[data-product] #hero [data-family-shell="true"] > .grid {
+    row-gap: 24px;
+  }
+
+  html[data-product] .hero-tagline {
+    text-align: center;
+  }
+
+  html[data-product] .hero-tagline .ht-rule {
+    margin-inline: auto;
+  }
+
+  html[data-product] #hero h1 {
+    font-size: clamp(1.3rem, 5.8vw, 1.62rem) !important;
+    line-height: 1.26 !important;
+  }
+
+  html[data-product] #hero .hero-lead {
+    max-width: 30ch;
+    margin-inline: auto;
+  }
+
+  html[data-product] .typewriter {
+    min-height: 1.08em;
+    margin-top: 14px;
+    padding-top: 0.04em;
+    font-size: clamp(2.1rem, 11vw, 3.2rem);
+    letter-spacing: -0.04em !important;
+    white-space: nowrap;
+  }
+
+  html[data-product] .tw-text {
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  html[data-product] section[data-landing-demo],
+  html[data-product] [data-family-shell="true"][data-landing-demo],
+  html[data-product] section[data-demo-static="true"],
+  html[data-product] #work,
+  html[data-product] #faq {
+    padding-block: 72px !important;
+  }
+
+  html[data-product] .landing-showcase {
+    padding-block: 20px;
+  }
+
+  html[data-product] .landing-showcase > section[data-family-shell="true"][data-landing-demo],
+  html[data-product] .landing-showcase > section[data-family-shell="true"]:has(> [data-landing-demo]) {
+    margin-block: 16px !important;
+    padding: 24px 20px !important;
+    border-radius: 24px;
+  }
+
+  html[data-product] .landing-showcase > section[data-landing-demo]:not([data-family-shell="true"]) {
+    padding-block: 16px !important;
+  }
+
+  html[data-product] .landing-showcase > section[data-landing-demo]:not([data-family-shell="true"]) > :first-child {
+    padding: 24px 20px;
+    border-radius: 24px;
+  }
+
+  html[data-product] #cta {
+    padding-block: 48px !important;
+  }
+
+  html[data-product] #cta > div {
+    padding: 28px !important;
+  }
+
+  html[data-product] .landing-page > section:last-child > div {
+    min-height: 0;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+  html[data-product] .landing-page > section:last-child p {
+    text-align: left !important;
+  }
+}
+
+@media (max-width: 460px) {
+  html[data-product] .glass-nav-inner {
+    gap: 8px;
+  }
+
+  html[data-product] #cta > div {
+    padding: 24px !important;
+  }
+
+  html[data-product] #cta form {
+    padding: 18px !important;
+  }
+
+  html[data-product] #faq details.faq-item summary {
+    gap: 16px;
+    padding-inline: 15px;
+  }
+
+  html[data-product] #faq details.faq-item .faq-body {
+    padding-inline: 15px 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-product],
+  html[data-product] * {
+    scroll-behavior: auto !important;
+  }
+
+  html[data-product] .landing-page *,
+  html[data-product] .landing-page *::before,
+  html[data-product] .landing-page *::after {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+
+  html[data-product] .tw-caret {
+    opacity: 0 !important;
+  }
+}
+
+@media (prefers-contrast: more) {
+  html[data-product] #hero [data-landing-demo],
+  html[data-product] [data-landing-demo][class*="shadow-["],
+  html[data-product] [data-demo-static="true"] .glass-card {
+    outline: 1px solid var(--family-border-strong);
+    outline-offset: -1px;
+  }
+}
+}

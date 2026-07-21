@@ -43,15 +43,20 @@
   .split-char { opacity: 1 !important; transform: none !important; animation: none !important; }
 }
 
-/* === Hero - flex center, ALWAYS 100vh === */
+/* === Hero: every product starts on the same physical baseline. === */
 #hero {
-  min-height: 100vh;
+  min-height: auto;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  padding-top: 80px;
-  padding-bottom: 40px;
+  justify-content: flex-start;
+  padding-top: 118px;
+  padding-bottom: 24px;
 }
+.hero-family-shell{width:min(1140px,calc(100% - 48px))!important;max-width:1140px!important}.hero-product-wordmark{margin-bottom:18px;font-size:clamp(2rem,3vw,2.7rem);line-height:.92;opacity:1;transition:opacity 300ms cubic-bezier(.23,1,.32,1)}.glass-nav:not(.is-top)~main .hero-product-wordmark{opacity:0}#hero [data-hero-demo]{min-height:520px}
+.hero-product-wordmark .wm-mark{color:var(--brand-display,var(--brand-ink))}
+.hero-static-accent{display:block;margin-top:6px;font-weight:800;letter-spacing:-.035em;overflow-wrap:anywhere}
+@media(max-width:980px){#hero [data-hero-demo]{min-height:500px}}
+@media(max-width:640px){#hero{padding-top:96px;padding-bottom:0}.hero-family-shell{width:calc(100% - 32px)!important}.hero-product-wordmark{font-size:2.15rem}#hero [data-hero-demo]{min-height:440px}}
 .grainient-canvas {
   position: absolute;
   inset: 0;
@@ -183,12 +188,21 @@
 /* Typewriter - its own line, centered, fixed-width container */
 .typewriter {
   display: block;
+  max-width: 100%;
   text-align: center;
   letter-spacing: normal;
   font-feature-settings: "kern" 1, "liga" 1;
   white-space: nowrap;
   margin: 32px auto 0;
   font-weight: 700;
+}
+@media (max-width: 767px) {
+  .typewriter {
+    min-width: 0 !important;
+    min-height: 2.24em;
+    white-space: normal;
+  }
+  .tw-text { overflow-wrap: anywhere; }
 }
 @media (min-width: 768px) {
   .typewriter { margin-top: 48px; }
@@ -202,6 +216,31 @@
   animation: tw-blink 800ms steps(2) infinite;
 }
 @keyframes tw-blink { 50% { opacity: 0; } }
+
+/* A stable mobile slot keeps the changing word and caret from moving nearby UI. */
+@media (max-width: 767px) {
+  .typewriter {
+    position: relative;
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    white-space: normal;
+  }
+
+  .tw-text {
+    display: inline-block;
+    width: calc(100% - 0.6em);
+    text-align: center;
+    overflow-wrap: anywhere;
+  }
+
+  .tw-caret {
+    width: 0.6em;
+    margin-left: 0 !important;
+    text-align: left;
+  }
+}
+
 
 /* ===== Hero buttons - premium static ===== */
 .btn-primary, .btn-ghost {
@@ -219,7 +258,11 @@
   transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
   will-change: transform;
 }
-.btn-primary:active, .btn-ghost:active { transform: scale(0.97); }
+.btn-primary:active, .btn-ghost:active { transform: scale(0.96); }
+.btn-primary:focus-visible, .btn-ghost:focus-visible {
+  outline: 2px solid var(--brand-ink);
+  outline-offset: 3px;
+}
 @media (prefers-reduced-motion: reduce) {
   .btn-primary, .btn-ghost { transition: none; }
   .btn-primary:active, .btn-ghost:active { transform: none; }
@@ -241,4 +284,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .split-char { opacity: 1 !important; transform: none !important; animation: none !important; }
+  .tw-caret { animation: none !important; opacity: 1; }
+  .hero-wordmark,
+  .hero-tagline { transition: none !important; }
 }
+.dark #hero::before{background:linear-gradient(180deg,rgba(15,17,24,.18),rgba(15,17,24,.56))}.dark #hero h1,.dark #hero p,.dark #hero .wordmark-3d,.dark #hero a{text-shadow:none}.dark .hero-lead{color:#f4f4f5!important;-webkit-text-fill-color:#f4f4f5!important}.dark .hero-audience,.dark .hero-commitment p{color:#c7c9d1!important}.dark .hero-product-wordmark .wm-mark{color:#f4f4f5}

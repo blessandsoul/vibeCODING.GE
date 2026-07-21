@@ -2,7 +2,7 @@
 
 import type React from 'react';
 
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 import { SITE } from '@/config/site';
 import { FAMILY } from '@/config/family';
@@ -10,6 +10,7 @@ import { MagneticButton } from '@/components/common/MagneticButton';
 import { SocialLinks } from '@/components/layout/SocialLinks';
 import { Link } from '@/i18n/navigation';
 import { FooterLanguageSwitcher } from './FooterLanguageSwitcher';
+import { LandingThemeToggle } from './LandingThemeToggle';
 import './landing-footer.css';
 
 /* =========================================================================
@@ -32,20 +33,22 @@ import './landing-footer.css';
 
 export function LandingFooter(): React.ReactElement {
   const t = useTranslations('landingFooter');
+  const locale = useLocale();
   const year = new Date().getFullYear();
+  const blogLabel = locale === 'ka' ? 'ბლოგი' : locale === 'ru' ? 'Блог' : 'Blog';
 
   // A site never links to itself, and a landing that has not shipped yet stays out.
   const family = FAMILY.filter((m) => m.live && m.domain !== SITE.domain);
 
   const copyright = (
-    <span className="block whitespace-normal break-words text-[12px] uppercase tracking-wide text-neutral-900/40 lg:whitespace-nowrap">
+    <span className="block whitespace-normal text-[12px] uppercase tracking-wide text-[#667085] lg:whitespace-nowrap">
       {t('copyright', { year })}
     </span>
   );
 
   return (
-    <footer className="landing-footer border-t border-[#e5e5e5]/60 bg-white px-6 pb-8 pt-12 text-neutral-900 md:px-10 md:py-16">
-      <div className="mx-auto w-full max-w-[1280px]">
+    <footer data-parent-brand="aiNOW" className="landing-footer border-t border-[#e5e5e5]/60 bg-white px-0 pb-8 pt-12 text-neutral-900 md:py-16">
+      <div data-family-shell="true" className="mx-auto w-[calc(100%-32px)] max-w-[1216px] md:w-[calc(100%-48px)]">
         <div className="grid lg:grid-cols-[minmax(460px,600px)_1fr] lg:gap-16">
           {/* LEFT, wordmark + link columns.
 
@@ -60,7 +63,7 @@ export function LandingFooter(): React.ReactElement {
             <Link
               href="/"
               aria-label="aiNOW"
-              className="inline-flex"
+              className="footer-logo-link -m-3 inline-flex min-h-11 min-w-11 items-center rounded-sm p-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-ink)]"
             >
               <span className="wordmark-3d ainow-parent footer-wordmark text-[40px] leading-none md:text-[52px]">
                 <span className="wm-prefix">ai</span>
@@ -76,27 +79,29 @@ export function LandingFooter(): React.ReactElement {
             </div>
 
             {/* Link columns */}
-            <div className="mt-10 grid grid-cols-1 gap-x-4 gap-y-10 sm:grid-cols-2 sm:gap-x-6 lg:mt-16">
+            <div className="mt-10 grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 lg:mt-16">
               <FooterColumn title={t('companyHeading')}>
                 <FooterRouteLink href="/contact">{t('contact')}</FooterRouteLink>
-                <FooterAnchorLink href="#showcase">{t('sectionShowcase')}</FooterAnchorLink>
-                <FooterAnchorLink href="#work">{t('sectionWork')}</FooterAnchorLink>
+                <FooterRouteLink href="/blog">{blogLabel}</FooterRouteLink>
+                <FooterAnchorLink href="#dashboard">{t('sectionShowcase')}</FooterAnchorLink>
+                <FooterAnchorLink href="#cases">{t('sectionWork')}</FooterAnchorLink>
                 <FooterAnchorLink href="#faq">{t('sectionFaq')}</FooterAnchorLink>
               </FooterColumn>
 
               <div>
-                <span className="whitespace-nowrap text-[12px] uppercase tracking-wide text-neutral-900/40">
+                <span className="whitespace-normal text-[12px] uppercase tracking-wide text-[#667085]">
                   {t('socialHeading')}
                 </span>
-                <SocialLinks className="mt-5 flex-wrap gap-3 sm:mt-4" size={18} round />
+                <SocialLinks className="mt-5 gap-3 sm:mt-4" size={18} round />
                 <div className="mt-8">
-                  <span className="whitespace-nowrap text-[12px] uppercase tracking-wide text-neutral-900/40">
+                  <span className="whitespace-normal text-[12px] uppercase tracking-wide text-[#667085]">
                     {t('languageHeading')}
                   </span>
                   <div className="mt-4 text-sm">
                     <FooterLanguageSwitcher />
                   </div>
                 </div>
+                <div className="mt-5"><LandingThemeToggle /></div>
               </div>
             </div>
           </div>
@@ -113,7 +118,7 @@ export function LandingFooter(): React.ReactElement {
           <MagneticButton className="block w-full">
             <a
               href="#cta"
-              className="flex h-[100px] w-full items-center justify-center whitespace-normal rounded-full px-5 text-center text-sm font-semibold uppercase leading-5 tracking-[0.02em] text-white lg:whitespace-nowrap [transition:transform_.18s_cubic-bezier(.2,.8,.2,1)] will-change-transform active:scale-[0.99] md:h-[120px] md:text-base 2xl:h-[140px]"
+              className="flex min-h-[100px] w-full items-center justify-center whitespace-normal rounded-full px-6 py-5 text-center text-sm font-semibold uppercase leading-5 tracking-[0.02em] text-[var(--primary-foreground)] [transition:transform_.15s_cubic-bezier(.23,1,.32,1)] active:scale-[0.96] md:min-h-[120px] md:text-base 2xl:min-h-[140px] lg:whitespace-nowrap"
               style={{ background: 'linear-gradient(135deg, var(--brand), var(--accent))' }}
             >
               {t('ctaHuge')}
@@ -136,7 +141,7 @@ function FamilyDirectory({
 }): React.ReactElement {
   return (
     <div>
-      <span className="whitespace-nowrap text-[12px] uppercase tracking-wide text-neutral-900/40">
+      <span className="whitespace-normal text-[12px] uppercase tracking-wide text-[#667085]">
         {heading}
       </span>
       <ul className="mt-5 grid grid-cols-2 gap-x-6 gap-y-3 sm:mt-4">
@@ -165,7 +170,7 @@ interface FooterColumnProps {
 function FooterColumn({ title, children }: FooterColumnProps): React.ReactElement {
   return (
     <div>
-      <span className="whitespace-nowrap text-[12px] uppercase tracking-wide text-neutral-900/40">
+      <span className="whitespace-normal text-[12px] uppercase tracking-wide text-[#667085]">
         {title}
       </span>
       <ul className="mt-5 flex flex-col items-start gap-3 sm:mt-4">{children}</ul>
@@ -174,7 +179,7 @@ function FooterColumn({ title, children }: FooterColumnProps): React.ReactElemen
 }
 
 const LINK_CLASS =
-  'text-sm text-neutral-900/70 transition-colors duration-150 active:opacity-70 md:hover:text-neutral-900';
+  'inline-flex min-h-11 min-w-11 items-center break-words text-sm text-[#4B5563] transition-[color,transform] duration-150 active:scale-[0.96] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-ink)] md:hover:text-[#111827]';
 
 function FooterRouteLink({ href, children }: { href: string; children: React.ReactNode }): React.ReactElement {
   return (

@@ -22,7 +22,7 @@ function walkSrc(dir, acc) {
     const p = join(dir, entry);
     if (statSync(p).isDirectory()) {
       walkSrc(p, acc);
-    } else if (/\.(tsx?|jsx?)$/.test(entry) && entry !== 'solar-icons.ts') {
+    } else if (/\.(?:[cm]?[jt]sx?)$/.test(entry) && entry !== 'solar-icons.ts') {
       const matches = readFileSync(p, 'utf8').match(/solar:[a-z0-9-]+/g);
       if (matches) for (const n of matches) acc.add(n.slice('solar:'.length));
     }

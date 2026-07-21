@@ -7,3 +7,4 @@
    hero wordmark.
    ========================================================================= */
 .wordmark-3d.footer-wordmark { line-height: 1; }
+.landing-product-wordmark-section .wm-mark { color: var(--brand-display, var(--brand-ink)); }

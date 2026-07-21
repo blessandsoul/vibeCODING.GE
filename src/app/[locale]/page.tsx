@@ -4,8 +4,7 @@ import { SITE } from '@/config/site';
 import { buildAlternates } from '@/i18n/seo-locales';
 import { HomeFaqSchema } from '@/components/seo/StructuredData';
 import { LandingHero } from '@/features/home/components/LandingHero';
-import { LandingShowcase } from '@/features/home/components/LandingShowcase';
-import { LandingWork } from '@/features/home/components/LandingWork';
+import { LandingBody } from '@/features/home/components/LandingBody';
 import { LandingFaq } from '@/features/home/components/LandingFaq';
 import { LandingCta } from '@/features/home/components/LandingCta';
 import { LandingWordmark } from '@/features/home/components/LandingWordmark';
@@ -55,8 +54,7 @@ export default async function HomePage({ params }: Props) {
       <HomeFaqSchema locale={locale} />
       <div className="landing-page">
         <LandingHero />
-        <LandingShowcase />
-        <LandingWork />
+        <LandingBody />
         <LandingFaq />
         <LandingCta />
         <LandingWordmark />
