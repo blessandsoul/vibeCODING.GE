@@ -58,11 +58,13 @@
       "description": "Check the public files of an AI-built application, understand visible security risks, and decide what needs a deeper review."
     },
     "hero": {
-      "lead": "Check who can reach your",
+      "owner": "Your",
+      "role": "security auditor",
+      "lead": "checks before your app goes live:",
       "taglinePrefix": "code",
       "taglineWorks": "rescue",
-      "typewriterWords": "database,login,keys,payments,files",
-      "typewriterPrefill": "database",
+      "typewriterWords": "access,data,payments,secrets,files",
+      "typewriterPrefill": "access",
       "ctaResults": "Review my app",
       "ctaCall": "Discuss a full review",
       "commitment": "The public scan shows only evidence available from outside. Deeper checks begin only after access and scope are approved.",

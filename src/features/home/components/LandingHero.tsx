@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useEffect, useRef, type CSSProperties } from 'react';
+import { memo, useEffect, useRef, useState, type CSSProperties } from 'react';
 import { useTranslations } from 'next-intl';
 import { MagneticButton } from '@/components/common/MagneticButton';
 import { Ico } from '@/components/common/Ico';
@@ -83,9 +83,128 @@ const SplitText = memo(function SplitText({
   );
 });
 
+function useReducedMotionPreference(): boolean {
+  const [reduced, setReduced] = useState(false);
+
+  useEffect(() => {
+    const query = window.matchMedia?.('(prefers-reduced-motion: reduce)');
+    if (!query) return undefined;
+    const sync = (): void => setReduced(query.matches);
+    sync();
+    query.addEventListener?.('change', sync);
+    return () => query.removeEventListener?.('change', sync);
+  }, []);
+
+  return reduced;
+}
+
 export function LandingHero() {
   const t = useTranslations('product.hero');
+  const prefersReducedMotion = useReducedMotionPreference();
   const typewriterPrefill = t('typewriterPrefill');
+  const typewriterRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    const element = typewriterRef.current;
+    if (!element) return undefined;
+    const root: HTMLSpanElement = element;
+
+    const words = (root.dataset.words || '')
+      .split(/[,、،]/)
+      .map((word) => word.trim())
+      .filter(Boolean);
+    const textElement = root.querySelector<HTMLElement>('.tw-text');
+    if (!words.length || !textElement) return undefined;
+    const text: HTMLElement = textElement;
+
+    if (prefersReducedMotion) {
+      text.textContent = words[0];
+      root.dataset.demoState = 'final';
+      return undefined;
+    }
+
+    const prefill = root.dataset.prefill;
+    let wordIndex = prefill && words.includes(prefill) ? words.indexOf(prefill) : 0;
+    text.textContent = words[wordIndex];
+    let charIndex = words[wordIndex].length;
+    let deleting = true;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let inView = true;
+    let cancelled = false;
+
+    const clearTimer = (): void => {
+      if (timer) clearTimeout(timer);
+      timer = undefined;
+    };
+
+    const canRun = (): boolean => inView && document.visibilityState === 'visible' && !cancelled;
+
+    const schedule = (delay: number): void => {
+      clearTimer();
+      if (!canRun()) return;
+      timer = setTimeout(tick, delay);
+    };
+
+    function tick(): void {
+      timer = undefined;
+      if (!canRun()) return;
+
+      const word = words[wordIndex];
+      root.dataset.demoState = 'playing';
+      if (deleting) {
+        charIndex -= 1;
+        text.textContent = word.slice(0, Math.max(0, charIndex));
+        if (charIndex <= 0) {
+          wordIndex = (wordIndex + 1) % words.length;
+          charIndex = 0;
+          deleting = false;
+          schedule(180);
+          return;
+        }
+        schedule(34);
+        return;
+      }
+
+      const nextWord = words[wordIndex];
+      charIndex += 1;
+      text.textContent = nextWord.slice(0, charIndex);
+      if (charIndex >= nextWord.length) {
+        deleting = true;
+        root.dataset.demoState = 'final';
+        schedule(1600);
+        return;
+      }
+      schedule(64);
+    }
+
+    const syncPlayback = (): void => {
+      if (!canRun()) {
+        clearTimer();
+        root.dataset.demoState = 'paused';
+        return;
+      }
+      if (!timer) schedule(320);
+    };
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        inView = entry?.isIntersecting ?? true;
+        syncPlayback();
+      },
+      { threshold: 0.15 },
+    );
+    observer.observe(root);
+    document.addEventListener('visibilitychange', syncPlayback);
+    root.dataset.demoState = 'final';
+    schedule(1600);
+
+    return () => {
+      cancelled = true;
+      clearTimer();
+      observer.disconnect();
+      document.removeEventListener('visibilitychange', syncPlayback);
+    };
+  }, [prefersReducedMotion, typewriterPrefill]);
 
   return (
     <section
@@ -136,16 +255,20 @@ export function LandingHero() {
               data-split-text="1"
               className="mt-3 text-balance leading-[1.12] tracking-tight text-[clamp(1.85rem,3.6vw,3.1rem)] text-neutral-900"
             >
+              <span className="hero-role-line">
+                <span>{t('owner')}</span>
+                <span className="hero-role-ai" aria-label="AI">ai</span>
+                <span>{t('role')}</span>
+              </span>
               <SplitText className="hero-lead" text={t('lead')} />
               {' '}
               <span
-                className="hero-static-accent"
-                /* THE INK, NOT THE FILL. This is the single biggest word on the page and it
-                   was painted in --brand, which measured 1.51:1 on aiAPP's lime and 1.60:1 on
-                   aiTAXI's yellow: below even the large-text bar, and it read like a highlighter
-                   that had run out. --brand-ink is the same hue, darkened until a letterform
-                   survives on the page. On aiDOCS and vibecoding, whose brands are already dark
-                   enough, the two tokens are the same colour and nothing changes. */
+                ref={typewriterRef}
+                className="typewriter"
+                data-words={t('typewriterWords')}
+                data-prefill={typewriterPrefill}
+                data-demo-state="idle"
+                aria-live="off"
                 style={{
                   fontFamily:
                     "'DachiLynx', var(--font-noto-georgian), 'Noto Sans Georgian', sans-serif",
@@ -153,7 +276,8 @@ export function LandingHero() {
                   WebkitTextFillColor: 'var(--brand-display, var(--brand-ink, var(--brand)))',
                 }}
               >
-                {typewriterPrefill}
+                <span className="tw-text">{typewriterPrefill}</span>
+                <span className="tw-caret" aria-hidden="true">|</span>
               </span>
             </h1>
           </div>

@@ -20,23 +20,23 @@
    surfaces. The other three are what happens when it has to carry, or sit under, a letterform. */
 
 :root {
-  --primary: #ef4444;
+  --primary: #ff365f;
   --primary-foreground: #0a0a0a;
-  --accent: #f87171;
+  --accent: #ff7894;
   --accent-foreground: #0a0a0a;
   --ring: var(--brand-ink);
-  --brand: #ef4444;
-  --brand-soft: #fecaca;
+  --brand: #ff365f;
+  --brand-soft: #ffd7e0;
 
-  /* the label #0a0a0a on #ef4444 is 5.26:1 (AA wants 4.5),
-     on #ef4444 it is 5.26:1 */
-  --brand-cta: #ef4444;
-  --accent-cta: #f87171;
+  /* the label #0a0a0a on #ff365f is 5.60:1 (AA wants 4.5),
+     on #ff365f it is 5.60:1 */
+  --brand-cta: #ff365f;
+  --accent-cta: #ff7894;
 
-  /* #ef4444 as text on #fbfbfc is 3.64:1 (normal text wants 4.5),
-     #bf3636 is 5.35:1 */
-  --brand-ink: #bf3636;
+  /* #ff365f as text on #fbfbfc is 3.42:1 (normal text wants 4.5),
+     #c72a4a is 5.26:1 */
+  --brand-ink: #c72a4a;
 
   /* Oversized display text needs 3:1, not the small-label reserve above. */
-  --brand-display: #ef4444;
+  --brand-display: #ff365f;
 }
