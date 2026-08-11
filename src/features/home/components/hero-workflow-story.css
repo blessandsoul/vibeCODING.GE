@@ -317,6 +317,82 @@
   outline-offset: 2px;
 }
 
+.dark .hero-workflow {
+  --story-border: rgba(255, 255, 255, 0.11);
+  background: #181b23;
+  box-shadow: 0 28px 70px -48px rgba(0, 0, 0, 0.72), 0 1px 0 rgba(255, 255, 255, 0.04) inset;
+}
+
+.dark .hero-workflow__topline,
+.dark .hero-workflow__footer {
+  background: #14171e;
+}
+
+.dark .hero-workflow__badge,
+.dark .hero-workflow__label,
+.dark .hero-workflow__route,
+.dark .hero-workflow__business-value > span {
+  color: #aeb4c0;
+}
+
+.dark .hero-workflow__row,
+.dark .hero-workflow__body,
+.dark .hero-workflow__business-value p,
+.dark .hero-workflow__replay {
+  color: #d4d7de;
+}
+
+.dark .hero-workflow__row + .hero-workflow__row {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.dark .hero-workflow__rail {
+  background: rgba(255, 255, 255, 0.11);
+}
+
+.dark .hero-workflow__icon,
+.dark .hero-workflow__replay {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: #20242d;
+}
+
+.dark .hero-workflow__row[data-active='true'] .hero-workflow__icon {
+  background: color-mix(in srgb, var(--brand) 14%, #20242d);
+  color: color-mix(in srgb, var(--brand) 65%, white);
+}
+
+.dark .hero-workflow__row[data-complete='true'] .hero-workflow__icon {
+  border-color: #256d4d;
+  background: #173b2b;
+  color: #72d9a6;
+}
+
+.dark .hero-workflow__row[data-active='true'] .hero-workflow__body,
+.dark .hero-workflow__request,
+.dark .hero-workflow__iai-wordmark {
+  color: #f4f4f5;
+}
+
+.dark .hero-workflow__product-name {
+  color: color-mix(in srgb, var(--brand) 62%, white);
+}
+
+.dark .hero-workflow__status {
+  border-color: rgba(255, 255, 255, 0.09);
+  background: #20242d;
+  color: #b8bdc9;
+}
+
+.dark .hero-workflow__status[data-ready='true'] {
+  border-color: color-mix(in srgb, var(--brand) 26%, #2a2e39);
+  background: color-mix(in srgb, var(--brand) 11%, #20242d);
+  color: #e5e7eb;
+}
+
+.dark .hero-workflow__result {
+  color: #72d9a6;
+}
+
 @media (max-width: 479px) {
   .hero-workflow {
     border-radius: 20px;

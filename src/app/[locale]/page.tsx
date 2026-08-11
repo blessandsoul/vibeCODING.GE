@@ -19,6 +19,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const ogImageUrl = `${SITE.baseUrl}/og-image.png`;
   const siteName = SITE.wordmark.prefix + SITE.wordmark.mark;
+  const canonical = buildAlternates('', locale).canonical;
+  const ogLocales: Record<string, string> = { ka: 'ka_GE', en: 'en_US', ru: 'ru_RU' };
+  const ogLocale = ogLocales[locale] ?? ogLocales.ka;
 
   return {
     title: t('title'),
@@ -28,6 +31,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     // neither, which is exactly what happened on aiads.ge and aicontent.ge.
     alternates: buildAlternates('', locale),
     openGraph: {
+      type: 'website',
+      url: canonical,
+      siteName,
+      locale: ogLocale,
+      alternateLocale: Object.values(ogLocales).filter((value) => value !== ogLocale),
       title: t('title'),
       description: t('description'),
       images: [{ url: ogImageUrl, width: 1200, height: 630, alt: siteName }],

@@ -8,15 +8,19 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Link } from "@/i18n/navigation";
 import {
   contactFormSchema,
   type ContactFormData,
 } from "../schemas/contact.schema";
 // facebook-pixel was stripped from this lean build; no-op keeps the call sites intact.
-const trackLead = (_args?: { content_name?: string }) => {};
+const trackLead = (args?: { content_name?: string }) => {
+  void args;
+};
 
 export const ContactForm = () => {
   const t = useTranslations("contact");
+  const productPageT = useTranslations("productPages.contact");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
@@ -69,7 +73,7 @@ export const ContactForm = () => {
         />
         {errors.phone && (
           <p id="phone-error" role="alert" aria-live="polite" className="text-sm text-destructive">
-            {errors.phone.message}
+            {productPageT("phoneInvalid")}
           </p>
         )}
       </div>
@@ -81,10 +85,14 @@ export const ContactForm = () => {
         aria-label={t("submit")}
         data-mcp-toolname="contact-submit"
         data-mcp-tooldescription="Submit contact form to send phone number to aiNOW for callback"
-        className="w-full bg-linear-to-r from-[#7c3aed] to-[#e040fb] text-white transition-all duration-200 hover:brightness-110 active:scale-[0.98]"
+        className="product-page-button product-page-button--primary w-full"
       >
         {isSubmitting ? t("submitting") : t("submit")}
       </Button>
+      <p className="contact-form-privacy">
+        {productPageT("privacyNote")}{" "}
+        <Link href="/privacy">{productPageT("privacyLink")}</Link>.
+      </p>
     </form>
   );
 };

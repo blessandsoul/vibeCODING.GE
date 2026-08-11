@@ -1,23 +1,26 @@
 import type { MetadataRoute } from "next";
 import { getAvailableLocales, getDefaultAvailableLocale, getPost, getPostSlugs } from "@/features/blog/lib/blog";
 import { INDEXED_LOCALES, buildAlternates, localeUrl } from "@/i18n/seo-locales";
-
-// Static routes exposed to search. The noindex /aicontent QR demo is omitted on
-// purpose. buildAlternates/localeUrl already own the per-locale URL shape.
-const PATHS = ["", "/contact", "/blog"];
+import {
+  PUBLIC_ROUTES,
+  isPublicRoute,
+} from "@/features/product-pages/routes";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const entries: MetadataRoute.Sitemap = [];
-  for (const path of PATHS) {
+  for (const route of PUBLIC_ROUTES) {
+    const path = route.path === "/" ? "" : route.path;
     for (const locale of INDEXED_LOCALES) {
       entries.push({
         url: localeUrl(locale, path),
-        changeFrequency: path === "" ? "weekly" : path === "/blog" ? "daily" : "monthly",
-        priority: path === "" ? 1 : path === "/blog" ? 0.8 : 0.7,
+        changeFrequency: route.changeFrequency,
+        priority: route.priority,
         alternates: { languages: buildAlternates(path, locale).languages },
       });
     }
   }
+
+  if (!isPublicRoute('/blog')) return entries;
 
   for (const slug of getPostSlugs()) {
     const path = `/blog/${slug}`;

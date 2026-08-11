@@ -8,8 +8,16 @@ export default getRequestConfig(async ({ requestLocale }) => {
     locale = routing.defaultLocale;
   }
 
+  const siteMessages = (await import(`../messages/${locale}.json`)).default;
+  const productPageMessages = (
+    await import(`../features/product-pages/messages/${locale}.json`)
+  ).default;
+
   return {
     locale,
-    messages: (await import(`../messages/${locale}.json`)).default,
+    messages: {
+      ...siteMessages,
+      productPages: productPageMessages,
+    },
   };
 });

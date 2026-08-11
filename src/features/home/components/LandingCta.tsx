@@ -130,18 +130,18 @@ export function LandingCta() {
   }, []);
 
   return (
-    <section ref={rootRef} id="cta" className="px-4 py-20 md:px-6 md:py-32">
-      <div data-family-shell="true" className="max-w-[1216px] mx-auto relative overflow-hidden rounded-3xl [clip-path:inset(0_round_1.5rem)] border border-[#e5e5e5] bg-gradient-to-br from-white via-neutral-50 to-white p-8 md:p-20">
+    <section ref={rootRef} id="cta" className="scroll-mt-24 px-4 py-16 md:px-6 md:py-32">
+      <div data-family-shell="true" className="max-w-[1216px] mx-auto relative overflow-hidden rounded-3xl [clip-path:inset(0_round_1.5rem)] border border-[#e5e5e5] bg-gradient-to-br from-white via-neutral-50 to-white p-5 sm:p-8 md:p-20">
         <div className="absolute -top-32 -right-32 w-[500px] h-[500px] bg-(--brand)/30 rounded-full blur-3xl"></div>
         <div className="absolute -bottom-32 -left-32 w-[500px] h-[500px] bg-(--brand-soft)/25 rounded-full blur-3xl"></div>
         <div className="relative text-center">
           <Reveal>
-            <h2 className="font-display font-extrabold text-4xl md:text-6xl leading-[1.05] tracking-tight max-w-3xl mx-auto text-neutral-900">
+            <h2 className="text-balance font-display font-extrabold text-[1.875rem] sm:text-4xl md:text-6xl leading-[1.08] tracking-tight max-w-3xl mx-auto text-neutral-900">
               <span className="gradient-text">{tc('heading')}</span>
             </h2>
-            <p className="mt-6 text-lg text-[#525252] max-w-xl mx-auto">{tc('subtitle')}</p>
+            <p className="mt-5 text-base leading-relaxed text-[#525252] max-w-xl mx-auto sm:text-lg">{tc('subtitle')}</p>
           </Reveal>
-          <form onSubmit={handleSubmit(onSubmit)} className="mt-10 max-w-md mx-auto text-left rounded-2xl border border-[#e5e5e5] bg-white p-6 md:p-8 space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="mt-8 max-w-md mx-auto text-left rounded-2xl border border-[#e5e5e5] bg-white p-4 sm:p-6 md:p-8 space-y-4">
             <div>
               <label htmlFor="cta-phone" className="block text-xs font-mono uppercase tracking-[0.2em] text-[#525252] mb-2">{tc('phoneLabel')}</label>
               <input
@@ -157,11 +157,13 @@ export function LandingCta() {
                 className="w-full px-4 py-3 rounded-xl border border-[#e5e5e5] bg-white text-neutral-900 focus:border-neutral-900 focus:outline-none transition disabled:opacity-60"
               />
               {errors.phone && (
-                <p id="cta-phone-error" role="alert" aria-live="polite" className="mt-2 text-sm text-red-600">{errors.phone.message}</p>
+                <p id="cta-phone-error" role="alert" aria-live="polite" className="mt-2 text-sm text-red-600">
+                  {t.has('phoneInvalid') ? t('phoneInvalid') : errors.phone.message}
+                </p>
               )}
             </div>
             <MagneticButton className="block w-full">
-              <button type="submit" disabled={isSubmitting} className="click-spark w-full px-6 py-4 rounded-xl bg-neutral-900 text-white font-medium [transition:background-color_.18s_ease,transform_.18s_cubic-bezier(.2,.8,.2,1)] will-change-transform hover:bg-neutral-800 active:scale-[0.97] disabled:opacity-60 disabled:cursor-not-allowed motion-reduce:transition-none motion-reduce:active:scale-100">{isSubmitting ? t('submitting') : tc('phoneSubmit')}</button>
+              <button type="submit" disabled={isSubmitting} className="click-spark min-h-11 w-full px-4 py-3.5 rounded-xl bg-neutral-900 text-white font-medium [transition:background-color_.18s_ease,transform_.18s_cubic-bezier(.2,.8,.2,1)] will-change-transform hover:bg-neutral-800 active:scale-[0.97] disabled:opacity-60 disabled:cursor-not-allowed motion-reduce:transition-none motion-reduce:active:scale-100">{isSubmitting ? t('submitting') : tc('phoneSubmit')}</button>
             </MagneticButton>
             <p className="text-center text-xs text-[#525252]">{tc('phoneNote')}</p>
           </form>

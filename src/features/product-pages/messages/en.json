@@ -1,0 +1,361 @@
+{
+  "common": {
+    "home": "Home",
+    "productMenu": "Product",
+    "pricing": "Pricing",
+    "integrations": "Integrations",
+    "security": "Security",
+    "blog": "Blog",
+    "contact": "Contact",
+    "privacy": "Privacy",
+    "terms": "Terms"
+  },
+  "pricing": {
+    "seoTitle": "{product} pricing and project scope",
+    "seoDescription": "See how {product} is scoped, what is included, what changes the estimate, and when payment starts.",
+    "breadcrumb": "Pricing",
+    "eyebrow": "Commercial terms",
+    "title": "A clear {product} scope before you pay",
+    "lead": "There is no made-up package price. aiNOW first checks your real task, writes down what is included and excluded, and gives you one price to approve.",
+    "context": {
+      "model": "Commercial model",
+      "fixed": "Verified fixed offer",
+      "project": "Individually scoped project",
+      "retainer": "Recurring service",
+      "usage": "Usage-based service",
+      "hybrid": "Setup plus recurring use",
+      "pilot": "Pre-launch pilot",
+      "liveSubscription": "Live subscription plans",
+      "price": "Price",
+      "priceValue": "Written before work starts",
+      "start": "Work starts",
+      "startValue": "After scope and price approval",
+      "support": "Support",
+      "supportValue": "Defined in the proposal"
+    },
+    "offers": {
+      "eyebrow": "Your offer",
+      "title": "One offer tied to your real task",
+      "intro": "The proposal names the result, access, integrations, approval points, timeline and ongoing costs. Anything outside it stays visible."
+    },
+    "labels": {
+      "included": "Included",
+      "excluded": "Not included by default",
+      "eligibility": "Pilot requirements",
+      "drivers": "What changes the estimate",
+      "allowance": "Included allowance",
+      "overage": "Overage rule",
+      "setup": "Setup"
+    },
+    "comparison": {
+      "eyebrow": "Compare",
+      "title": "Offers side by side",
+      "offer": "Offer",
+      "billing": "Billing"
+    },
+    "offer": {
+      "name": "{product} written scope",
+      "summary": "A product-specific proposal based on your workflow, required connections and approval rules.",
+      "billing": "Price fixed in the written proposal",
+      "fallbackIncluded": "The agreed first useful result",
+      "excluded1": "Third-party fees, advertising spend and paid licences unless explicitly listed",
+      "excluded2": "New work added after the written scope is approved",
+      "excluded3": "Guaranteed business results that depend on the market, platforms or customer behaviour",
+      "driver1": "Number and complexity of the workflows or screens",
+      "driver2": "Required integrations, data access and migration",
+      "driver3": "Launch, training and ongoing support requirements",
+      "eligibility1": "A responsible product owner and a clear first use case",
+      "eligibility2": "Access to the systems and data needed for a safe test",
+      "eligibility3": "Written approval of the pilot boundary before real-world use",
+      "action": "Request my scope"
+    },
+    "timeline": {
+      "eyebrow": "From request to start",
+      "title": "You know the decision before the invoice",
+      "s1Title": "Fit check",
+      "s1Description": "We confirm the business task, users, current process and the result that would count as useful.",
+      "s1Timing": "First call",
+      "s2Title": "Written scope",
+      "s2Description": "aiNOW lists the deliverables, integrations, approvals, exclusions, timeline and price.",
+      "s2Timing": "Before payment",
+      "s3Title": "Approval and start",
+      "s3Description": "Work starts only after you approve the same written scope that the team will follow.",
+      "s3Timing": "Your decision",
+      "s4Title": "Handover or support",
+      "s4Description": "The proposal states what you receive, who owns each access and what support continues after launch.",
+      "s4Timing": "Written in advance"
+    },
+    "faq": {
+      "eyebrow": "Pricing questions",
+      "title": "What a buyer should know",
+      "q1": "Why is there no single public price for {product}?",
+      "a1": "The cost depends on the real workflow, integrations and launch boundary. aiNOW gives you a written price before work starts instead of advertising a number that does not match your task.",
+      "q2": "Do I pay before I know the full scope?",
+      "a2": "No. The proposal names the deliverables, exclusions, timeline and price first. Payment and work begin only after you approve it.",
+      "q3": "Which costs can be separate?",
+      "a3": "Third-party licences, hosting, advertising spend, store fees and other provider charges are separate unless the proposal explicitly includes them.",
+      "q4": "What happens if the task changes?",
+      "a4": "aiNOW explains the effect on price and timing before adding the new work. The approved scope does not silently expand.",
+      "q5": "Who owns the finished work and access?",
+      "a5": "Ownership, source access, accounts and handover are written into the proposal or contract before work begins."
+    },
+    "cta": {
+      "eyebrow": "Next step",
+      "title": "Get the real {product} scope",
+      "description": "Leave your phone number. aiNOW will ask only what is needed to prepare a useful proposal.",
+      "label": "Request a scope"
+    }
+  },
+  "integrations": {
+    "seoTitle": "{product} integrations and supported systems",
+    "seoDescription": "See which channels and systems {product} can connect to, what moves between them, and which connections need a custom setup.",
+    "breadcrumb": "Integrations",
+    "eyebrow": "Connections",
+    "title": "Where {product} fits into your current work",
+    "lead": "This list separates available connections, custom setup and planned work. A platform logo is never treated as proof that every account can be connected automatically.",
+    "ledger": {
+      "eyebrow": "Verified connection list",
+      "title": "System, connection and data flow in one row",
+      "intro": "Final access and compatibility are confirmed before setup. Planned items are shown as planned."
+    },
+    "labels": {
+      "platform": "System",
+      "categories": "Categories",
+      "connection": "Connection",
+      "status": "Status",
+      "data": "What moves"
+    },
+    "platforms": {
+      "phone": "Phone",
+      "calendar": "Calendar",
+      "payments": "Payments",
+      "push-notifications": "Push notifications",
+      "camera": "Camera",
+      "email": "Email",
+      "documents": "Cloud documents",
+      "task-system": "Task system",
+      "maps": "Maps",
+      "vehicle-platform": "Vehicle platform",
+      "charging": "Charging and depot",
+      "telemetry": "Vehicle telemetry",
+      "website": "Website",
+      "analytics": "Analytics",
+      "forms": "Forms",
+      "domain": "Domain",
+      "public-app": "Public application",
+      "source-repository": "Source repository",
+      "database": "Database"
+    },
+    "status": {
+      "available": "Available",
+      "customSetup": "Custom setup",
+      "planned": "Planned"
+    },
+    "categories": {
+      "communication": "Communication",
+      "businessSystems": "Business systems",
+      "contentAndAdvertising": "Content and advertising",
+      "development": "Development",
+      "operations": "Operations"
+    },
+    "connections": {
+      "direct": "Direct connection",
+      "api": "API after access check",
+      "file": "Secure file exchange",
+      "custom": "Configured for your account",
+      "planned": "Pilot-dependent connection"
+    },
+    "flows": {
+      "calls": "Call status and approved call outcomes for {platform}.",
+      "callResults": "Completed-call results and cases requiring attention are sent to {platform}.",
+      "appointments": "Available times, confirmations and changes for {platform}.",
+      "customerRecords": "Only the customer fields approved for the workflow in {platform}.",
+      "paymentEvents": "Approved payment status and transaction references are exchanged with {platform}.",
+      "messages": "Incoming messages, approved replies and handoff status in {platform}.",
+      "websiteEvents": "Approved website changes and publication status for {platform}.",
+      "analyticsMetrics": "Selected visits, conversions and measured outcomes are read from {platform}.",
+      "domainSettings": "Only the approved domain and publication settings are changed in {platform}.",
+      "forms": "Form fields and the resulting business task from {platform}.",
+      "taskRecords": "Approved tasks, owners, due dates and completion status are exchanged with {platform}.",
+      "documents": "Selected source files and review status from {platform}.",
+      "accountingDrafts": "Review-ready draft rows prepared for {platform}.",
+      "applicationRelease": "Approved build and release information for {platform}.",
+      "notifications": "Approved notification content and delivery status in {platform}.",
+      "sourceReview": "Agreed source files, findings and verification status for {platform}.",
+      "campaignSignals": "Spend, enquiries and measured outcomes linked to {platform}.",
+      "contentPublishing": "Approved materials, schedule and publication status in {platform}.",
+      "fleetCommands": "Approved dispatch or depot tasks for {platform}.",
+      "routingData": "Pickup, destination and route information required for the trip is exchanged with {platform}.",
+      "depotSchedule": "Approved charging, cleaning and depot schedules are exchanged with {platform}.",
+      "telemetry": "Selected vehicle status and incident signals from {platform}."
+    },
+    "cta": {
+      "eyebrow": "Compatibility check",
+      "title": "Tell us which systems you already use",
+      "description": "aiNOW checks access, limits and the safest connection path before promising an integration.",
+      "label": "Check my systems"
+    }
+  },
+  "security": {
+    "seoTitle": "{product} security, approvals and data handling",
+    "seoDescription": "Understand how {product} access, actions, approvals, retention, deletion and human escalation are defined before launch.",
+    "breadcrumb": "Security",
+    "eyebrow": "Data and control",
+    "title": "You see what {product} may read and change",
+    "lead": "Before launch, aiNOW writes down the source access, allowed actions, approval boundary, retention rule and human handoff. Uncertain work does not become an invisible automatic decision.",
+    "labels": {
+      "control": "Control",
+      "owner": "Owner",
+      "evidence": "What proves it",
+      "incident": "Security contact"
+    },
+    "flow": {
+      "eyebrow": "Data flow",
+      "title": "Four visible stages",
+      "intro": "The exact systems and fields are project-specific; the control sequence stays the same.",
+      "s1Title": "Approved source",
+      "s1Description": "The product receives only the source and fields named in the scope.",
+      "s2Title": "Allowed action",
+      "s2Description": "It performs only the actions written into the operating boundary.",
+      "s3Title": "Approval or handoff",
+      "s3Description": "Important or uncertain cases wait for a person.",
+      "s4Title": "Recorded result",
+      "s4Description": "The business can see what happened and what needs attention."
+    },
+    "controls": {
+      "eyebrow": "Control ledger",
+      "title": "Six questions answered before launch",
+      "intro": "These controls are part of the project scope, not decorative security claims.",
+      "sourceAccess": {
+        "title": "Source access",
+        "description": "{product} receives only approved systems, files and fields.",
+        "owner": "Business and aiNOW",
+        "evidence": "Approved access list"
+      },
+      "actions": {
+        "title": "Allowed actions",
+        "description": "The product cannot silently expand beyond the written workflow.",
+        "owner": "Business",
+        "evidence": "Scope and action list"
+      },
+      "approval": {
+        "title": "Approval boundary",
+        "description": "Important changes and uncertain cases wait for the named person.",
+        "owner": "Business",
+        "evidence": "Approval rule"
+      },
+      "retention": {
+        "title": "Retention",
+        "description": "The project names what is stored and for how long.",
+        "owner": "Business and aiNOW",
+        "evidence": "Retention rule"
+      },
+      "deletion": {
+        "title": "Deletion",
+        "description": "Deletion requests have a named channel and confirmation step.",
+        "owner": "aiNOW",
+        "evidence": "Request record"
+      },
+      "escalation": {
+        "title": "Human escalation",
+        "description": "The workflow names who receives a case the product should not decide.",
+        "owner": "Business",
+        "evidence": "Handoff rule"
+      }
+    },
+    "limitations": {
+      "eyebrow": "Honest boundary",
+      "title": "What is not assumed",
+      "item1": "aiNOW does not expand access to your data or permission to act without prior written agreement.",
+      "item2": "A public landing page does not collect or process your operational business data.",
+      "item3": "Exact providers, retention periods and access rights are confirmed in the written project scope."
+    },
+    "cta": {
+      "eyebrow": "Security review",
+      "title": "Ask about your actual data flow",
+      "description": "aiNOW will map the sources, actions and approval points for your specific process.",
+      "label": "Discuss my data flow"
+    }
+  },
+  "contact": {
+    "seoTitle": "{product} project consultation and contact",
+    "seoDescription": "Contact aiNOW, describe the task and learn how {product} can be fitted to your real business workflow.",
+    "eyebrow": "Contact",
+    "responseLabel": "Response",
+    "responseValue": "Within one working day",
+    "privacyNote": "Your number is used only to respond to this request.",
+    "privacyLink": "Privacy policy",
+    "phoneInvalid": "Enter a valid phone number.",
+    "formTitle": "Leave one number",
+    "formLead": "No long questionnaire. We will clarify the task in the call.",
+    "directTitle": "Prefer to contact aiNOW directly?"
+  },
+  "privacy": {
+    "seoTitle": "{product} privacy policy",
+    "seoDescription": "How AI NOW LLC handles contact requests and product-project data submitted through {domain}.",
+    "breadcrumb": "Privacy",
+    "eyebrow": "Legal",
+    "title": "Privacy policy",
+    "lead": "This page explains what the public {domain} website receives and how product-project data is handled.",
+    "operatorLabel": "Controller",
+    "domainLabel": "Website",
+    "effectiveLabel": "Effective",
+    "updatedLabel": "Updated",
+    "contentsLabel": "Contents",
+    "effectiveDate": "2026-07-26",
+    "updatedDate": "2026-07-26",
+    "sections": {
+      "controllerTitle": "Who controls the data",
+      "controllerBody": "AI NOW LLC (Georgia, ID 406549070) operates this product website. Privacy questions and rights requests can be sent to CONTACT@aiNOW.GE.",
+      "publicSiteTitle": "What this public website receives",
+      "publicSiteBody": "If you submit the contact form, the website receives the information entered in that form, primarily your phone number. Hosting infrastructure may also create standard security logs. This landing page does not collect the operational data used inside a future product project.",
+      "purposeTitle": "Why the information is used",
+      "purposeBody": "The contact information is used to answer your request, understand the requested service, protect the website and meet legal obligations. It is not sold.",
+      "projectTitle": "Product-project data",
+      "projectBody": "If a project begins, the exact sources, fields, providers, access rights, retention, deletion and human approval rules are written into the proposal, contract or data-processing terms before operational data is connected.",
+      "sharingTitle": "Providers and disclosure",
+      "sharingBody": "Information may be handled by hosting, communication or technical providers needed to answer the request or operate the agreed service. AI NOW LLC may also disclose information when Georgian law requires it. Product-specific providers are confirmed in the project scope.",
+      "retentionTitle": "Retention and deletion",
+      "retentionBody": "Contact and project records are kept only for the business relationship, security and legal periods that apply to them. You can request access, correction or deletion by writing to CONTACT@aiNOW.GE. A legal retention duty may limit deletion.",
+      "rightsTitle": "Your rights and contact",
+      "rightsBody": "You may ask what personal data AI NOW LLC holds about you, request correction or deletion, object where applicable, or contact the Personal Data Protection Service of Georgia. Send the request to CONTACT@aiNOW.GE.",
+      "changesTitle": "Changes to this policy",
+      "changesBody": "Material changes are published on this page with a new updated date. The applicable project documents remain part of any active contract."
+    }
+  },
+  "terms": {
+    "seoTitle": "{product} website terms",
+    "seoDescription": "Terms for using {domain} and requesting a scoped {product} service from AI NOW LLC.",
+    "breadcrumb": "Terms",
+    "eyebrow": "Legal",
+    "title": "Website and service terms",
+    "lead": "These terms cover this public product website and the first service inquiry. A signed proposal or contract controls the actual project.",
+    "operatorLabel": "Provider",
+    "domainLabel": "Website",
+    "effectiveLabel": "Effective",
+    "updatedLabel": "Updated",
+    "contentsLabel": "Contents",
+    "effectiveDate": "2026-07-26",
+    "updatedDate": "2026-07-26",
+    "sections": {
+      "operatorTitle": "Provider",
+      "operatorBody": "The website and service inquiry are provided by AI NOW LLC (Georgia, ID 406549070), 3 Tornike Eristavi St., Tbilisi. Contact: CONTACT@aiNOW.GE, +995 599 70 15 52.",
+      "websiteTitle": "Use of this website",
+      "websiteBody": "The website explains one aiNOW product and lets you submit an inquiry. You may not attack the website, attempt unauthorised access, submit unlawful material or reuse its content as your own service.",
+      "inquiryTitle": "An inquiry is not a contract",
+      "inquiryBody": "Submitting the form starts a discussion. It does not create a binding order, fixed price, delivery date or service obligation.",
+      "scopeTitle": "Project scope and price",
+      "scopeBody": "Deliverables, integrations, access, approval points, exclusions, timeline, price, payment, ownership, support and termination are confirmed in a written proposal or separate contract before work starts.",
+      "demoTitle": "Demonstrations and results",
+      "demoBody": "Illustrative screens and numbers are examples unless clearly identified as measured client data. AI NOW LLC does not guarantee a business result controlled by customers, platforms, the market or third parties.",
+      "thirdPartyTitle": "Third-party systems",
+      "thirdPartyBody": "External platforms, stores, advertising networks, hosting and other providers have their own terms and may change access, pricing or approval decisions. Their fees are separate unless the project documents say otherwise.",
+      "propertyTitle": "Intellectual property",
+      "propertyBody": "The website design, copy and code belong to AI NOW LLC or their licensors. Ownership and handover of project deliverables are defined in the written project documents.",
+      "liabilityTitle": "Responsibility and governing law",
+      "liabilityBody": "The website is provided for information and inquiry. Project responsibility is governed by the signed documents and mandatory Georgian law. Disputes are first addressed through negotiation and otherwise under Georgian law.",
+      "changesTitle": "Changes and contact",
+      "changesBody": "Updated website terms are published here with a new date. Questions can be sent to CONTACT@aiNOW.GE."
+    }
+  }
+}

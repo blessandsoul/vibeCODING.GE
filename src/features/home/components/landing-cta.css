@@ -32,3 +32,47 @@
 @media (prefers-reduced-motion: reduce) {
   .magnet { transition: none !important; }
 }
+
+.dark #cta {
+  background: #101218;
+}
+
+.dark #cta > [data-family-shell] {
+  border-color: #2a2e39 !important;
+  background:
+    radial-gradient(circle at 86% 16%, color-mix(in srgb, var(--brand) 18%, transparent), transparent 42%),
+    #151820 !important;
+}
+
+.dark #cta h2 {
+  color: #f4f4f5;
+}
+
+.dark #cta p,
+.dark #cta label {
+  color: #b8bdc9 !important;
+}
+
+.dark #cta form {
+  border-color: #2a2e39 !important;
+  background: #181b23 !important;
+}
+
+.dark #cta input {
+  border-color: #343946 !important;
+  background: #101218 !important;
+  color: #f4f4f5 !important;
+}
+
+.dark #cta input::placeholder {
+  color: #7f8794;
+}
+
+.dark #cta button[type='submit'] {
+  background: var(--brand-cta);
+  color: var(--primary-foreground);
+}
+
+.dark #cta a {
+  color: #d4d7de;
+}

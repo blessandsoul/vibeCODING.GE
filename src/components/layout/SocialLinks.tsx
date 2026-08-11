@@ -36,7 +36,7 @@ export function SocialLinks({
 }) {
   const iconStyle: CSSProperties = { width: size, height: size };
   return (
-    <div className={cn('flex items-center gap-3', className)}>
+    <div className={cn('flex flex-wrap items-center gap-3', className)}>
       {SOCIALS.map(({ label, href, Icon }) =>
         round ? (
           <a

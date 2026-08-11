@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useEffect, useRef, useState, type CSSProperties } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { MagneticButton } from '@/components/common/MagneticButton';
 import { Ico } from '@/components/common/Ico';
@@ -13,75 +13,6 @@ import './landing-hero.css';
 /* Hero, ported 1:1 from ainow_handoff/index.html (#hero section).
    Copy is i18n-ized via the home.hero namespace. The typewriter word list and
    its prefill are a single comma-joined string per locale. */
-
-/* Hero-lead text style (stable reference so the memoized SplitText below never
-   re-renders and the imperative split is never clobbered). */
-const HERO_LEAD_STYLE: CSSProperties = {
-  fontFamily: "var(--font-noto-georgian), 'Noto Sans Georgian', sans-serif",
-  fontWeight: 300,
-  fontStyle: 'normal',
-  color: '#0a0a0a',
-  background: 'none',
-  WebkitTextFillColor: '#0a0a0a',
-  display: 'block',
-  letterSpacing: '-0.01em',
-};
-
-/* Letter-by-letter rise reveal, ports the handoff's split() verbatim
-   (ainow_handoff/index.html, script #1). SSR renders the plain text; on mount
-   we split it into .split-char spans via createElement, exactly like the
-   handoff's DOMContentLoaded JS, so the CSS `split-rise` fires in-view. */
-const SplitText = memo(function SplitText({
-  text,
-  className,
-}: {
-  text: string;
-  className?: string;
-}) {
-  const ref = useRef<HTMLSpanElement>(null);
-  useEffect(() => {
-    const root = ref.current;
-    if (!root || root.querySelector('.split-char')) return; // already split
-
-    const split = (node: ChildNode) => {
-      if (node.nodeType === 3) {
-        const value = node.nodeValue ?? '';
-        const frag = document.createDocumentFragment();
-        const tokens = value.split(/(\s+)/);
-        for (const tok of tokens) {
-          if (!tok) continue;
-          if (/^\s+$/.test(tok)) {
-            frag.appendChild(document.createTextNode(' '));
-          } else {
-            const wordSpan = document.createElement('span');
-            wordSpan.className = 'split-word';
-            for (const ch of tok) {
-              const s = document.createElement('span');
-              s.className = 'split-char';
-              s.textContent = ch;
-              wordSpan.appendChild(s);
-            }
-            frag.appendChild(wordSpan);
-          }
-        }
-        node.parentNode?.replaceChild(frag, node);
-      } else if (node.nodeType === 1 && (node as Element).tagName !== 'BR') {
-        Array.from(node.childNodes).forEach(split);
-      }
-    };
-
-    Array.from(root.childNodes).forEach(split);
-    root.querySelectorAll<HTMLElement>('.split-char').forEach((c, i) => {
-      c.style.animationDelay = i * 22 + 'ms';
-    });
-  }, [text]);
-
-  return (
-    <span ref={ref} className={className} style={HERO_LEAD_STYLE}>
-      {text}
-    </span>
-  );
-});
 
 function useReducedMotionPreference(): boolean {
   const [reduced, setReduced] = useState(false);
@@ -102,6 +33,11 @@ export function LandingHero() {
   const t = useTranslations('product.hero');
   const prefersReducedMotion = useReducedMotionPreference();
   const typewriterPrefill = t('typewriterPrefill');
+  const typewriterWords = t('typewriterWords');
+  const typewriterWordList = typewriterWords
+    .split(/[,、،]/)
+    .map((word) => word.trim())
+    .filter(Boolean);
   const typewriterRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
@@ -204,7 +140,7 @@ export function LandingHero() {
       observer.disconnect();
       document.removeEventListener('visibilitychange', syncPlayback);
     };
-  }, [prefersReducedMotion, typewriterPrefill]);
+  }, [prefersReducedMotion, typewriterPrefill, typewriterWords]);
 
   return (
     <section
@@ -234,11 +170,11 @@ export function LandingHero() {
           brand and no headline anywhere on screen: the product before the reader knew whose it was.
           At lg the explicit col/row starts fold A and C back into one column and let B span both. */}
       <div data-family-shell="true" className="hero-family-shell relative z-10 mx-auto min-w-0">
-        <div className="grid min-w-0 gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-x-16 lg:gap-y-6">
+        <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-x-16 lg:gap-y-6">
           {/* A. audience and the pain. Product identity stays in the navigation;
               the value proposition now owns the first hero line. */}
-          <div className="order-1 min-w-0 text-center lg:order-0 lg:col-start-1 lg:row-start-1 lg:self-start lg:text-left">
-            <div className="hero-product-wordmark wordmark-3d" aria-label={`${SITE.wordmark.prefix}${SITE.wordmark.mark}`}>
+          <div className="hero-copy-intro order-1 min-w-0 text-center lg:order-0 lg:col-start-1 lg:row-start-1 lg:self-start lg:text-left">
+            <div className="hero-product-wordmark wordmark-3d">
               <span className="wm-prefix">{SITE.wordmark.prefix}</span>
               <span className="wm-mark">{SITE.wordmark.mark}</span>
               <span className="wm-accent" aria-hidden="true" />
@@ -250,22 +186,24 @@ export function LandingHero() {
               {t('audience')}
             </p>
 
-            {/* THE PAIN, not the mechanism. */}
+            {/* Keep the H1 static and indexable. The changing examples are
+                decorative supporting copy, outside the heading. */}
             <h1
-              data-split-text="1"
-              className="mt-3 text-balance leading-[1.12] tracking-tight text-[clamp(1.85rem,3.6vw,3.1rem)] text-neutral-900"
+              className="mt-3 text-balance leading-[1.12] tracking-tight text-neutral-900"
             >
               <span className="hero-role-line">
-                <span>{t('owner')}</span>
-                <span className="hero-role-ai" aria-label="AI">ai</span>
-                <span>{t('role')}</span>
+                <span>{t('owner')} </span>
+                <span className="hero-role-ai">ai</span>
+                <span> {t('role')}</span>
               </span>
-              <SplitText className="hero-lead" text={t('lead')} />
-              {' '}
+            </h1>
+
+            <p className="hero-action-line">
+              <span className="hero-lead">{t('lead')}</span>
               <span
                 ref={typewriterRef}
                 className="typewriter"
-                data-words={t('typewriterWords')}
+                data-words={typewriterWords}
                 data-prefill={typewriterPrefill}
                 data-demo-state="idle"
                 aria-live="off"
@@ -276,10 +214,17 @@ export function LandingHero() {
                   WebkitTextFillColor: 'var(--brand-display, var(--brand-ink, var(--brand)))',
                 }}
               >
-                <span className="tw-text">{typewriterPrefill}</span>
+                <span className="tw-word-slot">
+                  {typewriterWordList.map((word, index) => (
+                    <span key={`${word}-${index}`} className="tw-reserve" aria-hidden="true">
+                      {word}
+                    </span>
+                  ))}
+                  <span className="tw-text">{typewriterPrefill}</span>
+                </span>
                 <span className="tw-caret" aria-hidden="true">|</span>
               </span>
-            </h1>
+            </p>
           </div>
 
           {/* B. THE PRODUCT, in one frame.
@@ -294,7 +239,7 @@ export function LandingHero() {
           </div>
 
           {/* C. how it works, the one button, the promise, the family */}
-          <div className="order-3 min-w-0 text-center lg:order-0 lg:col-start-1 lg:row-start-2 lg:text-left">
+          <div className="hero-copy-detail order-3 min-w-0 text-center lg:order-0 lg:col-start-1 lg:row-start-2 lg:text-left">
             <p className="mx-auto max-w-xl text-pretty text-[16px] leading-relaxed text-[#525252] lg:mx-0 md:text-[17px]">
               {t('sub')}
             </p>

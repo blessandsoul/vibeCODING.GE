@@ -1,131 +1,161 @@
-import type { Metadata } from "next";
-import { useTranslations } from "next-intl";
-import { getTranslations, setRequestLocale } from "next-intl/server";
-import { SectionContainer } from "@/components/layout/SectionContainer";
-import { ContactForm } from "@/features/contact/components/ContactForm";
-import { CONTACT_EMAIL, CONTACT_EMAIL_SECONDARY, CONTACT_PHONE, CONTACT_PHONE_DISPLAY } from "@/lib/constants/app.constants";
-import { buildAlternates } from "@/i18n/seo-locales";
-import { FadeIn } from "@/components/common/FadeIn";
+import type { Metadata } from 'next';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 
-type Props = {
+import { Ico } from '@/components/common/Ico';
+import { SITE } from '@/config/site';
+import { ContactForm } from '@/features/contact/components/ContactForm';
+import { ProductPageJsonLd } from '@/features/product-pages/components/ProductPageJsonLd';
+import { ProductPageSection } from '@/features/product-pages/components/ProductPageSection';
+import { ProductPageShell } from '@/features/product-pages/components/ProductPageShell';
+import { SecondaryPageHero } from '@/features/product-pages/components/SecondaryPageHero';
+import {
+  buildProductPageGraph,
+  buildProductPageMetadata,
+} from '@/features/product-pages/seo';
+import { PRODUCT_PAGE_LOCALES, type ProductPageLocale } from '@/features/product-pages/types';
+import { Link } from '@/i18n/navigation';
+import {
+  CONTACT_EMAIL,
+  CONTACT_EMAIL_SECONDARY,
+  CONTACT_PHONE,
+  CONTACT_PHONE_DISPLAY,
+} from '@/lib/constants/app.constants';
+
+import './contact-page.css';
+
+interface Props {
   params: Promise<{ locale: string }>;
-};
+}
+
+function asProductPageLocale(locale: string): ProductPageLocale {
+  return PRODUCT_PAGE_LOCALES.includes(locale as ProductPageLocale)
+    ? (locale as ProductPageLocale)
+    : SITE.defaultLocale;
+}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "seo.contact" });
-
-  return {
-    title: t("title"),
-    description: t("description"),
-    // Was a hand-rolled canonical + hreflang map with the domain typed out eight times.
-    // buildAlternates already owns that shape and reads the domain from src/config/site.ts.
-    alternates: buildAlternates("/contact", locale),
-    openGraph: {
-      title: t("title"),
-      description: t("description"),
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: t("title"),
-      description: t("description"),
-    },
-  };
+  return buildProductPageMetadata({
+    locale: asProductPageLocale(locale),
+    namespace: 'productPages.contact',
+    path: '/contact',
+  });
 }
 
 export default async function ContactPage({ params }: Props) {
   const { locale } = await params;
-  // Keeps the page static (see generateStaticParams in the layout).
-  setRequestLocale(locale);
-
-  return <ContactPageBody />;
-}
-
-function ContactPageBody() {
-  const t = useTranslations("contact");
+  const safeLocale = asProductPageLocale(locale);
+  setRequestLocale(safeLocale);
+  const t = await getTranslations({ locale: safeLocale, namespace: 'contact' });
+  const pageT = await getTranslations({
+    locale: safeLocale,
+    namespace: 'productPages.contact',
+  });
+  const title = t('title');
+  const lead = t('subtitle');
 
   return (
-    <div className="py-20">
-      <SectionContainer>
-        <div className="mx-auto max-w-md">
-          {/* Header */}
-          <FadeIn>
-            <div className="text-center">
-              <h1 className="font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-neutral-900 md:text-5xl">
-                {t("title")}
-              </h1>
-              <p className="mt-4 text-lg leading-relaxed text-[#525252]">
-                {t("subtitle")}
-              </p>
-            </div>
-          </FadeIn>
+    <>
+      <ProductPageJsonLd
+        graph={buildProductPageGraph({
+          locale: safeLocale,
+          path: '/contact',
+          name: title,
+          description: lead,
+        })}
+      />
+      <ProductPageShell className="contact-page" endcap={null}>
+        <SecondaryPageHero
+          breadcrumbLabel={title}
+          eyebrow={pageT('eyebrow')}
+          title={title}
+          lead={lead}
+          facts={[
+            {
+              label: pageT('responseLabel'),
+              value: pageT('responseValue'),
+            },
+            {
+              label: t('phoneLabel'),
+              value: CONTACT_PHONE_DISPLAY,
+            },
+            {
+              label: t('emailLabel'),
+              value: CONTACT_EMAIL.toLowerCase(),
+            },
+          ]}
+        />
 
-          {/* Form */}
-          <FadeIn delay={0.1}>
-            <div className="mt-12 rounded-xl border border-[#e5e5e5] bg-white p-6 shadow-sm md:p-8">
+        <ProductPageSection
+          id="contact-request"
+          eyebrow={pageT('eyebrow')}
+          title={pageT('formTitle')}
+          intro={pageT('formLead')}
+        >
+          <div className="contact-page__grid">
+            <div className="contact-page__facts">
+              <h3>{pageT('directTitle')}</h3>
+              <ContactFact
+                icon="solar:phone-calling-rounded-bold-duotone"
+                label={t('phoneLabel')}
+                href={`tel:${CONTACT_PHONE}`}
+                value={CONTACT_PHONE_DISPLAY}
+                direction="ltr"
+              />
+              <ContactFact
+                icon="solar:letter-bold-duotone"
+                label={t('emailLabel')}
+                href={`mailto:${CONTACT_EMAIL}`}
+                value={CONTACT_EMAIL.toLowerCase()}
+              />
+              <ContactFact
+                icon="solar:letter-bold-duotone"
+                label={t('emailLabel')}
+                href={`mailto:${CONTACT_EMAIL_SECONDARY}`}
+                value={CONTACT_EMAIL_SECONDARY}
+              />
+              <div className="contact-page__address">
+                <Ico name="solar:map-point-bold-duotone" aria-hidden="true" />
+                <div>
+                  <span>{t('officeLabel')}</span>
+                  <strong>{t('office')}</strong>
+                </div>
+              </div>
+              <Link href="/privacy" className="contact-page__privacy-link">
+                {pageT('privacyLink')}
+              </Link>
+            </div>
+
+            <div className="contact-page__form">
               <ContactForm />
             </div>
-          </FadeIn>
-
-          {/* Contact Info */}
-          <div className="mt-8 grid gap-6 text-center md:grid-cols-2">
-            <FadeIn delay={0.2}>
-              <div className="rounded-xl border border-[#e5e5e5] bg-white p-6 shadow-sm">
-                <p className="text-sm font-medium text-neutral-900">
-                  {t("phoneLabel")}
-                </p>
-                <a
-                  href={`tel:${CONTACT_PHONE}`}
-                  dir="ltr"
-                  className="mt-1 block text-sm text-[var(--brand)] transition-colors duration-150 hover:underline"
-                >
-                  {CONTACT_PHONE_DISPLAY}
-                </a>
-              </div>
-            </FadeIn>
-            <FadeIn delay={0.28}>
-              <div className="rounded-xl border border-[#e5e5e5] bg-white p-6 shadow-sm">
-                <p className="text-sm font-medium text-neutral-900">
-                  {t("emailLabel")}
-                </p>
-                <a
-                  href={`mailto:${CONTACT_EMAIL}`}
-                  className="mt-1 block text-xs text-[var(--brand)] transition-colors duration-150 hover:underline sm:text-sm"
-                >
-                  {CONTACT_EMAIL}
-                </a>
-                <a
-                  href={`mailto:${CONTACT_EMAIL_SECONDARY}`}
-                  className="mt-1 block text-xs text-[var(--brand)] transition-colors duration-150 hover:underline sm:text-sm"
-                >
-                  {CONTACT_EMAIL_SECONDARY}
-                </a>
-              </div>
-            </FadeIn>
-            <FadeIn delay={0.36}>
-              <div className="rounded-xl border border-[#e5e5e5] bg-white p-6 shadow-sm">
-                <p className="text-sm font-medium text-neutral-900">
-                  {t("officeLabel")}
-                </p>
-                <p className="mt-1 text-sm text-[#525252]">
-                  {t("office")}
-                </p>
-              </div>
-            </FadeIn>
-            <FadeIn delay={0.44}>
-              <div className="rounded-xl border border-[#e5e5e5] bg-white p-6 shadow-sm">
-                <p className="text-sm font-medium text-neutral-900">
-                  {t("legalLabel")}
-                </p>
-                <p className="mt-1 text-sm text-[#525252]">
-                  {t("legal")}
-                </p>
-              </div>
-            </FadeIn>
           </div>
-        </div>
-      </SectionContainer>
-    </div>
+        </ProductPageSection>
+      </ProductPageShell>
+    </>
   );
 }
 
+function ContactFact({
+  icon,
+  label,
+  href,
+  value,
+  direction,
+}: {
+  icon: string;
+  label: string;
+  href: string;
+  value: string;
+  direction?: 'ltr';
+}): React.ReactElement {
+  return (
+    <a href={href} className="contact-page__fact" dir={direction}>
+      <Ico name={icon} aria-hidden="true" />
+      <span>
+        <small>{label}</small>
+        <strong>{value}</strong>
+      </span>
+    </a>
+  );
+}

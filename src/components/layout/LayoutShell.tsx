@@ -4,27 +4,34 @@ import { usePathname } from "@/i18n/navigation";
 import { LandingNav } from "@/features/home/components/LandingNav";
 import { LandingFooter } from "@/features/home/components/LandingFooter";
 import { SmoothScroll } from "@/components/SmoothScroll";
+import { findPublicRoute } from "@/features/product-pages/routes";
 
 interface LayoutShellProps {
   children: React.ReactNode;
 }
 
 export const LayoutShell = ({ children }: LayoutShellProps) => {
-  // LandingNav is position:fixed and floats over the content, so an inner page needs top
-  // padding to clear it. The homepage pulls its hero flush under the nav via -mt-16 and must
-  // stay flush, or a white gap opens above the hero. usePathname() from next-intl returns the
-  // locale-stripped path, so "/" matches on every locale.
-  //
-  // The old "/start" and "/successful-payment" branches came from ainow.ge and named routes
-  // that do not exist on a product landing.
+  // usePathname() is locale-stripped. Registered secondary pages own the same
+  // 118px/96px hero clearance as the homepage and must not receive a second
+  // generic padding layer. Unknown legacy routes retain the safe header offset.
   const pathname = usePathname();
-  const isFlushHero = pathname === "/";
+  const publicRoute = findPublicRoute(pathname);
+  const isRegisteredSecondary =
+    publicRoute !== undefined && publicRoute.key !== 'home';
+  const needsLegacyHeaderClearance =
+    pathname !== "/" && !isRegisteredSecondary;
 
   return (
     <div className="flex min-h-dvh flex-col">
       <SmoothScroll />
       <LandingNav />
-      <main className={isFlushHero ? "flex-1" : "flex-1 pt-24"}>{children}</main>
+      <main
+        data-public-route-key={publicRoute?.key}
+        data-secondary-route={isRegisteredSecondary || undefined}
+        className={needsLegacyHeaderClearance ? "flex-1 pt-24" : "flex-1"}
+      >
+        {children}
+      </main>
       <LandingFooter />
     </div>
   );

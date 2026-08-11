@@ -1,0 +1,183 @@
+.integration-ledger {
+  border-block: 1px solid var(--product-page-line);
+}
+
+.integration-ledger__head,
+.integration-ledger__row {
+  display: grid;
+  grid-template-columns: minmax(180px, 1.4fr) minmax(150px, 1fr) minmax(130px, 0.8fr) minmax(240px, 2fr);
+  gap: 22px;
+}
+
+.integration-ledger__head {
+  padding: 12px 0;
+  color: var(--product-page-subtle);
+  font-size: 10px;
+  font-weight: 720;
+  text-transform: uppercase;
+}
+
+.integration-ledger__group {
+  border-top: 1px solid var(--product-page-line);
+}
+
+.integration-ledger__group > h3 {
+  margin: 0;
+  padding: 18px 0 8px;
+  color: var(--product-page-accent-ink);
+  font-family: var(--font-space-mono), monospace;
+  font-size: 11px;
+  font-weight: 720;
+  text-transform: uppercase;
+}
+
+.integration-ledger__row {
+  align-items: center;
+  min-height: 82px;
+  padding: 14px 0;
+  border-top: 1px solid var(--product-page-line);
+}
+
+.integration-ledger__platform {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+}
+
+.integration-ledger__platform > span {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 1px solid var(--product-page-line);
+  border-radius: var(--product-page-control-radius);
+  background: var(--product-page-surface);
+  color: var(--product-page-accent-ink);
+}
+
+.integration-ledger__platform svg {
+  width: 20px;
+  height: 20px;
+}
+
+.integration-ledger__platform strong {
+  min-width: 0;
+  color: var(--product-page-text);
+  font-size: 14px;
+}
+
+.integration-ledger__row p {
+  margin: 0;
+  color: var(--product-page-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.integration-ledger__cell,
+.integration-ledger__status-cell {
+  min-width: 0;
+}
+
+.integration-ledger__mobile-label {
+  display: none;
+}
+
+.integration-ledger__status-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.integration-ledger__status {
+  display: inline-flex;
+  min-height: 30px;
+  align-items: center;
+  gap: 8px;
+  justify-self: start;
+  padding: 5px 9px;
+  border: 1px solid var(--product-page-line);
+  border-radius: 999px;
+  color: var(--product-page-muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.integration-ledger__status i {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--product-page-subtle);
+}
+
+[data-integration-status="available"] .integration-ledger__status {
+  border-color: #b7e3c9;
+  background: #f0faf4;
+  color: #11653c;
+}
+
+[data-integration-status="available"] .integration-ledger__status i {
+  background: #16834c;
+}
+
+[data-integration-status="customSetup"] .integration-ledger__status {
+  border-color: color-mix(in srgb, var(--brand) 28%, var(--product-page-line));
+  background: color-mix(in srgb, var(--brand) 7%, var(--product-page-surface));
+  color: var(--product-page-accent-ink);
+}
+
+[data-integration-status="customSetup"] .integration-ledger__status i {
+  background: var(--product-page-accent-ink);
+}
+
+[data-integration-status="planned"] {
+  background: var(--product-page-surface-muted);
+}
+
+@media (max-width: 840px) {
+  .integration-ledger__head {
+    display: none;
+  }
+
+  .integration-ledger__row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px 16px;
+    padding-block: 18px;
+  }
+
+  .integration-ledger__row > p:first-of-type {
+    grid-column: 1;
+  }
+
+  .integration-ledger__status-cell {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .integration-ledger__row > p:last-child {
+    grid-column: 1 / -1;
+    padding-top: 10px;
+    border-top: 1px solid var(--product-page-line);
+  }
+
+  .integration-ledger__mobile-label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--product-page-subtle);
+    font-size: 10px;
+    font-weight: 720;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+}
+
+@media (max-width: 480px) {
+  .integration-ledger__row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .integration-ledger__status-cell {
+    grid-column: 1;
+    grid-row: auto;
+  }
+}

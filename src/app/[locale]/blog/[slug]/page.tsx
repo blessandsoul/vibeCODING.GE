@@ -6,6 +6,7 @@ import { setRequestLocale } from 'next-intl/server';
 import { SITE } from '@/config/site';
 import { BlogArticle } from '@/features/blog/components/BlogArticle';
 import { extractFaq, getAvailableLocales, getDefaultAvailableLocale, getPost, getPostSlugs, getRelatedPosts } from '@/features/blog/lib/blog';
+import { publishedRoute } from '@/features/product-pages/routes';
 import { localeUrl } from '@/i18n/seo-locales';
 
 type Props = { params: Promise<{ locale: string; slug: string }> };
@@ -13,6 +14,7 @@ type Props = { params: Promise<{ locale: string; slug: string }> };
 export const dynamicParams = true;
 
 export function generateStaticParams() {
+  if (!publishedRoute('blog')) return [];
   return getPostSlugs().flatMap((slug) => getAvailableLocales(slug).map((locale) => ({ locale, slug })));
 }
 
@@ -26,6 +28,7 @@ function articleAlternates(slug: string, locale: string) {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  if (!publishedRoute('blog')) notFound();
   const { locale, slug } = await params;
   const post = getPost(slug, locale);
   if (!post) return { title: 'Not found', robots: { index: false, follow: false } };
@@ -54,6 +57,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function ArticlePage({ params }: Props) {
+  if (!publishedRoute('blog')) notFound();
   const { locale, slug } = await params;
   setRequestLocale(locale);
   const post = getPost(slug, locale);

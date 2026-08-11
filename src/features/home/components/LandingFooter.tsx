@@ -8,7 +8,11 @@ import { SITE } from '@/config/site';
 import { FAMILY } from '@/config/family';
 import { MagneticButton } from '@/components/common/MagneticButton';
 import { SocialLinks } from '@/components/layout/SocialLinks';
-import { Link } from '@/i18n/navigation';
+import { Link, usePathname } from '@/i18n/navigation';
+import {
+  PUBLIC_ROUTES,
+  publishedRoute,
+} from '@/features/product-pages/routes';
 import { FooterLanguageSwitcher } from './FooterLanguageSwitcher';
 import { LandingThemeToggle } from './LandingThemeToggle';
 import './landing-footer.css';
@@ -31,11 +35,74 @@ import './landing-footer.css';
    same component renders pink on aiCONTENT and cyan on aiWEB with no edits.
    ========================================================================= */
 
+const FOOTER_ROUTE_LABELS = {
+  ka: {
+    pricing: 'ფასები',
+    blog: 'ბლოგი',
+    integrations: 'ინტეგრაციები',
+    security: 'უსაფრთხოება',
+    solutions: 'გადაწყვეტილებები',
+    privacy: 'კონფიდენციალურობა',
+    terms: 'პირობები',
+    cookies: 'Cookie-ფაილები',
+  },
+  en: {
+    pricing: 'Pricing',
+    blog: 'Blog',
+    integrations: 'Integrations',
+    security: 'Security',
+    solutions: 'Solutions',
+    privacy: 'Privacy',
+    terms: 'Terms',
+    cookies: 'Cookies',
+  },
+  ru: {
+    pricing: 'Цены',
+    blog: 'Блог',
+    integrations: 'Интеграции',
+    security: 'Безопасность',
+    solutions: 'Решения',
+    privacy: 'Конфиденциальность',
+    terms: 'Условия',
+    cookies: 'Cookie-файлы',
+  },
+} as const;
+
 export function LandingFooter(): React.ReactElement {
   const t = useTranslations('landingFooter');
   const locale = useLocale();
+  const pathname = usePathname();
+  const isHome = pathname === '/';
   const year = new Date().getFullYear();
-  const blogLabel = locale === 'ka' ? 'ბლოგი' : locale === 'ru' ? 'Блог' : 'Blog';
+  const labels =
+    FOOTER_ROUTE_LABELS[locale as keyof typeof FOOTER_ROUTE_LABELS] ??
+    FOOTER_ROUTE_LABELS.en;
+  const sectionHref = (id: string) => (isHome ? `#${id}` : `/#${id}`);
+  const contactRoute = publishedRoute('contact');
+  const blogRoute = publishedRoute('blog');
+  const companyRoutes = [
+    ...(
+      [
+        'pricing',
+        'integrations',
+        'security',
+        'solutions',
+        'privacy',
+        'terms',
+        'cookies',
+      ] as const
+    ).flatMap((key) => {
+      const route = publishedRoute(key);
+      return route ? [{ key, path: route.path, label: labels[key] }] : [];
+    }),
+    ...(blogRoute
+      ? [{ key: 'blog' as const, path: blogRoute.path, label: labels.blog }]
+      : []),
+  ];
+  const registryRoutePaths = new Set(PUBLIC_ROUTES.map((route) => route.path));
+  const publishedCompanyRoutes = companyRoutes.filter((route) =>
+    registryRoutePaths.has(route.path),
+  );
 
   // A site never links to itself, and a landing that has not shipped yet stays out.
   const family = FAMILY.filter((m) => m.live && m.domain !== SITE.domain);
@@ -81,11 +148,25 @@ export function LandingFooter(): React.ReactElement {
             {/* Link columns */}
             <div className="mt-10 grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 lg:mt-16">
               <FooterColumn title={t('companyHeading')}>
-                <FooterRouteLink href="/contact">{t('contact')}</FooterRouteLink>
-                <FooterRouteLink href="/blog">{blogLabel}</FooterRouteLink>
-                <FooterAnchorLink href="#dashboard">{t('sectionShowcase')}</FooterAnchorLink>
-                <FooterAnchorLink href="#cases">{t('sectionWork')}</FooterAnchorLink>
-                <FooterAnchorLink href="#faq">{t('sectionFaq')}</FooterAnchorLink>
+                {contactRoute ? (
+                  <FooterRouteLink href={contactRoute.path}>
+                    {t('contact')}
+                  </FooterRouteLink>
+                ) : null}
+                {publishedCompanyRoutes.map((route) => (
+                  <FooterRouteLink key={route.key} href={route.path}>
+                    {route.label}
+                  </FooterRouteLink>
+                ))}
+                <FooterAnchorLink href={sectionHref('dashboard')}>
+                  {t('sectionShowcase')}
+                </FooterAnchorLink>
+                <FooterAnchorLink href={sectionHref('cases')}>
+                  {t('sectionWork')}
+                </FooterAnchorLink>
+                <FooterAnchorLink href={sectionHref('faq')}>
+                  {t('sectionFaq')}
+                </FooterAnchorLink>
               </FooterColumn>
 
               <div>
@@ -116,13 +197,13 @@ export function LandingFooter(): React.ReactElement {
         {/* GIANT BRAND CTA, scrolls to the #cta lead form */}
         <div className="mt-12 sm:mt-20 md:mt-24">
           <MagneticButton className="block w-full">
-            <a
-              href="#cta"
+            <Link
+              href={sectionHref('cta')}
               className="flex min-h-[100px] w-full items-center justify-center whitespace-normal rounded-full px-6 py-5 text-center text-sm font-semibold uppercase leading-5 tracking-[0.02em] text-[var(--primary-foreground)] [transition:transform_.15s_cubic-bezier(.23,1,.32,1)] active:scale-[0.96] md:min-h-[120px] md:text-base 2xl:min-h-[140px] lg:whitespace-nowrap"
               style={{ background: 'linear-gradient(135deg, var(--brand), var(--accent))' }}
             >
               {t('ctaHuge')}
-            </a>
+            </Link>
           </MagneticButton>
         </div>
       </div>
@@ -191,14 +272,14 @@ function FooterRouteLink({ href, children }: { href: string; children: React.Rea
   );
 }
 
-/* In-page section anchor. A plain <a href="#..."> so SmoothScroll handles the
-   scroll; works from any page because the home sections are on the root path. */
+/* Locale-aware home anchor. On a secondary page it routes through `/#...`;
+   on home it remains a local hash and keeps the current scroll behavior. */
 function FooterAnchorLink({ href, children }: { href: string; children: React.ReactNode }): React.ReactElement {
   return (
     <li>
-      <a href={href} className={LINK_CLASS}>
+      <Link href={href} className={LINK_CLASS}>
         {children}
-      </a>
+      </Link>
     </li>
   );
 }

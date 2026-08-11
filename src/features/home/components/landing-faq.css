@@ -30,10 +30,42 @@ details.faq-item .faq-body {
     max-height 420ms cubic-bezier(0.22, 1, 0.36, 1),
     opacity 280ms ease,
     margin-top 420ms cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: max-height, opacity;
 }
 details.faq-item.is-opening .faq-body,
 details.faq-item[open].is-open .faq-body {
   opacity: 1;
   margin-top: 1rem;
+}
+
+.dark #faq {
+  border-color: #292d37;
+  background: #101218;
+}
+
+.dark #faq h2,
+.dark #faq details.faq-item h3 {
+  color: #f4f4f5;
+}
+
+.dark #faq .brand-mark .bm-mark {
+  color: color-mix(in srgb, var(--brand) 52%, white) !important;
+  -webkit-text-fill-color: color-mix(in srgb, var(--brand) 52%, white) !important;
+}
+
+.dark #faq > div > div > p,
+.dark #faq details.faq-item .faq-body p {
+  color: #b8bdc9;
+}
+
+.dark #faq details.faq-item {
+  border-color: #2a2e39;
+  background: #181b23;
+}
+
+.dark #faq details.faq-item[open] {
+  background: #1d212b;
+}
+
+.dark #faq details.faq-item summary svg {
+  color: #b8bdc9;
 }
