@@ -10,7 +10,9 @@
     "indexnow": "node scripts/indexnow-ping.mjs",
     "test:showcase": "node --test src/features/showcase/*.test.mjs src/messages/*.test.mjs",
     "test:scanner": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test src/app/api/scan/*.test.mjs",
+    "prebuild": "npm run blog:quality",
     "build": "next build",
+    "blog:quality": "node scripts/blog-quality-gate.mjs",
     "start": "next start",
     "lint": "eslint"
   },

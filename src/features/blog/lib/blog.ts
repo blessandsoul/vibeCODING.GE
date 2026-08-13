@@ -11,6 +11,7 @@ import type { BlogAuthor, BlogPost, BlogPostMeta } from '../types';
 const BLOG_ROOT = path.join(process.cwd(), 'content', 'blog');
 const DEFAULT_AUTHOR: BlogAuthor = { name: 'aiNOW', role: 'Product team' };
 const UNSAFE_SOURCE = /<\s*(script|iframe|object|embed|style|form)\b|javascript\s*:/iu;
+const FALSE_VALUES = new Set(['false', 'no', 'off', '0']);
 
 marked.setOptions({ gfm: true, breaks: false });
 
@@ -20,6 +21,16 @@ function localeDirectory(locale: string): string {
 
 function asText(value: unknown, fallback = ''): string {
   return typeof value === 'string' ? value.trim() : fallback;
+}
+
+function isExplicitlyFalse(value: unknown): boolean {
+  if (value === false || value === 0) return true;
+  return typeof value === 'string' && FALSE_VALUES.has(value.trim().toLowerCase());
+}
+
+function isPublished(data: Record<string, unknown>): boolean {
+  const status = asText(data.status).toLowerCase();
+  return !isExplicitlyFalse(data.indexable) && status !== 'draft' && status !== 'editorial-hold';
 }
 
 function asDate(value: unknown): string {
@@ -97,6 +108,7 @@ function readPostFile(slug: string, locale: string): { data: Record<string, unkn
   const file = path.join(localeDirectory(locale), `${slug}.mdx`);
   if (!fs.existsSync(file)) return null;
   const parsed = matter(fs.readFileSync(file, 'utf8'));
+  if (!isPublished(parsed.data as Record<string, unknown>)) return null;
   return { data: parsed.data as Record<string, unknown>, source: parsed.content };
 }
 
@@ -115,7 +127,7 @@ function toMeta(slug: string, locale: string, data: Record<string, unknown>, sou
     author: asAuthor(data.author),
     tags: asList(data.tags),
     cluster: asText(data.cluster) || asList(data.tags)[0] || SITE.wordmark.mark,
-    indexable: data.indexable !== false && data.status !== 'draft',
+    indexable: isPublished(data),
     sources: asList(data.sources),
     wordCount: words,
     coverImage: asText(data.coverImage) || `/${locale}/blog/${slug}/opengraph-image`,
@@ -143,7 +155,7 @@ export function getDefaultAvailableLocale(slug: string): string | null {
 }
 
 export function getAvailableLocales(slug: string): string[] {
-  return SITE.locales.filter((locale) => fs.existsSync(path.join(localeDirectory(locale), `${slug}.mdx`)));
+  return SITE.locales.filter((locale) => Boolean(readPostFile(slug, locale)));
 }
 
 export function getPost(slug: string, locale: string): BlogPost | null {
