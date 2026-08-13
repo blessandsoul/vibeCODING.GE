@@ -32,14 +32,15 @@ export const SITE = {
    *
    * `defaultLocale` is the UNPREFIXED locale (next-intl `localePrefix: "as-needed"`), so it
    * decides the URL shape: the default lives at `/`, the others at `/<locale>`. The Georgian
-   * landings use "ka"; the export landings (aiapp, vibecoding) use "en".
+   * All public product landings use Georgian at the bare domain; English and Russian keep
+   * explicit locale paths.
    *
    * It is NOT the same question as "is this locale Georgian". That stays a literal
    * `locale === "ka"` check wherever it appears, because it drives the Georgian font and the OG
    * locale tag, and Georgian is still an offered locale even on an EN-default site. Do not
    * find-replace one for the other.
    */
-  defaultLocale: "en",
+  defaultLocale: "ka",
   locales: ["ka", "en", "ru"],
 
   /** PWA manifest. Not locale-aware (Next metadata routes are build-time). English. */
