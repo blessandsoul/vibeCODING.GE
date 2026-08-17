@@ -4,6 +4,8 @@ import { useEffect, useRef, useState, type MouseEvent } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { Ico } from '@/components/common/Ico';
 import { Link, usePathname } from '@/i18n/navigation';
+import NextLink from 'next/link';
+import { localePath } from '@/i18n/seo-locales';
 import { routing } from '@/i18n/routing';
 import { SITE } from '@/config/site';
 import { MagneticButton } from '@/components/common/MagneticButton';
@@ -391,14 +393,13 @@ export function LandingNav() {
             >
               {LOCALES.map((l) => (
                 <li key={l.code}>
-                  <Link
-                    href={pathname}
-                    locale={l.code}
+                  <NextLink
+                    href={localePath(l.code, pathname)}
                     className={`nav-dd-link${l.code === locale ? ' is-current' : ''}`}
                     onClick={() => setLangOpen(false)}
                   >
                     {l.label}
-                  </Link>
+                  </NextLink>
                 </li>
               ))}
             </ul>

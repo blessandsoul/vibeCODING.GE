@@ -1,7 +1,9 @@
 'use client';
 
 import { useLocale } from 'next-intl';
-import { Link, usePathname } from '@/i18n/navigation';
+import { usePathname } from '@/i18n/navigation';
+import NextLink from 'next/link';
+import { localePath } from '@/i18n/seo-locales';
 import { routing } from '@/i18n/routing';
 import { cn } from '@/lib/utils';
 
@@ -28,9 +30,8 @@ export function FooterLanguageSwitcher() {
     <ul className="space-y-2 text-[#4B5563]">
       {LOCALES.map((l) => (
         <li key={l.code}>
-          <Link
-            href={pathname}
-            locale={l.code}
+          <NextLink
+            href={localePath(l.code, pathname)}
             aria-current={current === l.code ? 'true' : undefined}
             className={cn(
               'inline-flex min-h-11 min-w-11 items-center break-words transition-colors hover:text-neutral-900',
@@ -38,7 +39,7 @@ export function FooterLanguageSwitcher() {
             )}
           >
             {l.label}
-          </Link>
+          </NextLink>
         </li>
       ))}
     </ul>

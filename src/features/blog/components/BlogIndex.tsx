@@ -1,6 +1,7 @@
 import { Ico } from '@/components/common/Ico';
 import { SITE } from '@/config/site';
-import { Link } from '@/i18n/navigation';
+import NextLink from 'next/link';
+import { localePath } from '@/i18n/seo-locales';
 
 import { getBlogCopy } from '../lib/copy';
 
@@ -49,7 +50,7 @@ export function BlogIndex({ posts, locale, contentLocale = locale }: { posts: Bl
         ) : (
           <div className="blog-card-grid">
             {posts.map((post) => (
-              <Link key={post.slug} href={`/blog/${post.slug}`} locale={post.locale} className="blog-card">
+              <NextLink key={post.slug} href={localePath(post.locale, `/blog/${post.slug}`)} className="blog-card">
                 <div className="blog-card-topline">
                   <span className="blog-card-cluster">{post.cluster}</span>
                   <Ico name="solar:arrow-right-up-bold-duotone" aria-hidden="true" />
@@ -62,7 +63,7 @@ export function BlogIndex({ posts, locale, contentLocale = locale }: { posts: Bl
                   <span>{post.readTime}</span>
                 </div>
                 <span className="blog-card-link">{copy.read}</span>
-              </Link>
+              </NextLink>
             ))}
           </div>
         )}

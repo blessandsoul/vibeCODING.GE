@@ -21,6 +21,14 @@ export function localeUrl(locale: string, path = ""): string {
   return locale === SITE.defaultLocale ? `${BASE_URL}${path}` : `${BASE_URL}/${locale}${path}`;
 }
 
+// Relative route for locale switchers. The default locale uses the bare path;
+// non-default locales carry their prefix, avoiding redundant /ka redirects.
+export function localePath(locale: string, path = ""): string {
+  const normalizedPath = path === "/" ? "" : path;
+  if (locale === SITE.defaultLocale) return normalizedPath || "/";
+  return "/" + locale + normalizedPath;
+}
+
 // hreflang + canonical block for a page at `path` (no locale prefix, e.g. "/contact").
 // languages = every indexed locale + x-default (the default locale). canonical = the page's own
 // URL for an indexed locale, or the default-locale equivalent for a non-indexed one, so a fallback
