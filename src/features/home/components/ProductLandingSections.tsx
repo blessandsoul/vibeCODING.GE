@@ -3,10 +3,30 @@
 import { useLocale, useTranslations } from 'next-intl';
 
 import { Ico } from '@/components/common/Ico';
+import { PRODUCT_PAGES } from '@/config/product-pages';
 import { SITE } from '@/config/site';
 import './product-landing-sections.css';
+import './tiktok-roadmap.css';
 
 type Locale = 'ka' | 'en' | 'ru';
+
+const TIKTOK_ROADMAP_COPY = {
+  ka: {
+    status: 'მალე',
+    title: 'TikTok-ის ინტეგრაცია მზადდება',
+    note: 'ჯერ არ არის ხელმისაწვდომი. გაშვება დამოკიდებულია TikTok-ის დამტკიცებასა და რეგიონულ მხარდაჭერაზე.',
+  },
+  en: {
+    status: 'Coming soon',
+    title: 'TikTok integration is in preparation',
+    note: 'It is not currently available. Launch depends on TikTok approval and regional support.',
+  },
+  ru: {
+    status: 'Скоро',
+    title: 'Интеграция с TikTok готовится',
+    note: 'Сейчас она недоступна. Запуск зависит от одобрения TikTok и региональной поддержки.',
+  },
+} as const;
 
 const UI = {
   ka: {
@@ -82,7 +102,7 @@ const PRODUCT_LANDING_CONFIG = {
     resourceTitles: { ka: ['უსაფრთხო ვებ-პროდუქტის საფუძვლები','რა უნდა ნახოს Google-მა საიტზე','aiNOW-ის რეალური პროექტები'], en: ['Foundations of a safer web product','What Google should see on a website','Real projects by aiNOW'], ru: ['Основы безопасного веб-продукта','Что Google должен видеть на сайте','Реальные проекты aiNOW'] },
   },
   aicontent: {
-    integrations: [['solar:camera-bold-duotone','Instagram'],['solar:users-group-rounded-bold-duotone','Facebook'],['solar:videocamera-record-bold-duotone','TikTok'],['solar:play-circle-bold-duotone','YouTube']],
+    integrations: [['solar:camera-bold-duotone','Instagram'],['solar:users-group-rounded-bold-duotone','Facebook'],['solar:play-circle-bold-duotone','YouTube']],
     resources: ['/blog','/ai-biznesistvis','/projects'],
     resourceTitles: { ka: ['კონტენტის პრაქტიკული გზამკვლევები','როგორ გამოიყენოს ბიზნესმა AI','aiNOW-ის რეალური პროექტები'], en: ['Practical content guides','How a business can use AI','Real projects by aiNOW'], ru: ['Практические материалы о контенте','Как бизнесу использовать AI','Реальные проекты aiNOW'] },
   },
@@ -107,6 +127,10 @@ export function ProductLandingSections(): React.ReactElement {
   const steps = [1,2,3,4,5,6].map((number) => ({ title: t(`s${number}Title`), tag: t(`s${number}Tag`), description: t(`s${number}Desc`) }));
   const config = PRODUCT_LANDING_CONFIG[siteKey as keyof typeof PRODUCT_LANDING_CONFIG] ?? PRODUCT_LANDING_CONFIG.aiweb;
   const integrations = config.integrations;
+  const tiktokIntegration = PRODUCT_PAGES.integrations.records.find(
+    (record) => record.id.startsWith('tiktok'),
+  );
+  const tiktokCopy = TIKTOK_ROADMAP_COPY[locale] ?? TIKTOK_ROADMAP_COPY.en;
   const urls = config.resources;
   const resourceTitles = config.resourceTitles[locale];
 
@@ -115,7 +139,7 @@ export function ProductLandingSections(): React.ReactElement {
     <section id="dashboard" className="pl-section pl-dashboard" data-landing-section="dashboard" data-demo-static="true"><div className="pl-shell" data-family-shell="true"><div className="pl-dashboard-intro"><SectionHead eyebrow={c.dashboardEyebrow} heading={c.dashboardHeading}/><p>{c.dashboardNote}</p></div><div className="pl-dashboard-panel"><div className="pl-dashboard-bar"><span><i/>{productName} · {c.dashboardGroup}</span><small>{c.dashboardPeriod}</small></div><div className="pl-kpi-grid">{steps.slice(0,4).map((step,index)=><article className="pl-kpi" key={step.title}><Ico name={['solar:inbox-bold-duotone','solar:checklist-minimalistic-bold-duotone','solar:shield-check-bold-duotone','solar:flag-2-bold-duotone'][index]}/><span>{step.title}</span><strong>{step.tag}</strong><small>{c.illustrative}</small></article>)}</div><p className="pl-dashboard-foot">{c.dashboardFoot}</p></div></div></section>
     <section id="reviews" className="pl-reviews" data-landing-section="reviews" aria-labelledby="reviews-title"><div className="pl-reviews-label"><h2 id="reviews-title">{c.reviewsHeading}</h2><a href="https://maps.google.com/?cid=15533558721751972154" target="_blank" rel="noreferrer"><GoogleMark/><strong>4.7</strong><span>{c.reviewsLink}</span></a></div><div className="pl-review-viewport" tabIndex={0} aria-label={c.reviewsHeading}><div className="pl-review-track">{[...REVIEWS,...REVIEWS].map((review,index)=><article className="pl-review" key={`${review.name}-${index}`} aria-hidden={index>=REVIEWS.length||undefined}><div><span>{review.name.slice(0,1).toUpperCase()}</span><strong>{review.name}</strong></div><p>{review.text}</p><span className="pl-review-stars" role="img" aria-label="5 stars">{[0,1,2,3,4].map((star)=><Ico name="solar:star-bold" key={star}/>)}</span></article>)}</div></div></section>
     <section id="cases" className="pl-section pl-cases" data-landing-section="cases" data-demo-static="true"><div className="pl-shell" data-family-shell="true"><div className="pl-section-split"><SectionHead eyebrow={c.casesEyebrow} heading={c.casesHeading}/><p>{c.casesNote}</p></div><div className="pl-case-list">{[steps[0],steps[2],steps[4]].map((step,index)=><article className="pl-case" data-business-outcome="true" key={step.title}><span className="pl-case-index">0{index+1}</span><div><strong>{step.title}</strong><p>{step.description}</p></div><span className="pl-case-tag">{step.tag}</span><Ico name="solar:arrow-right-bold-duotone"/></article>)}</div></div></section>
-    <section id="integrations" className="pl-section pl-integrations" data-landing-section="integrations"><div className="pl-shell" data-family-shell="true"><SectionHead eyebrow={c.integrationsEyebrow} heading={c.integrationsHeading} description={c.integrationsNote} centered/><div className="pl-integration-grid">{integrations.map(([icon,label])=><article className="pl-integration" key={label}><span><Ico name={icon}/></span><strong>{label}</strong></article>)}</div></div></section>
+    <section id="integrations" className="pl-section pl-integrations" data-landing-section="integrations"><div className="pl-shell" data-family-shell="true"><SectionHead eyebrow={c.integrationsEyebrow} heading={c.integrationsHeading} description={c.integrationsNote} centered/><div className="pl-integration-grid">{integrations.map(([icon,label])=><article className="pl-integration" key={label}><span><Ico name={icon}/></span><strong>{label}</strong></article>)}</div>{tiktokIntegration?<article className="pl-tiktok-roadmap" data-integration-status="planned" data-available-now="false"><span className="pl-tiktok-roadmap__icon"><Ico name={tiktokIntegration.icon}/></span><div><strong>{tiktokCopy.title}</strong><p>{tiktokCopy.note}</p></div><span className="pl-tiktok-roadmap__status">{tiktokCopy.status}</span></article>:null}</div></section>
     <section id="resources" className="pl-section pl-resources" data-landing-section="resources"><div className="pl-shell" data-family-shell="true"><SectionHead eyebrow={c.resourcesEyebrow} heading={c.resourcesHeading}/><div className="pl-resource-grid">{urls.map((path,index)=>{const isLocal=siteKey==='aitaxi'&&index<2;return <a className="pl-resource" href={`${isLocal?'':'https://ainow.ge'}${path}`} target={isLocal?undefined:'_blank'} rel={isLocal?undefined:'noreferrer'} key={path}><span>0{index+1}</span><strong>{resourceTitles[index]}</strong><small>{c.resourceAction}<Ico name="solar:arrow-right-up-bold-duotone"/></small></a>;})}</div></div></section>
   </>;
 }

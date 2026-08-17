@@ -4,6 +4,7 @@ import { PUBLIC_ROUTES } from '@/features/product-pages/routes';
 import {
   MACHINE_REVIEWED_ON,
   MACHINE_PUBLIC_PAGES,
+  PRODUCT_MACHINE_INTEGRATIONS,
   PRODUCT_BRAND,
   machineTextResponse,
 } from '@/features/product-pages/machine';
@@ -53,6 +54,18 @@ export function GET() {
     ``,
     ...SITE.seo.features.map((f) => `- ${f}`),
     ``,
+    `## Integrations and availability`,
+    ``,
+    ...PRODUCT_MACHINE_INTEGRATIONS.map((integration) => {
+      const availability =
+        integration.status === 'planned'
+          ? 'planned; not currently available'
+          : integration.status === 'customSetup'
+            ? 'available after product-specific setup'
+            : 'available now';
+      return `- ${integration.platform}: ${availability}. ${integration.description ?? ''}`.trim();
+    }),
+    ``,
     `## What it does NOT do`,
     ``,
     `${SITE.seo.boundary}`,
@@ -79,11 +92,13 @@ export function GET() {
     `- ${SITE.baseUrl}/llms-full.txt`,
     `- ${SITE.baseUrl}/ai/summary.json`,
     `- ${SITE.baseUrl}/ai/service.json`,
+    `- ${SITE.baseUrl}/ai/integrations.json`,
     `- ${SITE.baseUrl}/ai/faq.json`,
     ``,
     `## Sources and verification`,
     ``,
     `- Product facts, scope and limits: ${SITE.baseUrl}/ai/service.json`,
+    `- Integration status and prerequisites: ${SITE.baseUrl}/ai/integrations.json`,
     `- Visible product questions and answers: ${SITE.baseUrl}/ai/faq.json`,
     `- Last content review: ${MACHINE_REVIEWED_ON}`,
     ``,

@@ -85,6 +85,14 @@ export interface ProductIntegrationRecord {
   connection: IntegrationConnection;
   status: IntegrationStatus;
   dataFlow: IntegrationDataFlow;
+  /**
+   * Plain-English product fact exposed through the machine-readable endpoints.
+   * Keep planned work explicit here instead of mixing it into active SEO
+   * capabilities.
+   */
+  machineDescription?: string;
+  requirements?: readonly string[];
+  officialSources?: readonly string[];
 }
 
 export interface IntegrationsPublication extends PagePublication {

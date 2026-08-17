@@ -39,7 +39,7 @@
   -webkit-text-fill-color: initial !important;
 }
 .brand-mark .bm-prefix {
-  font-family: "Space Mono", monospace;
+  font-family: var(--font-iai-data);
   font-style: italic;
   font-weight: 700;
   color: transparent;
@@ -49,7 +49,7 @@
   -webkit-text-fill-color: transparent !important;
 }
 .brand-mark .bm-mark {
-  font-family: "Bricolage Grotesque", "Noto Sans Georgian", sans-serif;
+  font-family: var(--font-iai-ui);
   font-weight: 900;
   color: var(--brand-ink, #0a0a0a);
   background: none !important;

@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@dagrejs/dagre": "^2.0.4",
+    "@fontsource/firago": "^5.3.0",
     "@hello-pangea/dnd": "^18.0.1",
     "@hookform/resolvers": "^5.2.2",
     "@iconify/react": "^6.0.2",

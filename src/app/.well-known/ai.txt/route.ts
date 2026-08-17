@@ -43,6 +43,7 @@ export function GET() {
     `Summary: ${SITE.baseUrl}/ai/summary.json`,
     `FAQ: ${SITE.baseUrl}/ai/faq.json`,
     `Service: ${SITE.baseUrl}/ai/service.json`,
+    `Integrations: ${SITE.baseUrl}/ai/integrations.json`,
     '',
     '# Public pages',
     ...PUBLIC_ROUTES.map(

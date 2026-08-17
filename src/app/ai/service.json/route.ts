@@ -21,6 +21,7 @@ export function GET() {
     boundary: PRODUCT_MACHINE_FACTS.boundary,
     limits: PRODUCT_MACHINE_FACTS.limits,
     commitment: PRODUCT_MACHINE_FACTS.commitment,
+    integrations: PRODUCT_MACHINE_FACTS.integrations,
     publicPages: PUBLIC_ROUTES.map((route) =>
       PRODUCT_MACHINE_FACTS.publicPages.find((page) => page.path === route.path),
     ).filter(Boolean),

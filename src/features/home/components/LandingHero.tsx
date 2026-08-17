@@ -209,7 +209,7 @@ export function LandingHero() {
                 aria-live="off"
                 style={{
                   fontFamily:
-                    "'DachiLynx', var(--font-noto-georgian), 'Noto Sans Georgian', sans-serif",
+                    'var(--font-iai-ui)',
                   color: 'var(--brand-display, var(--brand-ink, var(--brand)))',
                   WebkitTextFillColor: 'var(--brand-display, var(--brand-ink, var(--brand)))',
                 }}

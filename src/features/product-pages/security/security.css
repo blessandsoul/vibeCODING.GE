@@ -127,7 +127,7 @@
 
 .security-limitations h2 {
   margin: 0;
-  font-family: var(--font-bricolage), var(--font-noto-georgian), sans-serif;
+  font-family: var(--font-iai-ui);
   font-size: clamp(1.8rem, 3vw, 2.8rem);
   letter-spacing: -0.04em;
   line-height: 1.03;

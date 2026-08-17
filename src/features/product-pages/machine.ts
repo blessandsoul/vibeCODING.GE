@@ -1,4 +1,5 @@
 import messages from '@/messages/en.json';
+import { PRODUCT_PAGES } from '@/config/product-pages';
 import { SITE } from '@/config/site';
 import { PUBLIC_ROUTES } from '@/features/product-pages/routes';
 import { CONTACT_EMAIL } from '@/lib/constants/app.constants';
@@ -7,7 +8,7 @@ import { localeUrl } from '@/i18n/seo-locales';
 import type { ProductPageLocale, PublicRoute } from './types';
 
 export const PRODUCT_BRAND = SITE.wordmark.prefix + SITE.wordmark.mark;
-export const MACHINE_REVIEWED_ON = '2026-07-26';
+export const MACHINE_REVIEWED_ON = '2026-08-15';
 export const MACHINE_CACHE_HEADERS = {
   'Cache-Control': 'public, max-age=3600, s-maxage=86400',
 } as const;
@@ -25,6 +26,19 @@ export interface MachinePublicPage {
   path: PublicRoute['path'];
   url: string;
   localizedUrls: Readonly<Record<ProductPageLocale, string>>;
+}
+
+export interface MachineIntegration {
+  id: string;
+  platform: string;
+  status: 'available' | 'customSetup' | 'planned';
+  availableNow: boolean;
+  launchDate?: string | null;
+  connection: string;
+  dataFlow: string;
+  description?: string;
+  requirements: readonly string[];
+  officialSources: readonly string[];
 }
 
 function replaceBrandMarkup(value: string): string {
@@ -57,6 +71,23 @@ export const MACHINE_PUBLIC_PAGES: readonly MachinePublicPage[] =
       ) as Record<ProductPageLocale, string>,
     };
   });
+
+export const PRODUCT_MACHINE_INTEGRATIONS: readonly MachineIntegration[] =
+  PRODUCT_PAGES.integrations.records.map((record) => ({
+    id: record.id,
+    platform: record.name,
+    status: record.status,
+    availableNow: record.status !== 'planned',
+    ...(record.status === 'planned' ? { launchDate: null } : {}),
+    connection: record.connection,
+    dataFlow: record.dataFlow,
+    description:
+      'machineDescription' in record ? record.machineDescription : undefined,
+    requirements:
+      'requirements' in record ? [...record.requirements] : [],
+    officialSources:
+      'officialSources' in record ? [...record.officialSources] : [],
+  }));
 
 export function machineJsonResponse(payload: unknown): Response {
   return Response.json(payload, {
@@ -93,6 +124,7 @@ export const PRODUCT_MACHINE_FACTS = {
   contact: {
     email: CONTACT_EMAIL.toLowerCase(),
   },
+  integrations: PRODUCT_MACHINE_INTEGRATIONS,
   publicPages: MACHINE_PUBLIC_PAGES,
   reviewedOn: MACHINE_REVIEWED_ON,
 } as const;

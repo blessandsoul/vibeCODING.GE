@@ -1,4 +1,5 @@
-import { Bricolage_Grotesque, DM_Sans, Noto_Sans_Georgian, Space_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Noto_Sans_Georgian } from "next/font/google";
+import localFont from "next/font/local";
 import type { Metadata, Viewport } from "next";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -103,30 +104,38 @@ export async function generateMetadata({
   };
 }
 
-const bricolage = Bricolage_Grotesque({
-  subsets: ["latin"],
-  variable: "--font-bricolage",
+const geist = Geist({
+  subsets: ["latin", "cyrillic"],
+  weight: "variable",
+  variable: "--font-geist-sans",
   display: "swap",
-  weight: ["400", "600", "700", "800"],
 });
 
-const dmSans = DM_Sans({
-  subsets: ["latin"],
-  variable: "--font-dm-sans",
+const geistMono = Geist_Mono({
+  subsets: ["latin", "cyrillic"],
+  weight: "variable",
+  variable: "--font-geist-mono",
   display: "swap",
+});
+
+const firago = localFont({
+  src: [
+    { path: "../../../node_modules/@fontsource/firago/files/firago-latin-400-normal.woff2", weight: "400", style: "normal" },
+    { path: "../../../node_modules/@fontsource/firago/files/firago-latin-500-normal.woff2", weight: "500", style: "normal" },
+    { path: "../../../node_modules/@fontsource/firago/files/firago-latin-600-normal.woff2", weight: "600", style: "normal" },
+    { path: "../../../node_modules/@fontsource/firago/files/firago-latin-700-normal.woff2", weight: "700", style: "normal" },
+    { path: "../../../node_modules/@fontsource/firago/files/firago-latin-800-normal.woff2", weight: "800", style: "normal" },
+  ],
+  variable: "--font-firago",
+  display: "swap",
+  fallback: ["system-ui", "sans-serif"],
 });
 
 const notoGeorgian = Noto_Sans_Georgian({
   subsets: ["georgian"],
-  variable: "--font-noto-georgian",
+  variable: "--font-georgian-extended-fallback",
   display: "swap",
-});
-
-const spaceMono = Space_Mono({
-  subsets: ["latin"],
-  variable: "--font-space-mono",
-  display: "swap",
-  weight: ["400", "700"],
+  preload: false,
 });
 
 // Prerender every locale at build time. Without this (and the setRequestLocale call below) every
@@ -166,38 +175,24 @@ export default async function LocaleLayout({
     <html
       lang={locale}
       data-product={SITE.key}
-      className={`${bricolage.variable} ${dmSans.variable} ${notoGeorgian.variable} ${spaceMono.variable} bg-background`}
+      className={`${firago.variable} ${geist.variable} ${geistMono.variable} ${notoGeorgian.variable} bg-background`}
       suppressHydrationWarning
     >
       <head>
         {/* Exact font block copied verbatim from ainow_handoff/index.html <head>
             so the aiNOW wordmark renders with the source's variable Bricolage
             Grotesque (opsz,wght axis) + Space Mono, not next/font's static cuts. */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="ai-summary" type="application/json" href={`${BASE_URL}/ai/summary.json`} />
         <link rel="ai-service" type="application/json" href={`${BASE_URL}/ai/service.json`} />
         <link rel="ai-faq" type="application/json" href={`${BASE_URL}/ai/faq.json`} />
         <link rel="llms" type="text/plain" href={`${BASE_URL}/llms.txt`} />
         <link rel="llms-full" type="text/plain" href={`${BASE_URL}/llms-full.txt`} />
-        {/* eslint-disable-next-line @next/next/no-page-custom-font -- shared live aiNOW font contract */}
-        <link
-          href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800;12..96,900&family=DM+Sans:wght@400;500;700&family=Noto+Sans+Georgian:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap"
-          rel="stylesheet"
-        />
         {/* The entity graph. Without it every one of these domains is an orphan brand and an
             assistant has to guess what it is, which means it will not recommend it. */}
         <StructuredData />
       </head>
       <body
-        className={
-          // Script question, NOT the default-locale question. Georgian text needs the
-          // Georgian face on every site, including the EN-default export landings.
-          // Never rewrite this to SITE.defaultLocale.
-          locale === "ka"
-            ? "font-[family-name:var(--font-noto-georgian)]"
-            : "font-[family-name:var(--font-dm-sans)]"
-        }
+          className="font-sans"
       >
         <Providers>
           <NextIntlClientProvider locale={locale} messages={messages}>

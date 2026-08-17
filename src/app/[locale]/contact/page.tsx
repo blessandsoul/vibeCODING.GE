@@ -1,19 +1,16 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
-import { Ico } from '@/components/common/Ico';
+import { FadeIn } from '@/components/common/FadeIn';
 import { SITE } from '@/config/site';
 import { ContactForm } from '@/features/contact/components/ContactForm';
 import { ProductPageJsonLd } from '@/features/product-pages/components/ProductPageJsonLd';
-import { ProductPageSection } from '@/features/product-pages/components/ProductPageSection';
 import { ProductPageShell } from '@/features/product-pages/components/ProductPageShell';
-import { SecondaryPageHero } from '@/features/product-pages/components/SecondaryPageHero';
 import {
   buildProductPageGraph,
   buildProductPageMetadata,
 } from '@/features/product-pages/seo';
 import { PRODUCT_PAGE_LOCALES, type ProductPageLocale } from '@/features/product-pages/types';
-import { Link } from '@/i18n/navigation';
 import {
   CONTACT_EMAIL,
   CONTACT_EMAIL_SECONDARY,
@@ -47,10 +44,6 @@ export default async function ContactPage({ params }: Props) {
   const safeLocale = asProductPageLocale(locale);
   setRequestLocale(safeLocale);
   const t = await getTranslations({ locale: safeLocale, namespace: 'contact' });
-  const pageT = await getTranslations({
-    locale: safeLocale,
-    namespace: 'productPages.contact',
-  });
   const title = t('title');
   const lead = t('subtitle');
 
@@ -65,97 +58,73 @@ export default async function ContactPage({ params }: Props) {
         })}
       />
       <ProductPageShell className="contact-page" endcap={null}>
-        <SecondaryPageHero
-          breadcrumbLabel={title}
-          eyebrow={pageT('eyebrow')}
-          title={title}
-          lead={lead}
-          facts={[
-            {
-              label: pageT('responseLabel'),
-              value: pageT('responseValue'),
-            },
-            {
-              label: t('phoneLabel'),
-              value: CONTACT_PHONE_DISPLAY,
-            },
-            {
-              label: t('emailLabel'),
-              value: CONTACT_EMAIL.toLowerCase(),
-            },
-          ]}
-        />
+        <div className="contact-page__main" id="contact-request">
+          <div className="contact-page__content">
+            <FadeIn>
+              <header className="contact-page__header">
+                <h1>{title}</h1>
+                <p>{lead}</p>
+              </header>
+            </FadeIn>
 
-        <ProductPageSection
-          id="contact-request"
-          eyebrow={pageT('eyebrow')}
-          title={pageT('formTitle')}
-          intro={pageT('formLead')}
-        >
-          <div className="contact-page__grid">
-            <div className="contact-page__facts">
-              <h3>{pageT('directTitle')}</h3>
-              <ContactFact
-                icon="solar:phone-calling-rounded-bold-duotone"
-                label={t('phoneLabel')}
-                href={`tel:${CONTACT_PHONE}`}
-                value={CONTACT_PHONE_DISPLAY}
-                direction="ltr"
-              />
-              <ContactFact
-                icon="solar:letter-bold-duotone"
-                label={t('emailLabel')}
-                href={`mailto:${CONTACT_EMAIL}`}
-                value={CONTACT_EMAIL.toLowerCase()}
-              />
-              <ContactFact
-                icon="solar:letter-bold-duotone"
-                label={t('emailLabel')}
-                href={`mailto:${CONTACT_EMAIL_SECONDARY}`}
-                value={CONTACT_EMAIL_SECONDARY}
-              />
-              <div className="contact-page__address">
-                <Ico name="solar:map-point-bold-duotone" aria-hidden="true" />
-                <div>
-                  <span>{t('officeLabel')}</span>
-                  <strong>{t('office')}</strong>
-                </div>
+            <FadeIn delay={0.1}>
+              <div className="contact-page__form-card">
+                <ContactForm />
               </div>
-              <Link href="/privacy" className="contact-page__privacy-link">
-                {pageT('privacyLink')}
-              </Link>
-            </div>
+            </FadeIn>
 
-            <div className="contact-page__form">
-              <ContactForm />
+            <div className="contact-page__info-grid">
+              <FadeIn delay={0.2}>
+                <ContactInfoCard
+                  label={t('phoneLabel')}
+                  href={`tel:${CONTACT_PHONE}`}
+                  direction="ltr"
+                >
+                  {CONTACT_PHONE_DISPLAY}
+                </ContactInfoCard>
+              </FadeIn>
+              <FadeIn delay={0.28}>
+                <article className="contact-page__info-card">
+                  <p>{t('emailLabel')}</p>
+                  <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+                  <a href={`mailto:${CONTACT_EMAIL_SECONDARY}`}>{CONTACT_EMAIL_SECONDARY}</a>
+                </article>
+              </FadeIn>
+              <FadeIn delay={0.36}>
+                <ContactInfoCard label={t('officeLabel')}>{t('office')}</ContactInfoCard>
+              </FadeIn>
+              <FadeIn delay={0.44}>
+                <ContactInfoCard label={t('legalLabel')}>{t('legal')}</ContactInfoCard>
+              </FadeIn>
             </div>
           </div>
-        </ProductPageSection>
+        </div>
       </ProductPageShell>
     </>
   );
 }
 
-function ContactFact({
-  icon,
+function ContactInfoCard({
   label,
   href,
-  value,
+  children,
   direction,
 }: {
-  icon: string;
   label: string;
-  href: string;
-  value: string;
+  href?: string;
+  children: React.ReactNode;
   direction?: 'ltr';
 }): React.ReactElement {
   return (
-    <a href={href} className="contact-page__fact" dir={direction}>
-      <Ico name={icon} aria-hidden="true" />
-      <span>
-        <small>{label}</small>
-        <strong>{value}</strong>
-      </span>
-    </a>
+    <article className="contact-page__info-card">
+      <p>{label}</p>
+      {href ? (
+        <a href={href} dir={direction}>
+          {children}
+        </a>
+      ) : (
+        <span dir={direction}>{children}</span>
+      )}
+    </article>
   );
 }

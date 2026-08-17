@@ -4,6 +4,7 @@ import {
   MACHINE_FAQ,
   MACHINE_PUBLIC_PAGES,
   MACHINE_REVIEWED_ON,
+  PRODUCT_MACHINE_INTEGRATIONS,
   PRODUCT_BRAND,
   machineTextResponse,
 } from '@/features/product-pages/machine';
@@ -29,6 +30,22 @@ export function GET() {
     '',
     ...SITE.seo.features.map((feature) => `- ${feature}`),
     '',
+    '## Integrations and availability',
+    '',
+    ...PRODUCT_MACHINE_INTEGRATIONS.flatMap((integration) => [
+      `### ${integration.platform}`,
+      '',
+      `Status: ${integration.status}.`,
+      `Available now: ${integration.availableNow ? 'yes' : 'no'}.`,
+      ...(integration.description ? [integration.description] : []),
+      ...(integration.requirements.length > 0
+        ? [
+            'Requirements:',
+            ...integration.requirements.map((requirement) => `- ${requirement}`),
+          ]
+        : []),
+      '',
+    ]),
     '## Product boundary',
     '',
     SITE.seo.boundary,
@@ -61,6 +78,7 @@ export function GET() {
     `- Provider: aiNOW, https://ainow.ge`,
     `- Structured summary: ${SITE.baseUrl}/ai/summary.json`,
     `- Structured service facts: ${SITE.baseUrl}/ai/service.json`,
+    `- Structured integration status: ${SITE.baseUrl}/ai/integrations.json`,
     `- Structured FAQ: ${SITE.baseUrl}/ai/faq.json`,
     `- Concise index: ${SITE.baseUrl}/llms.txt`,
     '',

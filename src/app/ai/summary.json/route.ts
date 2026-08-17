@@ -17,6 +17,10 @@ export function GET() {
     areaServed: SITE.seo.areaServed,
     languages: PRODUCT_MACHINE_FACTS.languages,
     boundary: SITE.seo.boundary,
+    integrations: PRODUCT_MACHINE_FACTS.integrations,
+    plannedIntegrations: PRODUCT_MACHINE_FACTS.integrations.filter(
+      (integration) => integration.status === 'planned',
+    ),
     publicPages: PRODUCT_MACHINE_FACTS.publicPages,
     reviewedOn: PRODUCT_MACHINE_FACTS.reviewedOn,
   });

@@ -8,13 +8,6 @@
      blur-fade-in sequence below (the FLIP canvas loader was dead code in source)
    ========================================================================= */
 
-/* Local Georgian display font for the typewriter word */
-@font-face {
-  font-family: 'DachiLynx';
-  src: url('/fonts/dachi_lynx.otf') format('opentype');
-  font-display: swap;
-}
-
 /* === Page wrapper, the white dot-grid background now lives on <body>
    (globals.css) so it repeats site-wide; this wrapper stays transparent so the
    single body grid shows through continuously (no double-paint / seam). It
@@ -24,7 +17,7 @@
   /* Mirror the source tailwind.config fontFamily so `font-mono` utilities
      resolve to JetBrains Mono (loaded via the CDN <link> in layout head),
      not Tailwind v4's default mono stack. */
-  --font-mono: 'JetBrains Mono', 'Noto Sans Georgian', monospace;
+  --font-mono: var(--font-iai-data);
 }
 
 /* === Split Text - letter reveal, words stay whole (no mid-word break) === */
@@ -44,7 +37,7 @@
   gap: 0.22em;
   margin-bottom: 0.3em;
   color: #111827;
-  font-family: var(--font-bricolage), var(--font-noto-georgian), sans-serif;
+  font-family: var(--font-iai-ui);
   font-size: clamp(1.25rem, 2.15vw, 1.8rem);
   font-weight: 760;
   line-height: 1.16;
@@ -178,7 +171,7 @@
 }
 .hero-tagline.scrolled { opacity: 0; }
 .hero-tagline .ht-text {
-  font-family: var(--font-bricolage), 'Bricolage Grotesque', var(--font-noto-georgian), 'Noto Sans Georgian', sans-serif;
+  font-family: var(--font-iai-ui);
   font-style: italic;
   font-weight: 600;
   font-size: clamp(1.05rem, 2.4vw, 1.65rem);
@@ -218,7 +211,7 @@
 .hero-action-line {
   margin-top: 0.28em;
   color: #0a0a0a;
-  font-family: var(--font-noto-georgian), "Noto Sans Georgian", sans-serif;
+  font-family: var(--font-iai-ui);
   font-size: clamp(2.05rem, 3.5vw, 3.1rem);
   font-weight: 300;
   font-style: normal;
@@ -348,7 +341,7 @@
   gap: 10px;
   padding: 14px 24px;
   border-radius: 14px;
-  font-family: var(--font-bricolage), "Bricolage Grotesque", var(--font-noto-georgian), "Noto Sans Georgian", sans-serif;
+  font-family: var(--font-iai-ui);
   font-weight: 600;
   font-size: 14px;
   letter-spacing: -0.005em;

@@ -20,7 +20,7 @@
   -moz-osx-font-smoothing: grayscale;
 }
 .wordmark-3d .wm-prefix {
-  font-family: 'Space Mono', monospace;
+  font-family: var(--font-iai-data);
   font-weight: 400;
   letter-spacing: -0.02em;
   /* Canonical aiNOW gradient. Product identity changes in the mark, not in the "ai" glyphs. */
@@ -31,7 +31,7 @@
   color: transparent;
 }
 .wordmark-3d .wm-mark {
-  font-family: 'Bricolage Grotesque', sans-serif;
+  font-family: var(--font-iai-ui);
   font-weight: 800;
   letter-spacing: -0.05em;
   color: var(--brand-ink, #0a0a0a);
@@ -286,7 +286,7 @@
 }
 .nav-drawer-link {
   display: block;
-  font-family: var(--font-bricolage), 'Bricolage Grotesque', var(--font-noto-georgian), 'Noto Sans Georgian', sans-serif;
+  font-family: var(--font-iai-ui);
   font-size: 32px;
   font-weight: 700;
   color: #0a0a0a;
@@ -548,7 +548,7 @@
   align-items: center;
   gap: 10px;
   padding: 11px 4px;
-  font-family: var(--font-bricolage), 'Bricolage Grotesque', var(--font-noto-georgian), 'Noto Sans Georgian', sans-serif;
+  font-family: var(--font-iai-ui);
   font-size: 17px;
   font-weight: 500;
   color: #2a2a2a;
