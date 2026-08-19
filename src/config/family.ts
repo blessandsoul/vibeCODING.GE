@@ -14,16 +14,15 @@ export interface FamilyMember {
 
 export const FAMILY: readonly FamilyMember[] = [
   { key: "ainow", domain: "ainow.ge", label: "aiNOW.ge", live: true },
-  { key: "aicall", domain: "aicall.ge", label: "aiCALL.ge", live: true },
   { key: "aicontent", domain: "aicontent.ge", label: "aiCONTENT.ge", live: true },
   { key: "aiads", domain: "aiads.ge", label: "aiADS.ge", live: true },
   { key: "aistaff", domain: "aistaff.ge", label: "aiSTAFF.ge", live: true },
   { key: "iai", domain: "iai.ge", label: "iAI.ge", live: true },
-  { key: "aitaxi", domain: "aitaxi.ge", label: "aiTAXI.ge", live: true },
   { key: "aiweb", domain: "aiweb.ge", label: "aiWEB.ge", live: true },
+  { key: "aicall", domain: "aicall.ge", label: "aiCALL.ge", live: true },
   { key: "aioffice", domain: "aioffice.ge", label: "aiOFFICE.ge", live: true },
   { key: "aidocs", domain: "aidocs.ge", label: "aiDOCS.ge", live: true },
+  { key: "aitaxi", domain: "aitaxi.ge", label: "aiTAXI.ge", live: true },
   { key: "aiapp", domain: "aiapp.ge", label: "aiAPP.ge", live: true },
   { key: "vibecoding", domain: "vibecoding.ge", label: "vibecoding.ge", live: true },
-  { key: "aibrain", domain: "aibrain.ge", label: "aiBRAIN.ge", live: true },
 ] as const;

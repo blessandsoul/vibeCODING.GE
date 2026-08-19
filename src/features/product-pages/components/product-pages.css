@@ -216,7 +216,7 @@
 .product-page-inline-cta h2,
 .product-page-endcap h2 {
   margin: 0;
-  font-family: var(--font-iai-ui);
+  font-family: var(--font-bricolage), var(--font-sans), sans-serif;
   font-size: clamp(2rem, 3.4vw, 3.4rem);
   font-weight: 760;
   letter-spacing: -0.045em;

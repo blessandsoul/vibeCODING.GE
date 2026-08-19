@@ -22,12 +22,11 @@ export function localeUrl(locale: string, path = ""): string {
 }
 
 // Relative route for locale switchers. The default locale uses the bare path;
-// non-default locales carry their prefix. Keeping this separate from localeUrl
-// prevents next-intl links from generating a redundant /ka redirect.
+// non-default locales carry their prefix, avoiding redundant /ka redirects.
 export function localePath(locale: string, path = ""): string {
   const normalizedPath = path === "/" ? "" : path;
   if (locale === SITE.defaultLocale) return normalizedPath || "/";
-  return `/${locale}${normalizedPath}`;
+  return "/" + locale + normalizedPath;
 }
 
 // hreflang + canonical block for a page at `path` (no locale prefix, e.g. "/contact").

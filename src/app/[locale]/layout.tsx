@@ -50,9 +50,9 @@ export async function generateMetadata({
   return {
     metadataBase: new URL(BASE_URL),
     icons: {
-      icon: [{ url: "/icon.svg?v=17-20260811", type: "image/svg+xml" }],
-      shortcut: "/icon.svg?v=17-20260811",
-      apple: [{ url: "/apple-icon.png?v=17-20260811", type: "image/png", sizes: "180x180" }],
+      icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+      shortcut: "/icon.svg",
+      apple: "/icon.svg",
     },
     title: {
       default: t("title"),
