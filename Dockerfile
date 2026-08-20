@@ -1,14 +1,8 @@
 # syntax=docker/dockerfile:1.7
 # Stage 1: Dependencies
-FROM node:24-bookworm-slim AS deps
-WORKDIR /app
-COPY package.json package-lock.json ./
-RUN --network=host --mount=type=cache,target=/root/.npm \
-    npm ci --no-audit --no-fund --ignore-scripts \
-      --fetch-retries=5 --fetch-retry-factor=2 \
-      --fetch-retry-mintimeout=10000 --fetch-retry-maxtimeout=120000 \
-      --maxsockets=1 --prefer-offline \
-    && test -x node_modules/.bin/next
+# Built outside BuildKit because the VPS BuildKit npm resolver is unreliable.
+# The tag is the shared package-lock SHA-256 prefix for this landing family.
+FROM localhost:5000/landing-deps:4c3aadd82edc AS deps
 
 # Stage 2: Build
 FROM node:24-bookworm-slim AS builder
