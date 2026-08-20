@@ -9,7 +9,7 @@ FROM node:24-bookworm-slim AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN npm run build
+RUN --network=host npm run build
 
 # Stage 3: Production runner
 FROM node:24-bookworm-slim AS runner
