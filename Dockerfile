@@ -1,18 +1,24 @@
+# syntax=docker/dockerfile:1.7
 # Stage 1: Dependencies
-FROM node:20-alpine AS deps
+FROM node:24-bookworm-slim AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN --network=host --mount=type=cache,target=/root/.npm \
+    npm ci --no-audit --no-fund --ignore-scripts \
+      --fetch-retries=5 --fetch-retry-factor=2 \
+      --fetch-retry-mintimeout=10000 --fetch-retry-maxtimeout=120000 \
+      --maxsockets=1 --prefer-offline \
+    && test -x node_modules/.bin/next
 
 # Stage 2: Build
-FROM node:20-alpine AS builder
+FROM node:24-bookworm-slim AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npm run build
 
 # Stage 3: Production runner
-FROM node:20-alpine AS runner
+FROM node:24-bookworm-slim AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
