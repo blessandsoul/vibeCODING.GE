@@ -22,6 +22,16 @@ export function SmoothScroll() {
 
     const lenis = new Lenis({ lerp: 0.1, smoothWheel: true });
 
+    // Native window.scrollTo() and Lenis keep separate scroll targets. Route
+    // changes therefore go through Lenis, otherwise its next animation frame
+    // can restore the position from the previous page.
+    const resetForRouteChange = (event: Event) => {
+      const routeEvent = event as CustomEvent<{ handled: boolean }>;
+      routeEvent.detail.handled = true;
+      lenis.scrollTo(0, { duration: 0.42, force: true });
+    };
+    window.addEventListener('landing:route-change', resetForRouteChange);
+
     let rafId = 0;
     const raf = (time: number) => {
       lenis.raf(time);
@@ -30,6 +40,7 @@ export function SmoothScroll() {
     rafId = requestAnimationFrame(raf);
 
     return () => {
+      window.removeEventListener('landing:route-change', resetForRouteChange);
       cancelAnimationFrame(rafId);
       lenis.destroy();
     };
