@@ -349,6 +349,12 @@ const LEGAL_SECTION_KEYS = {
   ],
 } as const;
 
+const INFRASTRUCTURE_NOTICE: Record<ProductPageLocale, LegalDocumentSection> = {
+  ka: { id: 'privacy-infrastructure', title: 'ინფრასტრუქტურა და მონაცემთა დამუშავება', body: 'სერვისის ძირითადი ჰოსტინგი მდებარეობს EU/EEA-ში. კონკრეტული ფუნქციისთვის მონაცემების შეზღუდული ნაწილი შეიძლება დამუშავდეს დამტკიცებული გარე დამმუშავებლის მიერ. დამუშავების კატეგორიები და შესაბამისი პირობები აღწერილია ამ პოლიტიკასა და, საჭიროების შემთხვევაში, ხელშეკრულებაში.' },
+  en: { id: 'privacy-infrastructure', title: 'Infrastructure and data processing', body: 'Primary service hosting is located in the EU/EEA. A limited part of data may be processed by an approved external processor where a specific function requires it. Processing categories and applicable conditions are described in this policy and, where relevant, in the agreement.' },
+  ru: { id: 'privacy-infrastructure', title: 'Инфраструктура и обработка данных', body: 'Основной хостинг сервиса расположен в EU/EEA. Ограниченная часть данных может обрабатываться утверждённым внешним обработчиком, если это требуется для конкретной функции. Категории обработки и применимые условия описаны в этой политике и, при необходимости, в договоре.' },
+};
+
 export async function getLegalContent(
   locale: ProductPageLocale,
   kind: ProductLegalKind,
@@ -383,10 +389,13 @@ export async function getLegalContent(
     contentsLabel: t('contentsLabel'),
     effectiveDate: t('effectiveDate'),
     updatedDate: t('updatedDate'),
-    sections: LEGAL_SECTION_KEYS[kind].map((key) => ({
+    sections: [
+      ...(kind === 'privacy' ? [INFRASTRUCTURE_NOTICE[locale]] : []),
+      ...LEGAL_SECTION_KEYS[kind].map((key) => ({
       id: `${kind}-${key.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`)}`,
       title: t(`sections.${key}Title`),
       body: t(`sections.${key}Body`),
-    })),
+      })),
+    ],
   };
 }

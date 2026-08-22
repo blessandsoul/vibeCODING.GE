@@ -15,6 +15,15 @@ const nextConfig: NextConfig = {
   skipProxyUrlNormalize: true,
   poweredByHeader: false,
 
+  async redirects() {
+    return [
+      { source: '/privacy', destination: 'https://ainow.ge/privacy', permanent: true },
+      { source: '/:locale(ka|en|ru)/privacy', destination: 'https://ainow.ge/:locale/privacy', permanent: true },
+      { source: '/terms', destination: 'https://ainow.ge/terms', permanent: true },
+      { source: '/:locale(ka|en|ru)/terms', destination: 'https://ainow.ge/:locale/terms', permanent: true },
+    ];
+  },
+
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [

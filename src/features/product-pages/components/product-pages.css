@@ -3,7 +3,7 @@
   --product-page-hero-shell: 1140px;
   --product-page-reading-shell: 760px;
   --product-page-gutter: 24px;
-  --product-page-section-space: 96px;
+  --product-page-section-space: 80px;
   --product-page-text: #111827;
   --product-page-muted: #4b5563;
   --product-page-subtle: #667085;
@@ -72,8 +72,8 @@
 }
 
 [data-product-page-hero="true"] {
-  padding-top: 118px;
-  padding-bottom: 64px;
+  padding-top: 96px;
+  padding-bottom: 48px;
 }
 
 .product-page-hero__rail {
@@ -81,7 +81,7 @@
   grid-template-columns: auto minmax(24px, 1fr) auto;
   align-items: center;
   gap: 14px;
-  margin-bottom: clamp(42px, 6vw, 72px);
+  margin-bottom: clamp(28px, 4vw, 44px);
 }
 
 .product-page-hero__home {
@@ -135,7 +135,7 @@
   max-width: 16ch;
   margin: 0;
   font-family: var(--font-bricolage), var(--font-sans), sans-serif;
-  font-size: clamp(2.7rem, 6vw, 5.6rem);
+  font-size: clamp(2.125rem, 4.5vw, 3rem);
   font-weight: 780;
   letter-spacing: -0.055em;
   line-height: 0.96;
@@ -143,7 +143,7 @@
 
 .product-page-hero__lead {
   max-width: 62ch;
-  margin: 28px 0 0;
+  margin: 20px 0 0;
   color: var(--product-page-muted);
   font-size: clamp(1rem, 1.35vw, 1.18rem);
   line-height: 1.65;
@@ -217,7 +217,7 @@
 .product-page-endcap h2 {
   margin: 0;
   font-family: var(--font-bricolage), var(--font-sans), sans-serif;
-  font-size: clamp(2rem, 3.4vw, 3.4rem);
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
   font-weight: 760;
   letter-spacing: -0.045em;
   line-height: 1.02;
@@ -456,17 +456,17 @@
 @media (max-width: 640px) {
   [data-product-page="true"] {
     --product-page-gutter: 16px;
-    --product-page-section-space: 64px;
+    --product-page-section-space: 56px;
   }
 
   [data-product-page-hero="true"] {
-    padding-top: 96px;
-    padding-bottom: 48px;
+    padding-top: 84px;
+    padding-bottom: 36px;
   }
 
   .product-page-hero__rail {
     grid-template-columns: auto 1fr;
-    margin-bottom: 38px;
+    margin-bottom: 24px;
   }
 
   .product-page-hero__rail-line {
@@ -483,12 +483,12 @@
 
   .product-page-hero h1 {
     max-width: 18ch;
-    font-size: clamp(2.35rem, 13vw, 3.75rem);
+    font-size: clamp(1.75rem, 8.5vw, 2.125rem);
     line-height: 0.98;
   }
 
   .product-page-hero__lead {
-    margin-top: 22px;
+    margin-top: 18px;
     font-size: 1rem;
   }
 

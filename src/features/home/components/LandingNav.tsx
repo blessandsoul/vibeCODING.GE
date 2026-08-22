@@ -103,8 +103,9 @@ function Wordmark() {
 export function LandingNav() {
   const t = useTranslations('landingNav');
   const locale = useLocale();
-  const pathname = usePathname(); // locale-stripped, so "/" === home
-  const isHome = pathname === '/';
+  const pathname = usePathname();
+  // Keep the hero/header handoff working whether navigation returns "/" or "/ka".
+  const isHome = pathname === '/' || pathname === `/${locale}`;
 
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
