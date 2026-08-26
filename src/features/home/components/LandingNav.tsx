@@ -237,7 +237,7 @@ export function LandingNav() {
     }
   };
 
-  const atTop = isHome && !scrolled;
+  const atTop = !scrolled;
   const logoHidden = atTop;
   const navClassName = ['glass-nav', atTop && 'is-top', menuOpen && 'menu-open']
     .filter(Boolean)
