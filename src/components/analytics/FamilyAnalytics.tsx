@@ -127,7 +127,7 @@ export function FamilyAnalytics({
 
   return (
     <aside
-      className="fixed left-3 w-[min(21rem,calc(100vw-1.5rem))] bottom-[min(17.5rem,calc(100dvh-5rem))] md:bottom-[max(0.75rem,env(safe-area-inset-bottom))] md:w-[min(22.5rem,calc(100vw-26.5rem))]"
+      className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-3 w-[min(15rem,calc(100vw-11.5rem))] md:w-[min(22.5rem,calc(100vw-26.5rem))]"
       style={{ zIndex: ANALYTICS_CONSENT_Z_INDEX }}
       aria-label="Analytics preferences"
     >
