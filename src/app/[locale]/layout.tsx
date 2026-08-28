@@ -12,6 +12,7 @@ import { AistaffWidget } from "@/components/layout/AistaffWidget";
 import { Toaster } from "sonner";
 import { ScrollToTop } from "@/components/common/ScrollToTop";
 import { StructuredData } from "@/components/seo/StructuredData";
+import { FamilyAnalytics } from "@/components/analytics/FamilyAnalytics";
 import { SITE } from "@/config/site";
 import "@/app/globals.css";
 import "@/app/site-new.css";
@@ -179,6 +180,7 @@ export default async function LocaleLayout({
       suppressHydrationWarning
     >
       <head>
+        <meta name="ainow-ga4-destination" content="G-LHWNXVZ9B9" />
         {/* Exact font block copied verbatim from ainow_handoff/index.html <head>
             so the aiNOW wordmark renders with the source's variable Bricolage
             Grotesque (opsz,wght axis) + Space Mono, not next/font's static cuts. */}
@@ -200,6 +202,7 @@ export default async function LocaleLayout({
             <ScrollToTop />
             <Toaster position="top-right" richColors theme="dark" />
             <AistaffWidget />
+            <FamilyAnalytics />
           </NextIntlClientProvider>
         </Providers>
       </body>
