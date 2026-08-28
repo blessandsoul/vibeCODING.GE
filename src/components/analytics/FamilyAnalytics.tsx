@@ -69,18 +69,24 @@ const copy = {
     manage: "ანალიტიკის არჩევა",
     accept: "ანალიტიკის ჩართვა",
     reject: "მხოლოდ აუცილებელი",
+    acceptCompact: "ჩართვა",
+    rejectCompact: "არ ჩავრთო",
   },
   en: {
     text: "We use optional analytics to improve the website. You can allow or decline it.",
     manage: "Analytics choices",
     accept: "Allow analytics",
     reject: "Necessary only",
+    acceptCompact: "Allow",
+    rejectCompact: "Decline",
   },
   ru: {
     text: "Мы используем необязательную аналитику для улучшения сайта. Вы можете разрешить её или отказаться.",
     manage: "Выбор аналитики",
     accept: "Разрешить аналитику",
     reject: "Только необходимое",
+    acceptCompact: "Включить",
+    rejectCompact: "Не включать",
   },
 } as const;
 
@@ -121,51 +127,31 @@ export function FamilyAnalytics({
 
   return (
     <aside
-      className="fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] mx-auto max-w-[920px]"
+      className="fixed left-3 w-[min(21rem,calc(100vw-1.5rem))] bottom-[min(17.5rem,calc(100dvh-5rem))] md:bottom-[max(0.75rem,env(safe-area-inset-bottom))] md:w-[min(22.5rem,calc(100vw-26.5rem))]"
       style={{ zIndex: ANALYTICS_CONSENT_Z_INDEX }}
       aria-label="Analytics preferences"
     >
-      <details className="group rounded-2xl bg-white/78 p-2 shadow-[0_18px_55px_-24px_rgba(15,23,42,0.38),0_2px_10px_rgba(15,23,42,0.08)] ring-1 ring-black/[0.08] backdrop-blur-2xl backdrop-saturate-150 md:hidden dark:bg-neutral-950/78 dark:ring-white/10">
-        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-3 text-sm font-semibold text-neutral-800 outline-none transition-[transform,background-color,box-shadow] duration-150 ease-[cubic-bezier(0.23,1,0.32,1)] hover:bg-white/70 focus-visible:ring-2 focus-visible:ring-neutral-950/80 focus-visible:ring-offset-2 focus-visible:ring-offset-white active:scale-[0.96] [&::-webkit-details-marker]:hidden dark:text-white dark:hover:bg-white/10 dark:focus-visible:ring-white dark:focus-visible:ring-offset-neutral-950">
+      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 rounded-2xl bg-white/78 p-2 shadow-[0_18px_55px_-24px_rgba(15,23,42,0.38),0_2px_10px_rgba(15,23,42,0.08)] ring-1 ring-black/[0.08] backdrop-blur-2xl backdrop-saturate-150 dark:bg-neutral-950/78 dark:ring-white/10">
+        <p className="min-w-0 truncate px-1 text-sm font-semibold text-neutral-800 dark:text-white">
           <span>{text.manage}</span>
-          <span className="text-xs font-medium text-neutral-500 transition-transform duration-150 ease-[cubic-bezier(0.23,1,0.32,1)] group-open:rotate-45 dark:text-neutral-400">+</span>
-        </summary>
-        <div className="grid gap-2 px-1 pb-1 pt-2">
-          <p className="text-pretty text-xs leading-5 text-neutral-700 dark:text-neutral-200">{text.text}</p>
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              type="button"
-              className="min-h-11 whitespace-nowrap rounded-xl bg-white/72 px-2 py-2 text-xs font-semibold text-neutral-800 shadow-[0_0_0_1px_rgba(0,0,0,0.09),0_1px_2px_rgba(0,0,0,0.05)] transition-[transform,background-color,box-shadow] duration-150 ease-[cubic-bezier(0.23,1,0.32,1)] hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black active:scale-[0.96] dark:bg-white/10 dark:text-white dark:shadow-[0_0_0_1px_rgba(255,255,255,0.1)] dark:hover:bg-white/15 dark:focus-visible:outline-white"
-              onClick={() => save("declined")}
-            >
-              {text.reject}
-            </button>
-            <button
-              type="button"
-              className="min-h-11 whitespace-nowrap rounded-xl bg-neutral-950 px-2 py-2 text-xs font-semibold text-white shadow-[0_1px_2px_rgba(0,0,0,0.18),0_7px_18px_-10px_rgba(0,0,0,0.55)] transition-[transform,background-color,box-shadow] duration-150 ease-[cubic-bezier(0.23,1,0.32,1)] hover:bg-neutral-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black active:scale-[0.96] dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-100 dark:focus-visible:outline-white"
-              onClick={() => save("accepted")}
-            >
-              {text.accept}
-            </button>
-          </div>
-        </div>
-      </details>
-      <div className="hidden grid-cols-[minmax(0,1fr)_auto] items-center gap-5 rounded-[24px] bg-white/76 px-4 py-3 shadow-[0_18px_55px_-24px_rgba(15,23,42,0.38),0_2px_10px_rgba(15,23,42,0.08)] ring-1 ring-black/[0.08] backdrop-blur-2xl backdrop-saturate-150 md:grid dark:bg-neutral-950/76 dark:ring-white/10">
-        <p className="min-w-0 text-pretty text-sm leading-6 text-neutral-700 dark:text-neutral-200">{text.text}</p>
+          <span className="sr-only">{text.text}</span>
+        </p>
         <div className="flex shrink-0 gap-2">
           <button
             type="button"
-            className="min-h-11 whitespace-nowrap rounded-xl bg-white/72 px-3.5 py-2.5 text-sm font-semibold text-neutral-800 shadow-[0_0_0_1px_rgba(0,0,0,0.09),0_1px_2px_rgba(0,0,0,0.05)] transition-[transform,background-color,box-shadow] duration-150 ease-[cubic-bezier(0.23,1,0.32,1)] hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black active:scale-[0.96] dark:bg-white/10 dark:text-white dark:shadow-[0_0_0_1px_rgba(255,255,255,0.1)] dark:hover:bg-white/15 dark:focus-visible:outline-white"
+            aria-label={text.reject}
+            className="min-h-11 whitespace-nowrap rounded-xl bg-white/72 px-2.5 py-2 text-xs font-semibold text-neutral-800 shadow-[0_0_0_1px_rgba(0,0,0,0.09),0_1px_2px_rgba(0,0,0,0.05)] transition-[transform,background-color,box-shadow] duration-150 ease-[cubic-bezier(0.23,1,0.32,1)] hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black active:scale-[0.96] dark:bg-white/10 dark:text-white dark:shadow-[0_0_0_1px_rgba(255,255,255,0.1)] dark:hover:bg-white/15 dark:focus-visible:outline-white"
             onClick={() => save("declined")}
           >
-            {text.reject}
+            {text.rejectCompact}
           </button>
           <button
             type="button"
-            className="min-h-11 whitespace-nowrap rounded-xl bg-neutral-950 px-3.5 py-2.5 text-sm font-semibold text-white shadow-[0_1px_2px_rgba(0,0,0,0.18),0_7px_18px_-10px_rgba(0,0,0,0.55)] transition-[transform,background-color,box-shadow] duration-150 ease-[cubic-bezier(0.23,1,0.32,1)] hover:bg-neutral-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black active:scale-[0.96] dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-100 dark:focus-visible:outline-white"
+            aria-label={text.accept}
+            className="min-h-11 whitespace-nowrap rounded-xl bg-neutral-950 px-2.5 py-2 text-xs font-semibold text-white shadow-[0_1px_2px_rgba(0,0,0,0.18),0_7px_18px_-10px_rgba(0,0,0,0.55)] transition-[transform,background-color,box-shadow] duration-150 ease-[cubic-bezier(0.23,1,0.32,1)] hover:bg-neutral-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black active:scale-[0.96] dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-100 dark:focus-visible:outline-white"
             onClick={() => save("accepted")}
           >
-            {text.accept}
+            {text.acceptCompact}
           </button>
         </div>
       </div>
