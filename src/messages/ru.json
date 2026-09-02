@@ -1,4 +1,13 @@
 {
+  "metaTrust": {
+    "providerStatus": "VERIFIED META TECH PROVIDER",
+    "provider": "Официальный технологический провайдер Meta",
+    "appStatus": "META APP REVIEW APPROVED",
+    "app": "Приложение одобрено Meta",
+    "connectionStatus": "CONNECT IN ONE CLICK",
+    "connection": "Подключение к Meta в один клик",
+    "note": "Доступ подтверждаете вы сами внутри Meta. Пароль нам не нужен."
+  },
   "seo": {
     "contact": {
       "title": "Контакты, Vibe Code Rescue",

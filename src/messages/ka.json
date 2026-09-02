@@ -1,4 +1,13 @@
 {
+  "metaTrust": {
+    "providerStatus": "VERIFIED META TECH PROVIDER",
+    "provider": "Meta-ს ოფიციალური ტექნოლოგიური პროვაიდერი",
+    "appStatus": "META APP REVIEW APPROVED",
+    "app": "აპლიკაცია დამტკიცებულია Meta-ს მიერ",
+    "connectionStatus": "CONNECT IN ONE CLICK",
+    "connection": "Meta-სთან დაკავშირება ერთი დაწკაპუნებით",
+    "note": "წვდომას თავად ადასტურებთ Meta-ში. პაროლს არ გთხოვთ."
+  },
   "seo": {
     "contact": {
       "title": "კონტაქტი, Vibe Code Rescue",

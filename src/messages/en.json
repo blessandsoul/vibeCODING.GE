@@ -1,4 +1,13 @@
 {
+  "metaTrust": {
+    "providerStatus": "VERIFIED META TECH PROVIDER",
+    "provider": "Official Meta Technology Provider",
+    "appStatus": "META APP REVIEW APPROVED",
+    "app": "Approved by Meta",
+    "connectionStatus": "CONNECT IN ONE CLICK",
+    "connection": "Connect Meta in one click",
+    "note": "You approve access yourself in Meta. We never ask for your password."
+  },
   "seo": {
     "contact": {
       "title": "Contact, Vibe Code Rescue",

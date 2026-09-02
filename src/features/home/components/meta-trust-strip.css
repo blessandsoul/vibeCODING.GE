@@ -1,0 +1,179 @@
+.meta-trust {
+  --meta-trust-surface: var(--card);
+  --meta-trust-ink: var(--foreground);
+
+  padding: 12px 24px 44px;
+  background: transparent;
+}
+
+.meta-trust__grid {
+  width: min(1160px, 100%);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0 auto;
+}
+
+.meta-trust__card {
+  min-width: 0;
+  overflow: hidden;
+  padding: 4px;
+  border-radius: 18px;
+  background: var(--meta-trust-surface);
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--meta-trust-ink) 7%, transparent),
+    0 14px 36px -24px color-mix(in oklab, var(--meta-trust-ink) 26%, transparent);
+}
+
+.meta-trust__media {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  border-radius: 14px;
+  outline: 1px solid rgba(0, 0, 0, .1);
+  outline-offset: -1px;
+  background: var(--muted);
+}
+
+.meta-trust__media img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.meta-trust__media::after {
+  position: absolute;
+  inset: 0;
+  content: '';
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--meta-trust-surface) 98%, transparent) 0%,
+    color-mix(in oklab, var(--meta-trust-surface) 92%, transparent) 45%,
+    color-mix(in oklab, var(--meta-trust-surface) 18%, transparent) 72%,
+    transparent 86%
+  );
+}
+
+.meta-trust__copy {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  color: var(--meta-trust-ink);
+}
+
+.meta-trust__status {
+  position: absolute;
+  top: clamp(14px, 1.7vw, 20px);
+  right: clamp(14px, 1.7vw, 20px);
+  display: inline-flex;
+  max-width: calc(100% - 28px);
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 6px 10px 6px 6px;
+  border-radius: 8px;
+  background: color-mix(in oklab, var(--meta-trust-surface) 97%, var(--meta-trust-ink));
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--meta-trust-ink) 10%, transparent),
+    0 1px 2px -1px color-mix(in oklab, var(--meta-trust-ink) 16%, transparent),
+    0 2px 4px color-mix(in oklab, var(--meta-trust-ink) 5%, transparent);
+  color: color-mix(in oklab, var(--meta-trust-ink) 84%, transparent);
+  font-size: clamp(9px, .72vw, 10px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: .045em;
+  text-transform: uppercase;
+}
+
+.meta-trust__status::before {
+  display: grid;
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  place-items: center;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: color-mix(in oklab, var(--meta-trust-ink) 92%, transparent);
+  color: var(--meta-trust-surface);
+  content: '✓';
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.meta-trust__copy h3 {
+  position: absolute;
+  bottom: clamp(18px, 2.2vw, 26px);
+  left: clamp(18px, 2.2vw, 26px);
+  max-width: 64%;
+  margin: 0;
+  color: var(--meta-trust-ink);
+  font-size: clamp(23px, 2.35vw, 34px);
+  font-weight: 750;
+  line-height: 1.05;
+  letter-spacing: -.035em;
+  text-wrap: balance;
+}
+
+@media (max-width: 860px) {
+  .meta-trust__grid {
+    width: 100%;
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(270px, 78vw);
+    justify-content: start;
+    overflow-x: auto;
+    padding: 4px 4px 14px;
+    scroll-snap-type: inline mandatory;
+    scrollbar-width: thin;
+    overscroll-behavior-inline: contain;
+  }
+
+  .meta-trust__card {
+    scroll-snap-align: start;
+  }
+
+  .meta-trust__copy h3 {
+    max-width: 66%;
+    font-size: clamp(21px, 5.8vw, 24px);
+    line-height: 1.08;
+  }
+}
+
+@media (max-width: 640px) {
+  .meta-trust {
+    padding: 8px 12px 32px;
+  }
+
+  .meta-trust__grid {
+    gap: 10px;
+  }
+
+  .meta-trust__status {
+    top: 14px;
+    right: 14px;
+    max-width: calc(100% - 28px);
+    font-size: 9px;
+  }
+
+  .meta-trust__copy h3 {
+    bottom: 18px;
+    left: 18px;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .meta-trust__card {
+    box-shadow: 0 0 0 2px var(--foreground);
+  }
+}
+
+.dark .meta-trust__media {
+  outline-color: rgba(0, 0, 0, .1);
+}
+
+.dark .meta-trust {
+  --meta-trust-surface: var(--foreground);
+  --meta-trust-ink: var(--background);
+}
