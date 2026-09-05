@@ -1,5 +1,7 @@
 'use client';
 
+import { ContactChallenge } from "@/components/common/ContactChallenge";
+
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -27,6 +29,8 @@ export function LandingCta() {
   const t = useTranslations('contact');
   const tc = useTranslations('product.cta');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [challengeAttempt, setChallengeAttempt] = useState(0);
 
   const {
     register,
@@ -40,12 +44,13 @@ export function LandingCta() {
   // Submit to the same endpoint the old contact form used (/api/contact →
   // Telegram notification). Phone-only lead, we call back within 24h.
   const onSubmit = async (data: ContactFormData) => {
+    if (!turnstileToken) return;
     setIsSubmitting(true);
     try {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: data.phone }),
+        body: JSON.stringify({ turnstileToken, phone: data.phone }),
       });
       if (res.ok) {
         trackLead();
@@ -57,6 +62,8 @@ export function LandingCta() {
     } catch {
       toast.error(t('errorMessage'));
     } finally {
+      setTurnstileToken("");
+      setChallengeAttempt((value) => value + 1);
       setIsSubmitting(false);
     }
   };
@@ -162,8 +169,9 @@ export function LandingCta() {
                 </p>
               )}
             </div>
+            <ContactChallenge key={challengeAttempt} onToken={setTurnstileToken} errorText={t("errorMessage")} />
             <MagneticButton className="block w-full">
-              <button type="submit" disabled={isSubmitting} className="click-spark min-h-11 w-full px-4 py-3.5 rounded-xl bg-neutral-900 text-white font-medium [transition:background-color_.18s_ease,transform_.18s_cubic-bezier(.2,.8,.2,1)] will-change-transform hover:bg-neutral-800 active:scale-[0.97] disabled:opacity-60 disabled:cursor-not-allowed motion-reduce:transition-none motion-reduce:active:scale-100">{isSubmitting ? t('submitting') : tc('phoneSubmit')}</button>
+              <button type="submit" disabled={isSubmitting || !turnstileToken} className="click-spark min-h-11 w-full px-4 py-3.5 rounded-xl bg-neutral-900 text-white font-medium [transition:background-color_.18s_ease,transform_.18s_cubic-bezier(.2,.8,.2,1)] will-change-transform hover:bg-neutral-800 active:scale-[0.97] disabled:opacity-60 disabled:cursor-not-allowed motion-reduce:transition-none motion-reduce:active:scale-100">{isSubmitting ? t('submitting') : tc('phoneSubmit')}</button>
             </MagneticButton>
             <p className="text-center text-xs text-[#525252]">{tc('phoneNote')}</p>
           </form>

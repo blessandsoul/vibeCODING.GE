@@ -1,3 +1,4 @@
+import { verifyContactChallenge } from "@/lib/contact-challenge";
 import { NextResponse } from "next/server";
 import { contactFormSchema } from "@/features/contact/schemas/contact.schema";
 import { sendTelegramNotification } from "@/lib/telegram";
@@ -25,6 +26,9 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
+    if (!(await verifyContactChallenge(body?.turnstileToken))) {
+      return NextResponse.json({ error: "Please complete the security check." }, { status: 403 });
+    }
     const parsed = contactFormSchema.safeParse(body);
 
     if (!parsed.success) {

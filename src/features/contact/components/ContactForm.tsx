@@ -1,5 +1,7 @@
 "use client";
 
+import { ContactChallenge } from "@/components/common/ContactChallenge";
+
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,6 +24,8 @@ export const ContactForm = () => {
   const t = useTranslations("contact");
   const productPageT = useTranslations("productPages.contact");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [challengeAttempt, setChallengeAttempt] = useState(0);
 
   const {
     register,
@@ -33,12 +37,13 @@ export const ContactForm = () => {
   });
 
   const onSubmit = async (data: ContactFormData) => {
+    if (!turnstileToken) return;
     setIsSubmitting(true);
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, turnstileToken }),
       });
 
       if (res.ok) {
@@ -53,6 +58,8 @@ export const ContactForm = () => {
     } catch {
       toast.error(t("errorMessage"));
     } finally {
+      setTurnstileToken("");
+      setChallengeAttempt((value) => value + 1);
       setIsSubmitting(false);
     }
   };
@@ -78,10 +85,11 @@ export const ContactForm = () => {
         )}
       </div>
 
+      <ContactChallenge key={challengeAttempt} onToken={setTurnstileToken} errorText={t("errorMessage")} />
       {/* Submit */}
       <Button
         type="submit"
-        disabled={isSubmitting}
+        disabled={isSubmitting || !turnstileToken}
         aria-label={t("submit")}
         data-mcp-toolname="contact-submit"
         data-mcp-tooldescription="Submit contact form to send phone number to aiNOW for callback"

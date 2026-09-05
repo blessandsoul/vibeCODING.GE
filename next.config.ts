@@ -68,7 +68,7 @@ const nextConfig: NextConfig = {
           {
             key: "Content-Security-Policy-Report-Only",
             value:
-              "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://aistaff.ge; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://aistaff.ge; frame-src https://aistaff.ge; media-src 'self' https:; object-src 'none'; base-uri 'self'",
+              "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://aistaff.ge https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://aistaff.ge https://challenges.cloudflare.com; frame-src https://aistaff.ge https://challenges.cloudflare.com; media-src 'self' https:; object-src 'none'; base-uri 'self'",
           },
         ],
       },
