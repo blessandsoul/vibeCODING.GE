@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'product.seo' });
 
-  const ogImageUrl = `${SITE.baseUrl}/og-image.png`;
+  const ogImageUrl = `${SITE.baseUrl}/og/landing-20260905.png`;
   const siteName = SITE.wordmark.prefix + SITE.wordmark.mark;
   const canonical = buildAlternates('', locale).canonical;
   const ogLocales: Record<string, string> = { ka: 'ka_GE', en: 'en_US', ru: 'ru_RU' };

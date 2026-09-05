@@ -27,9 +27,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: copy.subtitle,
       url: buildAlternates('/blog', locale).canonical,
       type: 'website',
-      images: [{ url: `${SITE.baseUrl}/og-image.png`, width: 1200, height: 630, alt: title }],
+      images: [{ url: `${SITE.baseUrl}/og/landing-20260905.png`, width: 1200, height: 630, alt: title }],
     },
-    twitter: { card: 'summary_large_image', title, description: copy.subtitle, images: [`${SITE.baseUrl}/og-image.png`] },
+    twitter: { card: 'summary_large_image', title, description: copy.subtitle, images: [`${SITE.baseUrl}/og/landing-20260905.png`] },
     robots: hasArticles ? undefined : { index: false, follow: true },
   };
 }

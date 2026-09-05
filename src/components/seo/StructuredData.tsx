@@ -91,7 +91,7 @@ const service = {
   brand: { '@type': 'Brand', name: BRAND },
   serviceType: SITE.seo.serviceType,
   url: SITE.baseUrl,
-  image: `${SITE.baseUrl}/og-image.png`,
+  image: `${SITE.baseUrl}/og/landing-20260905.png`,
   description: SITE.manifest.description,
   provider: { '@id': ORG_ID },
   areaServed:

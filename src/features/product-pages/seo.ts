@@ -47,13 +47,13 @@ export async function buildProductPageMetadata({
       url,
       type: 'website',
       siteName: PRODUCT_NAME,
-      images: [{ url: `${SITE.baseUrl}/og-image.png`, width: 1200, height: 630 }],
+      images: [{ url: `${SITE.baseUrl}/og/landing-20260905.png`, width: 1200, height: 630 }],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: [`${SITE.baseUrl}/og-image.png`],
+      images: [`${SITE.baseUrl}/og/landing-20260905.png`],
     },
   };
 }

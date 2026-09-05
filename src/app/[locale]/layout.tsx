@@ -46,7 +46,7 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: 'product.seo' });
   const siteName = SITE.wordmark.prefix + SITE.wordmark.mark;
 
-  const ogImageUrl = `${BASE_URL}/og-image.png`;
+  const ogImageUrl = `${BASE_URL}/og/landing-20260905.png`;
 
   return {
     metadataBase: new URL(BASE_URL),
