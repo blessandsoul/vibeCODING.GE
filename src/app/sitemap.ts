@@ -9,6 +9,7 @@ import {
 export default function sitemap(): MetadataRoute.Sitemap {
   const entries: MetadataRoute.Sitemap = [];
   for (const route of PUBLIC_ROUTES) {
+    if (route.path === "/privacy" || route.path === "/terms" || route.path === "/cookies") continue;
     const path = route.path === "/" ? "" : route.path;
     for (const locale of INDEXED_LOCALES) {
       entries.push({

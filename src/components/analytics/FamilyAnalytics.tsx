@@ -40,9 +40,10 @@ function loadAnalytics(measurementIds: readonly string[]): void {
   const ids = Array.from(new Set(measurementIds.filter(Boolean)));
   if (ids.length === 0) return;
 
-  const analyticsWindow = window as Window & { dataLayer?: unknown[][] };
+  const analyticsWindow = window as Window & { dataLayer?: unknown[]; gtag?: (...args: unknown[]) => void };
   analyticsWindow.dataLayer = analyticsWindow.dataLayer || [];
   const gtag = (...args: unknown[]) => analyticsWindow.dataLayer?.push(args);
+  analyticsWindow.gtag = gtag;
 
   if (!document.getElementById("ainow-ga4-loader")) {
     const script = document.createElement("script");

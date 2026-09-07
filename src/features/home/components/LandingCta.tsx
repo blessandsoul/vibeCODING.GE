@@ -10,8 +10,7 @@ import { toast } from 'sonner';
 import { Reveal } from '@/components/common/Reveal';
 import { MagneticButton } from '@/components/common/MagneticButton';
 import { contactFormSchema, type ContactFormData } from '@/features/contact/schemas/contact.schema';
-// facebook-pixel was stripped from this lean build; no-op keeps the call sites intact.
-const trackLead = () => undefined;
+import { createLeadEventId, trackLead } from "@/lib/analytics";
 import './landing-cta.css';
 
 /* =========================================================================
@@ -46,6 +45,7 @@ export function LandingCta() {
   const onSubmit = async (data: ContactFormData) => {
     if (!turnstileToken) return;
     setIsSubmitting(true);
+    const leadEventId = createLeadEventId();
     try {
       const res = await fetch('/api/contact', {
         method: 'POST',
@@ -53,7 +53,7 @@ export function LandingCta() {
         body: JSON.stringify({ turnstileToken, phone: data.phone }),
       });
       if (res.ok) {
-        trackLead();
+        trackLead("homepage_cta", leadEventId);
         toast.success(t('successTitle'), { description: t('successMessage') });
         reset();
       } else {

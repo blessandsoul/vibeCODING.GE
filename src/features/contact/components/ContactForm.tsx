@@ -15,10 +15,7 @@ import {
   contactFormSchema,
   type ContactFormData,
 } from "../schemas/contact.schema";
-// facebook-pixel was stripped from this lean build; no-op keeps the call sites intact.
-const trackLead = (args?: { content_name?: string }) => {
-  void args;
-};
+import { createLeadEventId, trackLead } from "@/lib/analytics";
 
 export const ContactForm = () => {
   const t = useTranslations("contact");
@@ -39,6 +36,7 @@ export const ContactForm = () => {
   const onSubmit = async (data: ContactFormData) => {
     if (!turnstileToken) return;
     setIsSubmitting(true);
+    const leadEventId = createLeadEventId();
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
@@ -47,7 +45,7 @@ export const ContactForm = () => {
       });
 
       if (res.ok) {
-        trackLead({ content_name: "contact-phone" });
+        trackLead("contact", leadEventId);
         toast.success(t("successTitle"), {
           description: t("successMessage"),
         });
