@@ -1,0 +1,107 @@
+---
+title: "ადმინისტრატორის ფუნქციების ავტორიზაცია: role bypass-ის შემოწმება"
+excerpt: "დამალული მენიუ წვდომას არ ზღუდავს. შექმენით capability matrix და შეამოწმეთ თითოეული ადმინისტრატორის მოქმედება სერვერზე და მონაცემთა ფენაში."
+author: "aiNOW editorial team"
+tags: ["vibeCODING", "ადმინისტრატორი", "ავტორიზაცია", "role bypass"]
+coverQuery: "admin control panel behind layered server authorization gates, editorial technical illustration"
+readTime: "8 min"
+locale: "ka"
+site: "vibecoding"
+articleType: "spoke"
+defaultLocale: "ka"
+slug: "protect-admin-routes-beyond-hiding-the-menu-link"
+language: "ka"
+coverFile: "cover.png"
+engine: "SEO_ARTICLE_v1"
+contentMode: "STRUCTURAL_SAFE_v1"
+date: 2026-09-26
+updated: 2026-09-26
+status: published
+indexable: true
+public_release: true
+coverImage: "/images/blog-covers/protect-admin-routes-beyond-hiding-the-menu-link.png"
+sources: ["https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html", "https://nextjs.org/docs/app/guides/authentication", "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/403"]
+---
+
+<p><strong>პირდაპირი პასუხი:</strong> ადმინისტრატორის ფუნქცია დაცულია მხოლოდ მაშინ, როცა სანდო სერვერი ან მონაცემთა ფენა ამოწმებს ვინ არის მომხმარებელი, რა როლი აქვს და კონკრეტული მოქმედების უფლება აქვს თუ არა. დამალული მენიუ და client-side redirect მხოლოდ ინტერფეისია. უკვე აშენებული AI აპლიკაციის ფარგლების შესაფასებლად <a href="/contact">მოითხოვეთ vibecoding.ge-ს scoped review</a>, სადაც private ტესტის წვდომა და არადესტრუქციული საზღვარი წინასწარ შეთანხმდება.</p>
+
+<h2 id="hidden-menu">დამალული მენიუს ზღვარი ადმინისტრატორის დაცვაში</h2>
+
+<p>ბრაუზერი არ არის ნდობის საზღვარი. ჩვეულებრივ მომხმარებელს შეუძლია პირდაპირ გახსნას ადმინისტრატორის URL, გამოიძახოს API endpoint ან გაიმეოროს network request მაშინაც კი, როცა ღილაკი არ ჩანს. OWASP-ის <a href="https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html">Authorization Cheat Sheet</a> რეკომენდაციას აძლევს deny by default მიდგომას და თითოეულ მოთხოვნაზე უფლების შემოწმებას.</p>
+
+<p>შემოწმება უნდა ეხებოდეს capability-ს, ანუ მოქმედებას, რომელსაც ბიზნესი უშვებს: მომხმარებლის დაბლოკვას, თანხის დაბრუნებას, ექსპორტს, მიწვევას, კონფიგურაციის შეცვლას ან ფაილის ნახვას. ერთი დაცული გვერდი ვერ ფარავს სხვა route-ს, server action-ს, cron endpoint-ს ან პირდაპირ მონაცემთა მოთხოვნას.</p>
+
+<p>Next.js-ის ოფიციალური <a href="https://nextjs.org/docs/app/guides/authentication">authentication გზამკვლევი</a> ერთმანეთისგან არჩევს authentication-ს, session management-ს და authorization-ს. ამ განსხვავების შენარჩუნება პრაქტიკულია: login-ის წარმატება ადასტურებს ვინაობას, მაგრამ არ ამტკიცებს, რომ იმ მომხმარებელს ყველა ადმინისტრატორის მოქმედება ეკუთვნის.</p>
+
+<h2 id="capability-matrix">როგორ შეადგინოთ ადმინისტრატორის capability matrix?</h2>
+
+<p>მატრიცა ამცირებს იმ რისკს, რომ გუნდმა მხოლოდ გვერდები ჩამოწეროს და მოქმედებები გამორჩეს. თითოეული რიგი უნდა პასუხობდეს კითხვას: ვის შეუძლია რა მონაცემზე რა ცვლილების გაკეთება და სად მოწმდება ეს წესი.</p>
+
+<table>
+  <thead><tr><th>capability</th><th>შესასვლელი გზა</th><th>დაშვების წესი</th><th>უარყოფის მტკიცებულება</th></tr></thead>
+  <tbody>
+    <tr><td>მომხმარებლის დაბლოკვა</td><td>admin page და mutation</td><td>მხოლოდ შესაბამისი staff role</td><td>403 და უცვლელი სტატუსი</td></tr>
+    <tr><td>მონაცემთა ექსპორტი</td><td>button, API, background job</td><td>role და tenant scope</td><td>ფაილი არ შეიქმნა</td></tr>
+    <tr><td>კონფიგურაციის შეცვლა</td><td>server action</td><td>explicit permission</td><td>ცვლილება არ ჩაიწერა</td></tr>
+    <tr><td>ფაილის ნახვა</td><td>download URL</td><td>object ownership ან staff rule</td><td>ბაიტი არ დაბრუნდა</td></tr>
+    <tr><td>მოწვევა</td><td>form და email endpoint</td><td>ორგანიზაციის ადმინისტრატორი</td><td>მოწვევა არ გაიგზავნა</td></tr>
+  </tbody>
+</table>
+
+<p>თუ Supabase გამოიყენება, შეადარეთ route-ის შემოწმება მონაცემთა ბაზის grant-სა და Row Level Security პოლიტიკას. სერვერის როლი, table owner ან service role შეიძლება მომხმარებლის ჩვეულებრივ session-ს არ ჰგავდეს. მატრიცაში თითოეულ მაღალი პრივილეგიის როლს ცალკე მიუთითეთ, რადგან ადმინისტრატორის წარმატებული ტესტი ჩვეულებრივი მომხმარებლის უარყოფით შედეგს ვერ ჩაანაცვლებს.</p>
+
+<h2 id="bypass-test">რა ტესტი ამხელს permission bypass-ს?</h2>
+
+<p>ტესტი უნდა დაიწყოს ყველაზე დაბალი დაშვებით და შეადაროს დადებით, უარყოფით და signed-out შემთხვევებს. გამოიყენეთ staging ან სხვა გარემო, სადაც სატესტო ჩანაწერი უსაფრთხოდ კონტროლდება.</p>
+
+<ol>
+  <li><strong>ჩამოწერეთ სამი actor state:</strong> signed-out, ჩვეულებრივი მომხმარებელი და დაშვებული ადმინისტრატორი. თითოეულზე წინასწარ განსაზღვრეთ რომელი პასუხია მისაღები.</li>
+  <li><strong>გახსენით გვერდი პირდაპირ.</strong> ჩვეულებრივმა მომხმარებელმა URL ხელით მოითხოვოს. შემდეგ იგივე account-ით გამოიძახეთ underlying API ან server action.</li>
+  <li><strong>შეცვალეთ მხოლოდ მოქმედების პარამეტრი.</strong> არ აურიოთ role, email ან user ID ბრაუზერისგან მიღებულ მნიშვნელობაში. ტესტი უნდა ამოწმებდეს სერვერის მიერ დამოწმებულ identity-ს.</li>
+  <li><strong>შეამოწმეთ side effect.</strong> უარყოფილი მოთხოვნის შემდეგ წაიკითხეთ შესაბამისი record, audit entry ან ფაილის მდგომარეობა. შეცვლილი ჩანაწერი უარყოფით status-თან ერთადაც ჩავარდნილ კონტროლზე მიუთითებს.</li>
+  <li><strong>გაიმეორეთ alternate path.</strong> მოძებნეთ იგივე capability-ის export, download, background და mobile/API გზა. ერთი route-ის დაცვა არ ნიშნავს ყველა ალტერნატიული გზის დაცვას.</li>
+</ol>
+
+<h2 id="auth-vs-authz">COMPARISON: authentication და authorization</h2>
+
+<table>
+  <thead><tr><th>კითხვა</th><th>authentication</th><th>authorization</th></tr></thead>
+  <tbody>
+    <tr><td>ვინ არის მომთხოვნი?</td><td>სესია, token ან provider ადგენს identity-ს</td><td>მიღებული identity ებმის როლსა და ორგანიზაციას</td></tr>
+    <tr><td>რა შეიძლება გააკეთოს?</td><td>ადასტურებს შესვლას</td><td>ამოწმებს კონკრეტულ capability-სა და ობიექტს</td></tr>
+    <tr><td>სად უნდა იყოს?</td><td>session boundary-ში</td><td>ყოველ დაცულ მონაცემსა და მოქმედებასთან ახლოს</td></tr>
+    <tr><td>რა შეცდომა ხდება?</td><td>login წარმატებულია და ყველა გზა იხსნება</td><td>role მხოლოდ UI-ში ინახება ან client-ს სჯერა</td></tr>
+  </tbody>
+</table>
+
+<p>HTTP 403 ხშირად შეესაბამება შემთხვევას, როცა სერვერმა მოთხოვნა გაიგო, მაგრამ მოქმედ account-ს უფლება არ აქვს; განმარტება მოცემულია <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/403">MDN-ის 403 აღწერაში</a>. პასუხში არ ჩაწეროთ როლის საიდუმლო დეტალები, მონაცემის სრული შინაარსი ან debug stack. უარის ლოგი უნდა იყოს საკმარისი ინციდენტის შესასწავლად და არ უნდა გახდეს ინფორმაციის გაჟონვის ახალი არხი.</p>
+
+<h2 id="limitations">LIMITATIONS: რა ვერ დაამტკიცებს საჯარო scan-ს?</h2>
+
+<p>საჯარო ფაილების scan ხედავს იმას, რაც ჩვეულებრივ სტუმარს შეუძლია ჩამოტვირთოს. იგი ვერ ადგენს private role mapping-ს, ყველა server action-ს, database grant-ს ან რეალურ ადმინისტრატორის workflow-ს. public bundle-ში დამალული route მხოლოდ ჰიპოთეზაა და არა დადასტურებული bypass.</p>
+
+<p>vibecoding.ge-ის პროდუქტი განკუთვნილია უკვე აშენებული AI-ით შექმნილი აპლიკაციის security და production-readiness review-სთვის. ღრმა შემოწმება იწყება მხოლოდ მაშინ, როცა owner-თან access და test boundary შეთანხმდება. ანგარიში დადასტურებულ მიგნებებს აერთიანებს ბიზნეს-რისკთან, მტკიცებულებასთან, repair ნაბიჯებთან და ხელახალი შემოწმების პირობებთან. ეს არ არის ახალი აპლიკაციის აშენება, სრული სერტიფიკაცია ან ყველა შესაძლო რისკის გარანტია.</p>
+
+<h2 id="release-rule">როგორ მიიღოთ release გადაწყვეტილება?</h2>
+
+<p>მონიშნეთ releaseთვის საჭირო capability-ები და არ დაეყრდნოთ მხოლოდ იმ გვერდებს, რომლებიც ყველაზე თვალსაჩინოა. გადაწყვეტილება უფრო მყარია, როცა მატრიცის თითოეულ მაღალი რისკის მოქმედებას ჰყავს პასუხისმგებელი პირი (owner), აქვს სანდო enforcement point, უარყოფითი ტესტის შედეგი (test result), გვერდითი ეფექტის შემოწმება (side-effect check) და repair-ის შემდეგ rescan-ის ჩანაწერი.</p>
+
+<p>თუ ერთი მოქმედების შემოწმება ჯერ ვერ ხერხდება, შეინახეთ სტატუსი UNKNOWN და მიუთითეთ საჭირო წვდომა ან წყარო. უცნობი პასუხი არ უდრის უარყოფითს და არც დადებითს. ამ წესით გუნდს შეუძლია პასუხისმგებლობა კონკრეტულ შემდეგ ნაბიჯზე გადაიტანოს, ვიდრე მწვანე სტატუსი მხოლოდ მენიუს ხილვადობიდან გამოიტანოს.</p>
+
+<h2 id="faq">ხშირად დასმული კითხვები</h2>
+<h3 id="faq-1">დამალული admin ღილაკი საკმარისია?</h3>
+<p>არა. მომხმარებელს შეუძლია პირდაპირ მოითხოვოს URL ან API. უფლება სერვერმა უნდა გადაამოწმოს თითოეულ დაცულ მოქმედებაზე.</p>
+<h3 id="faq-2">403 პასუხი ავტომატურად ნიშნავს, რომ მონაცემი დაცულია?</h3>
+<p>არა. საჭიროა შემოწმდეს response body, გვერდითი ეფექტი და ალტერნატიული გზები. 403 ერთ კონკრეტულ request-ზე უარს აჩვენებს, მთელ აპს კი არა.</p>
+<h3 id="faq-3">შეიძლება თუ არა როლის ტესტი production-ზე?</h3>
+<p>მხოლოდ owner-ის მიერ შეთანხმებული არადესტრუქციული ტესტით. უსაფრთხო დასაწყისი ჩვეულებრივ staging, fixture ან იზოლირებული account-ია.</p>
+
+<h2 id="related-reading">დაკავშირებული საკითხები</h2>
+<ul>
+  <li><a href="/ka/blog/csp-da-nonce-aiit-shekmnil-apshi">CSP და nonce AI-ით შექმნილ აპში</a></li>
+  <li><a href="/ka/blog/staging-da-production-secrets-vibe-coded-apshi">staging და production გარემოების გამიჯვნა</a></li>
+  <li><a href="/ka/blog/webhookis-khelmotseris-shemotsmeba-aiit-shekmnil-apshi">webhook-ის ხელმოწერის შემოწმება</a></li>
+  <li><a href="/ka/blog/csrf-state-changing-actions">CSRF და state-changing action</a></li>
+  <li><a href="/contact">scoped review-ის მოთხოვნა</a></li></ul>
+
+<p><em>სარედაქციო შენიშვნა: ტექსტის მომზადებაში გამოყენებულია ხელოვნური ინტელექტი. წყაროების შესაბამისობა, ენა და releaseთვის საჭირო ფარგლები ცალკე გადამოწმებას საჭიროებს.</em></p>

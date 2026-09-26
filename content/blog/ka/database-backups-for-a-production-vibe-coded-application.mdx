@@ -1,0 +1,116 @@
+---
+title: "AI-ით შექმნილი აპის backup და restore: მზადყოფნის შემოწმება"
+excerpt: "როგორ შეამოწმოს მფლობელმა, ინახება თუ არა AI-ით შექმნილი აპის საჭირო მონაცემები და შეუძლია თუ არა გუნდს უსაფრთხო restore-ის ჩატარება."
+author: "Andrew Altair / Founder, aiNOW"
+tags: ["vibeCODING", "backup", "restore", "production readiness"]
+cluster: "Production readiness"
+coverQuery: "isolated restore drill for an AI-built application with data map and recovery evidence"
+readTime: "8 min read"
+locale: "ka"
+articleType: "spoke"
+engine: "SEO_ARTICLE_v1"
+site: "vibecoding"
+defaultLocale: "ka"
+slug: "database-backups-for-a-production-vibe-coded-application"
+date: 2026-09-26
+updated: 2026-09-26
+status: published
+indexable: true
+public_release: true
+coverImage: "/images/blog-covers/database-backups-for-a-production-vibe-coded-application.png"
+sources: ["https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/rel_backing_up_data_periodic_recovery_testing_data.html", "https://www.postgresql.org/docs/18/backup.html", "https://learn.microsoft.com/en-us/azure/backup/backup-overview"]
+---
+
+<p><strong>მოკლე პასუხი:</strong> backup მზადყოფნა მხოლოდ წარმატებული სარეზერვო job-ის არსებობა არ არის. მფლობელმა უნდა იცოდეს, რომელი მონაცემია კრიტიკული, სად ინახება თითოეული ნაწილი, როგორ აღდგება იგი იზოლირებულ გარემოში და რა მტკიცებულება ადასტურებს, რომ აპლიკაცია აღდგენის შემდეგ მუშაობს. <a href="/ka/contact">მოითხოვეთ არსებული AI-ით შექმნილი აპლიკაციის scoped review</a>, თუ ამ სურათის დამოუკიდებლად შეკვრა გჭირთ.</p>
+
+<h2 id="what-ready-means">რას ნიშნავს backup და restore მზადყოფნა</h2>
+
+<p>წარმოიდგინეთ ონლაინ სერვისი, რომელსაც აქვს მომხმარებლები, ავტორიზაცია, შეკვეთები, ატვირთული ფაილები და გარე გადახდის პროვაიდერი. მხოლოდ database-ის ასლი ამ სისტემის სრული აღდგენა არ არის. საჭიროა გაირკვეს, სად ცხოვრობს თითოეული stateful ნაწილი, რომელი წყაროა საბოლოო და რა შეიძლება ხელახლა შეიქმნას.</p>
+
+<p>კარგი მიზანი წერია ბიზნესის ენაზე: რომელი პროცესი უნდა დაბრუნდეს პირველ რიგში, რამდენი დროის მიუღებელი პაუზა არსებობს და რამდენი ბოლო ცვლილების დაკარგვაა მისაღები. ტექნიკურ გეგმაში ამ კითხვებს RTO და RPO ეწოდება. მნიშვნელობა თვითონ აბრევიატურას არ აქვს; მნიშვნელობა აქვს შეთანხმებულ ზღვარს და შემოწმების ჩანაწერს.</p>
+
+<p><a href="https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/rel_backing_up_data_periodic_recovery_testing_data.html">AWS Well-Architected-ის recovery guidance</a> პირდაპირ აკავშირებს restore ტესტს მონაცემის მთლიანობასთან, RTO-სთან და RPO-სთან. გვერდი აფრთხილებს, რომ backup-ის არსებობის ვარაუდი ან restore-ის შემდეგ მონაცემის წაუკითხავად დატოვება recovery-ის მტკიცებულება ვერ იქნება.</p>
+
+<h2 id="inventory">შექმენით მონაცემთა რუკა restore-მდე</h2>
+
+<p>დაიწყეთ ერთი ცხრილით. თითოეულ მწკრივში ჩაწერეთ კომპონენტი, მისი მფლობელი, აღდგენის გზა, დამოკიდებულება და შემოწმების ნიშანი:</p>
+
+<table>
+  <thead><tr><th>კომპონენტი</th><th>რა უნდა დადასტურდეს</th><th>რა რჩება უცნობი</th></tr></thead>
+  <tbody>
+    <tr><td>ძირითადი database</td><td>რომელი backup შეირჩევა და როგორ იკითხება აღდგენილი ჩანაწერი</td><td>საჭიროა თუ არა კონკრეტულ მომენტამდე დაბრუნება</td></tr>
+    <tr><td>ფაილები და object storage</td><td>ფაილი და მისი metadata ერთად ბრუნდება</td><td>არის თუ არა ყველა bucket backup-ის საზღვრებში</td></tr>
+    <tr><td>auth და secrets</td><td>აღდგენის შემდეგ უსაფრთხოდ იქმნება წვდომა</td><td>რომელი credential უნდა შეიცვალოს</td></tr>
+    <tr><td>ინდექსი, queue და job</td><td>შესაძლებელია ხელახლა აგება ან უსაფრთხო გამოტოვება</td><td>დუბლირებული სამუშაოს რისკი</td></tr>
+    <tr><td>გარე პროვაიდერი</td><td>სერვისი დაბრუნების შემდეგ როგორ ერთვება</td><td>რომელი მდგომარეობა მხოლოდ პროვაიდერთან რჩება</td></tr>
+  </tbody>
+</table>
+
+<h2 id="comparison">backup მიდგომების შედარება</h2>
+
+<p>PostgreSQL <strong>18</strong>-ის <a href="https://www.postgresql.org/docs/18/backup.html">ოფიციალური დოკუმენტაცია</a> ერთმანეთისგან განასხვავებს SQL dump-ს, file-system backup-ს და continuous archiving-ს. ეს განსხვავება პრაქტიკულია: არჩეული მეთოდი უნდა შეესაბამებოდეს თქვენს მონაცემთა ბაზას, ხელმისაწვდომ ფანჯარას და აღდგენის ამოცანას. ნუ ჩათვლით provider-ის სიტყვას „backup“ აპლიკაციის სრულ სურათად.</p>
+
+<h2 id="restore-drill">როგორ ჩაატაროთ უსაფრთხო restore drill</h2>
+
+<p>Restore უნდა ჩატარდეს ისეთ გარემოში, რომელიც production-ის მომხმარებლებს არ ეხება. მიზანია პროცედურის შემოწმება და არა ცოცხალ მონაცემებზე ექსპერიმენტი. გამოიყენეთ ეს თანმიმდევრობა:</p>
+
+<ol>
+  <li><strong>დააფიქსირეთ საზღვრები.</strong> მიუთითეთ რომელი backup აირჩევა, რა დროის მონაცემი უნდა დაბრუნდეს და ვინ აჩერებს ტესტს შეცდომისას.</li>
+  <li><strong>გამოაცალკევეთ გარემო.</strong> შექმენით ახალი რესურსი ან იზოლირებული namespace. არ მიაბათ აღდგენილი აპლიკაცია ნამდვილ email, payment ან webhook endpoint-ს.</li>
+  <li><strong>აღადგინეთ ტექნიკური დამოკიდებულებები.</strong> დააყენეთ schema, migration, ფაილების საცავი და მინიმალური configuration. საიდუმლო მნიშვნელობები ტესტის ჩანაწერში არ ჩაწეროთ.</li>
+  <li><strong>შეამოწმეთ ბიზნესის ჩანაწერი.</strong> წაიკითხეთ ბოლო ცნობილი შეკვეთა, მომხმარებელი, ფაილის metadata და სხვა კრიტიკული ობიექტი. ცარიელი dashboard ვერ ადასტურებს წარმატებას.</li>
+  <li><strong>გაიარეთ მნიშვნელოვანი journey.</strong> შემოწმდეს ავტორიზაცია, ჩანაწერის ნახვა, უსაფრთხო ცვლილება და საჭირო გარე ინტეგრაციის mock ან sandbox ქცევა.</li>
+  <li><strong>შეადარეთ დრო და დანაკარგი.</strong> ჩაწერეთ restore-ის დაწყება, usable state-მდე მისვლა, დაკარგული ბოლო ცვლილება და იმ ზღვართან შედარება, რომელიც ბიზნესმა წინასწარ დაადგინა.</li>
+  <li><strong>დააფიქსირეთ შედეგი.</strong> შეინახეთ არჩეული backup, გარემოს საზღვარი, შემოწმებული ჩანაწერები, შეცდომები, owner და შემდეგი repair. PASS მხოლოდ მაშინ დაწერეთ, როცა კრიტიკული კითხვა პასუხგაცემულია.</li>
+</ol>
+
+<p>Microsoft-ის <a href="https://learn.microsoft.com/en-us/azure/backup/backup-overview">Azure Backup overview</a> აჩვენებს policy-driven workflow-ს, recovery point-ს და სხვადასხვა დონის restore-ს. ეს დოკუმენტაცია კონკრეტულ Azure სერვისზეა; იგი არ ამტკიცებს თქვენი აპლიკაციის აღდგენადობას. სერვისის ფუნქცია და თქვენი პროცედურის ფაქტობრივი შედეგი სხვადასხვა მტკიცებულებაა.</p>
+
+<p>სასწავლო ჩანაწერში HTTP <code>200</code> შეიძლება ნიშნავდეს მოსალოდნელ პასუხს, ხოლო <code>403</code> უარყოფილ წვდომას. დაკარგული კრიტიკული ჩანაწერების რაოდენობა ცალკე ჩაწერეთ და ნულოვანი შედეგი მხოლოდ მაშინ მიუთითეთ, როცა შესაბამისი შემოწმება ნამდვილად ჩატარდა. ეს რიცხვები ამ სტატიის მაგალითებია და არა თქვენი აპლიკაციის შედეგი.</p>
+
+<h2 id="evidence">რა მტკიცებულება უნდა მიიღოს მფლობელმა</h2>
+
+<p>საბოლოო პაკეტში სასარგებლოა ოთხი ცალკე ჩანაწერი: მონაცემთა რუკა, restore runbook, ტესტის ჟურნალი და ღია საკითხების სია. თითოეული ჩანაწერი უნდა მიუთითებდეს თარიღს, გარემოს, პასუხისმგებელ ადამიანს და იმ ნაწილს, რომელიც არ შემოწმებულა.</p>
+
+<p>თუ ტესტმა მხოლოდ database-ის წაკითხვა დაადასტურა, დასკვნა უნდა იყოს „database წაკითხვადია იზოლირებულ გარემოში“. დასკვნა „აპლიკაცია აღდგა“ ზედმეტად ფართოა, თუ ფაილები, authentication, queue და გარე ინტეგრაციები არ შემოწმებულა. მსგავსი ზუსტი ენა გადაწყვეტილებას ამარტივებს და გადაჭარბებულ დაპირებას არ ქმნის.</p>
+
+<h2 id="vibecoding-scope">რას ამოწმებს vibeCODING</h2>
+
+<p>vibeCODING განიხილავს უკვე არსებულ AI-ით შექმნილ აპებს და ეხმარება მფლობელს security და production-readiness საკითხების დალაგებაში. საჯარო scan ამოწმებს იმას, რასაც ჩვეულებრივი visitor ჩამოტვირთავს. backup-ის private console, database ან restore გარემო საჯარო ფაილიდან არ დასტურდება.</p>
+
+<p>უფრო ღრმა review, repair ან rescan მხოლოდ მაშინ შედის, როცა მფლობელი და review გუნდი წვდომასა და ტესტის საზღვრებს წინასწარ ათანხმებენ. ანგარიში აღწერს შემოწმებულ ზედაპირს, აღმოჩენას, შესაძლო გავლენას, repair-ის scope-ს და ხელახალი შემოწმების პირობას. ეს არ არის ახალი აპის აშენება, restore-ის გარანტია ან კონკრეტული provider-ის სერტიფიკატი.</p>
+
+<p>ოპერაციული გადაბარება, monitoring და audit trail ცალკე საკითხებია; მათი შემოწმებისას იგივე წესი მოქმედებს: დაასახელეთ მტკიცებულება და დატოვეთ დაუდასტურებელი ნაწილი ღიად.</p>
+
+<h2 id="limits">შეზღუდვები: სად მთავრდება ეს შემოწმება</h2>
+
+<ul>
+  <li>backup-ის ფაილის არსებობა არ ადასტურებს, რომ იგი წაკითხვადია;</li>
+  <li>database restore არ აბრუნებს ავტომატურად ფაილებს, secrets-ს ან გარე ანგარიშებს;</li>
+  <li>იზოლირებულ გარემოში წარმატება არ ნიშნავს production traffic-ის უსაფრთხო გადართვას;</li>
+  <li>provider-ის feature label არ არის თქვენი ბიზნეს-journey-ის ტესტის შედეგი;</li>
+  <li>უცნობი კომპონენტი უნდა დარჩეს ღია საკითხი და არა გამოგონილი PASS.</li>
+</ul>
+
+<h2 id="faq">ხშირად დასმული კითხვები</h2>
+
+<h3 id="faq-1">თუ backup job მწვანეა, საკმარისია?</h3>
+<p>არა. უნდა დადასტურდეს აღდგენის ფაქტობრივი წაკითხვა, საჭირო მონაცემების არსებობა და შეთანხმებულ დროში დაბრუნება. მწვანე job მხოლოდ ერთი ტექნიკური სიგნალია.</p>
+
+<h3 id="faq-2">შეიძლება restore პირდაპირ production-ში გავაკეთოთ?</h3>
+<p>ეს სტატია ასეთ მოქმედებას არ გირჩევთ. ჯერ განსაზღვრეთ იზოლირებული ტესტი, stop პირობა და sandbox ინტეგრაციები. ცოცხალ მონაცემზე ნაბიჯი ცალკე ავტორიზაციას და მკაცრ runbook-ს მოითხოვს.</p>
+
+<h3 id="faq-3">ვინ შეამოწმებს ჩემს კონკრეტულ აპლიკაციას?</h3>
+<p>პირველადი review შეიძლება დაიწყოს საჯარო ზედაპირიდან. private მონაცემის, backup-ის ან restore გარემოს განხილვა მხოლოდ შეთანხმებული წვდომით და მკაფიო scope-ით განიხილება. დეტალები მიიღეთ <a href="/ka/contact">vibeCODING-ის contact გვერდზე</a>.</p>
+
+<h2 id="related-reading">დაკავშირებული საკითხები</h2>
+
+<ul>
+  <li><a href="/ka/blog/server-side-input-validation-injection">server-side input validation და injection</a></li>
+  <li><a href="/ka/blog/csp-da-nonce-aiit-shekmnil-apshi">CSP და nonce AI-ით შექმნილ აპლიკაციაში</a></li>
+  <li><a href="/ka/blog/staging-da-production-secrets-vibe-coded-apshi">staging და production secrets</a></li>
+  <li><a href="/ka/blog/webhookis-khelmotseris-shemotsmeba-aiit-shekmnil-apshi">webhook-ის ხელმოწერის შემოწმება</a></li>
+  <li><a href="/ka/blog/logging-audit-trail">audit trail-ის ჩანაწერები</a></li>
+  <li><a href="/ka/blog/csrf-state-changing-actions">state-changing action-ის CSRF კონტროლი</a></li>
+
+<p><em>სარედაქციო შენიშვნა: ტექსტის მომზადებაში გამოყენებულია ხელოვნური ინტელექტი.</em></p>

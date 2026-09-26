@@ -1,0 +1,94 @@
+---
+title: "Rate limiting API endpoint-ებისა და საჯარო ფორმებისთვის"
+excerpt: "შეარჩიეთ endpoint-ის შესაბამისი ზღვარი, დაიცავით ძვირი მოქმედებები და შეინარჩუნეთ რეალური მომხმარებლისთვის აღდგენის გზა."
+author: "aiNOW editorial team"
+tags: ["vibeCODING", "rate limiting", "API", "resource exhaustion"]
+coverQuery: "public API request streams passing through measured rate limit gates, editorial technical illustration"
+readTime: "9 min"
+locale: "ka"
+site: "vibecoding"
+articleType: "spoke"
+defaultLocale: "ka"
+slug: "rate-limiting-public-forms-and-api-endpoints"
+language: "ka"
+coverFile: "cover.png"
+engine: "SEO_ARTICLE_v1"
+contentMode: "STRUCTURAL_SAFE_v1"
+date: 2026-09-26
+updated: 2026-09-26
+status: published
+indexable: true
+public_release: true
+coverImage: "/images/blog-covers/rate-limiting-public-forms-and-api-endpoints.png"
+sources: ["https://owasp.org/API-Security/editions/2023/en/0xa4-unrestricted-resource-consumption/", "https://www.rfc-editor.org/rfc/rfc6585.html#section-4", "https://www.rfc-editor.org/rfc/rfc9110.html#section-10.2.3"]
+---
+
+<p><strong>პირდაპირი პასუხი:</strong> rate limiting არის თითოეული ოპერაციისთვის განსაზღვრული სამუშაოს ბიუჯეტი, რომელიც მოთხოვნის ძვირადღირებული ნაწილის დაწყებამდე მოწმდება. სწორი წესი ითვალისწინებს caller-ის იდენტობას, burst-ს, ღირებულებას, უარის პასუხსა და ლეგიტიმური მომხმარებლის აღდგენის გზას. უკვე აშენებული AI აპლიკაციის abuse-flow-ების შესაფასებლად <a href="/contact">მოითხოვეთ vibecoding.ge-ს scoped review</a>.</p>
+
+<h2 id="budget">რატომ არ არის ერთი requests-per-minute ლიმიტი საკმარისი?</h2>
+
+<p>contact form, password reset, დიდი ძიება და paid API call ერთნაირი ოპერაციები არ არის. ერთმა მოთხოვნამ შეიძლება მხოლოდ მოკლე ჩანაწერი შეინახოს, მეორემ email გაგზავნოს, მესამემ კი გარე compute ან storage დახარჯოს. OWASP API Security-ის <a href="https://owasp.org/API-Security/editions/2023/en/0xa4-unrestricted-resource-consumption/">API4:2023</a> ყურადღებას ამახვილებს არა მხოლოდ request count-ზე, არამედ execution time-ზე, memory-ზე, file size-ზე, pagination-ზე და მესამე მხარის ხარჯზე.</p>
+
+<p>HTTP <a href="https://www.rfc-editor.org/rfc/rfc6585.html#section-4">429 სტატუსი</a> აღნიშნავს, რომ მოთხოვნა ძალიან ბევრია. <a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-10.2.3">Retry-After</a> კლიენტს ეუბნება, როდის ან რამდენ ხანში სცადოს ხელახლა. header მარტო abuse-ს ვერ აჩერებს, თუ API ძვირ ოპერაციას უკვე ასრულებს და მხოლოდ შემდეგ აბრუნებს უარს.</p>
+
+<p>ეს განსხვავება გეხმარებათ, რომ ლიმიტის გადაწყვეტილება ოპერაციის რეალურ ღირებულებას დაუკავშიროთ და მხოლოდ სტატისტიკურ request count-ს არ დაეყრდნოთ.</p>
+
+<h2 id="playbook">endpoint-specific ლიმიტის playbook</h2>
+
+<ol>
+  <li><strong>ჩამოწერეთ ოპერაციები.</strong> route-ების სიის გარდა გამოყავით login, email, file upload, search, record creation და paid provider call. ერთ endpoint-ში რამდენიმე სხვადასხვა ხარჯი შეიძლება იმალებოდეს.</li>
+  <li><strong>აირჩიეთ counter განზომილება.</strong> sign-in-მდე IP შეიძლება იყოს საწყისი სიგნალი, ხოლო sign-in-ის შემდეგ account, session ან verified destination უფრო ზუსტია. მაღალი რისკის მოქმედებას შეიძლება რამდენიმე counter დასჭირდეს.</li>
+  <li><strong>განსაზღვრეთ rate, burst და concurrency.</strong> ბიუჯეტი უნდა უკავშირდებოდეს capacity-სა და ბიზნეს-წესს. „უსასრულო“ queue resource exhaustion-ს მხოლოდ გვიან აჩენს.</li>
+  <li><strong>შეამოწმეთ ბიუჯეტი ძვირ მოქმედებამდე.</strong> გააჩერეთ email, დიდი query, გარე API და ფაილის processing მანამ, სანამ limit გადაწყვეტილება არ მიიღება.</li>
+  <li><strong>დააბრუნეთ მკაფიო, მცირე პასუხი.</strong> 429 და Retry-After მომხმარებელს აძლევს აღდგენის მინიშნებას. შეინარჩუნეთ უსაფრთხოდ შეყვანილი ფორმის მონაცემი, თუ ეს workflow-ს შეესაბამება.</li>
+  <li><strong>დაკვირდით ორივე მხარეს.</strong> შეადარეთ accepted request, limit hit, downstream error, support report და გარე ხარჯი. ბევრი block შეიძლება ცუდი იდენტიფიკაციის ნიშანი იყოს, ხოლო ნულოვანი block შეიძლება უბრალოდ გამორთულ კონტროლს ნიშნავდეს.</li>
+</ol>
+
+<h2 id="identity">რომელი იდენტობა უნდა დაითვალოს?</h2>
+
+<table>
+  <thead><tr><th>სიგნალი</th><th>სად გამოდგება</th><th>რისი შეცდომაა</th></tr></thead>
+  <tbody>
+    <tr><td>IP</td><td>საწყისი anonymous abuse და edge დაცვა</td><td>shared office, carrier ან hotel-ის ყველა მომხმარებლის დაბლოკვა</td></tr>
+    <tr><td>account</td><td>authenticated მოქმედება და ბიზნეს-ლიმიტი</td><td>ახალი ანგარიშებით ლიმიტის გვერდის ავლა</td></tr>
+    <tr><td>session ან token</td><td>მოკლე lifecycle კონტროლი</td><td>ტოკენის გაჟონვისას ძველი counter ნდობა</td></tr>
+    <tr><td>destination</td><td>password reset ან message გაგზავნა</td><td>ერთი inbox-ის ან ნომრის overload</td></tr>
+    <tr><td>operation cost</td><td>paid provider და მძიმე processing</td><td>ყველა route-ისთვის ერთი იაფი წესი</td></tr>
+  </tbody>
+</table>
+
+<p>rate limiting DDoS დაცვის სინონიმი არ არის. ინფრასტრუქტურული შეტევა, WAF, queue და application-level budget სხვადასხვა ფენაა. ერთ კონტროლს ნუ დაარქმევთ „სრულ დაცვას“, თუ რეალურად მხოლოდ ერთ endpoint-სა და ერთ counter-ს ამოწმებთ.</p>
+
+<h2 id="customer-failure">customer-safe failure-ის წესები</h2>
+
+<p>customer-safe failure იწყება იმით, რომ უარი კონკრეტულ ოპერაციას ეხება და არა მთელ account-ს გაურკვეველი მიზეზით. rate rule-ში წინასწარ ჩაწერეთ, რომელი ლიმიტი დაირღვა, რა არის retry გზა და ვის შეუძლია ხელით გადახედვა.</p>
+
+<p>საერთო IP ხშირად რამდენიმე ლეგიტიმურ მომხმარებელს აერთიანებს. მხოლოდ IP-ზე დაყრდნობამ შეიძლება ოფისი, მობილური ქსელი ან სასტუმრო ერთ actor-ად აქციოს. პირიქით, მხოლოდ account-ზე დაყრდნობამ შეიძლება უსასრულო signup-ებით abuse-ს გზა დაუტოვოს. იდენტობის კომბინაცია ბიზნესის კონკრეტულ flow-ს მოარგეთ.</p>
+
+<h2 id="evidence">რა უნდა ჩაიწეროს შემოწმების ანგარიშში?</h2>
+
+<p>თითოეული აღმოჩენა დააბით endpoint-ზე, counter-ზე, ზღვარზე, response-ზე, downstream ხარჯზე და ხელახლა შემოწმების წესზე. კარგი ჩანაწერი პასუხობს ოთხ კითხვას: რა ითვლება, როდის ხდება უარი, რა მტკიცებულება დარჩა და რა შეუძლია ლეგიტიმურ მომხმარებელს შემდეგ.</p>
+
+<p>vibecoding.ge ამოწმებს უკვე აშენებულ AI-ით შექმნილ აპს, ადგენს დადასტურებულ მიგნებებს ბიზნეს-რისკთან ერთად და repair/rescan ნაბიჯებს აღწერს. public scan მხოლოდ ჩამოსატვირთ და დაკვირვებად ზედაპირს ხედავს. private rate configuration, paid provider ან ანგარიშზე მიბმული test flow-სთვის access და test boundary წინასწარ უნდა შეთანხმდეს.</p>
+
+<h2 id="limitations">შეზღუდვა: რა ვერ დადასტურდება საჯარო URL-ით?</h2>
+
+<p>საჯარო URL შეიძლება აჩვენებდეს status code-ს, ფორმას ან ერთ response-ს, მაგრამ იგი ვერ ამტკიცებს, როგორ ითვლება burst, სად ინახება counter, რა ხდება მრავალინსტანციურ გარემოში ან რომელი downstream ხარჯი იბლოკება. 429-ის არქონა არ ნიშნავს, რომ ყველა resource limit სწორად მუშაობს.</p>
+
+<p>ანგარიში ვრცელდება შეთანხმებულ scope-ზე და დადასტურებულ მტკიცებულებაზე. პროდუქტი არ არის DDoS სერვისი, uptime-ის გარანტია, ახალი აპლიკაციის მშენებლობა ან ყველა abuse სცენარის სერტიფიკაცია. გაურკვეველი counter ან უცნობი provider წესი ცალკე ღია საკითხად უნდა დარჩეს.</p>
+
+<h2 id="faq">ხშირად დასმული კითხვები</h2>
+<h3 id="faq-1">429 პასუხი საკმარისია rate limiting-ის დასამტკიცებლად?</h3>
+<p>არა. საჭიროა გაირკვეს, რა დაითვალა სერვერმა, მოხდა თუ არა ძვირი მოქმედების დაწყება და შეუძლია თუ არა ნამდვილ მომხმარებელს უსაფრთხოდ ცდა მოგვიანებით.</p>
+<h3 id="faq-2">ყველა endpoint-ს ერთი ლიმიტი უნდა ჰქონდეს?</h3>
+<p>არა. ოპერაციის ღირებულება, abuse-ის გზა და მომხმარებლის იდენტობა განსხვავდება. login, upload, search და paid API-ს შეიძლება განსხვავებული counter და აღდგენის წესი დასჭირდეს.</p>
+
+<h2 id="related-reading">დაკავშირებული საკითხები</h2>
+<ul>
+  <li><a href="/ka/blog/csp-da-nonce-aiit-shekmnil-apshi">CSP და nonce AI-ით შექმნილ აპში</a></li>
+  <li><a href="/ka/blog/staging-da-production-secrets-vibe-coded-apshi">staging და production გარემოების გამიჯვნა</a></li>
+  <li><a href="/ka/blog/webhookis-khelmotseris-shemotsmeba-aiit-shekmnil-apshi">webhook-ის ხელმოწერის შემოწმება</a></li>
+  <li><a href="/ka/blog/logging-audit-trail">rate-limit event-ის audit trail</a></li>
+  <li><a href="/contact">scoped review-ის მოთხოვნა</a></li></ul>
+
+<p><em>სარედაქციო შენიშვნა: ტექსტის მომზადებაში გამოყენებულია ხელოვნური ინტელექტი. წყაროების შესაბამისობა, ენა და releaseთვის საჭირო ფარგლები ცალკე გადამოწმებას საჭიროებს.</em></p>

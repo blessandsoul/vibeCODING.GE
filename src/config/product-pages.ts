@@ -3,7 +3,7 @@ import type { ProductPagesConfig } from '@/features/product-pages/types';
 export const PRODUCT_PAGES = {
   pricing: { status: 'public', mode: 'project' },
   contact: { status: 'public' },
-  blog: { status: 'off' },
+  blog: { status: 'public' },
   integrations: {
     status: 'public',
     records: [
@@ -40,8 +40,8 @@ export const PRODUCT_PAGES = {
   cookies: { status: 'off' },
   solutions: { status: 'off', slugs: [] },
   localeNamespaces: {
-    ka: ['productPages.common', 'productPages.pricing', 'productPages.contact', 'productPages.integrations', 'productPages.security', 'productPages.privacy', 'productPages.terms'],
-    en: ['productPages.common', 'productPages.pricing', 'productPages.contact', 'productPages.integrations', 'productPages.security', 'productPages.privacy', 'productPages.terms'],
-    ru: ['productPages.common', 'productPages.pricing', 'productPages.contact', 'productPages.integrations', 'productPages.security', 'productPages.privacy', 'productPages.terms'],
+    ka: ['productPages.common', 'productPages.pricing', 'productPages.contact', 'productPages.blog', 'productPages.integrations', 'productPages.security', 'productPages.privacy', 'productPages.terms'],
+    en: ['productPages.common', 'productPages.pricing', 'productPages.contact', 'productPages.blog', 'productPages.integrations', 'productPages.security', 'productPages.privacy', 'productPages.terms'],
+    ru: ['productPages.common', 'productPages.pricing', 'productPages.contact', 'productPages.blog', 'productPages.integrations', 'productPages.security', 'productPages.privacy', 'productPages.terms'],
   },
 } as const satisfies ProductPagesConfig;

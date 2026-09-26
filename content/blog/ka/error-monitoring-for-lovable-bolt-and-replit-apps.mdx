@@ -1,0 +1,87 @@
+---
+title: "AI-ით შექმნილ აპში production monitoring და alerting: მფლობელის გზამკვლევი"
+excerpt: "როგორ დააკავშიროს დამფუძნებელმა მომხმარებლის კრიტიკული გზა, ტექნიკური სიგნალი, alert და პასუხისმგებელი ადამიანი უკვე არსებულ AI-ით შექმნილ აპში."
+author: "Andrew Altair / Founder, aiNOW"
+tags: ["vibeCODING", "monitoring", "alerting", "AI-built app"]
+cluster: "Production readiness"
+coverQuery: "founder reviewing application telemetry signals and alert ownership"
+readTime: "8 min read"
+locale: "ka"
+articleType: "spoke"
+engine: "SEO_ARTICLE_v1"
+site: "vibecoding"
+defaultLocale: "ka"
+slug: "error-monitoring-for-lovable-bolt-and-replit-apps"
+date: 2026-09-26
+updated: 2026-09-26
+status: published
+indexable: true
+public_release: true
+coverImage: "/images/blog-covers/error-monitoring-for-lovable-bolt-and-replit-apps.png"
+sources: ["https://opentelemetry.io/docs/concepts/signals/", "https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html", "https://csrc.nist.gov/pubs/sp/800/61/r3/final"]
+---
+
+<p><strong>მოკლე პასუხი:</strong> production monitoring სასარგებლოა მაშინ, როცა აჩვენებს შეწყვეტილ მომხმარებლის გზას, release-ს, გავლენას და პასუხისმგებელ owner-ს. დაიწყეთ ერთი კრიტიკული მოქმედებით, დააკავშირეთ trace, metric და უსაფრთხო log, შემდეგ კონტროლირებული ტესტით შეამოწმეთ alert. <a href="/ka/contact">მოითხოვეთ არსებული AI-ით შექმნილი აპის scoped review</a>, თუ ეს ჯაჭვი მხოლოდ dashboard-ად გაქვთ.</p>
+
+<h2 id="monitoring-question">რას უნდა აჩვენებდეს production monitoring</h2>
+
+<p>დამფუძნებელს ხშირად აჩვენებენ მწვანე uptime-ს და ამბობენ, რომ ყველაფერი კონტროლშია. ეს ერთი კითხვა პასუხობს: სერვერი პასუხობს თუ არა. ბიზნესს კი სხვა კითხვებიც აქვს: დასრულდა თუ არა signup, შეინახა თუ არა upload, დადასტურდა თუ არა payment და რა უნდა გაკეთდეს, თუ პასუხი მომხმარებელს არ მიუვიდა.</p>
+
+<p>სასარგებლო monitoring-ს აქვს ოთხი ნაწილი: მოვლენის აღმოჩენა, კონტექსტი, alert-ის წესი და პასუხისმგებელი owner. კონტექსტში ჩაწერეთ release, environment, operation და უსაფრთხო correlation ID. პაროლი, access token, connection string, სრული request body და ზედმეტი პირადი მონაცემი telemetry-ში არ უნდა აღმოჩნდეს მხოლოდ იმიტომ, რომ მათი ჩაწერა მარტივია.</p>
+
+<p><a href="https://opentelemetry.io/docs/concepts/signals/">OpenTelemetry Signals გვერდი</a> 4 კატეგორიას ასახელებს: traces, metrics, logs და baggage. Trace აღწერს მოთხოვნის გზას კომპონენტებს შორის, metric არის runtime-ის გაზომვა, log კი მოვლენის ჩანაწერი; baggage კონტექსტის გადატანას ეხმარება. მცირე აპს ყველა სიგნალის სრულად დანერგვა პირველივე დღეს არ სჭირდება. მას სჭირდება ისეთი მინიმალური კავშირი, რომელიც მარცხს კონკრეტულ მომხმარებლის მოქმედებას დაუკავშირებს.</p>
+
+<h2 id="checkout-story">ერთი checkout-ის ამბავი და ბრმა ზონა</h2>
+
+<p>წარმოიდგინეთ ასეთი შემთხვევა: მომხმარებელი checkout-ს აგზავნის, ღილაკი იტრიალებს და შემდეგ გვერდი თითქოს წარმატებით იტვირთება. მაგრამ payment provider-ს callback არ მიუღია, order-ის სტატუსი pending დარჩა და support-ს მხოლოდ მომხმარებლის წერილი აქვს. თუ მხოლოდ browser console-ს აკვირდებით, server-side failure და მესამე მხარის callback-ის დაკარგვა შეიძლება საერთოდ არ გამოჩნდეს.</p>
+
+<p>ამ ამბის გასარჩევად ჯერ დაწერეთ მოსალოდნელი გზა: request-ის მიღება, validation, payment call, database update, callback და მომხმარებლისთვის საბოლოო პასუხი. თითოეულ ნაბიჯს მიუთითეთ მინიმალური მტკიცებულება და owner. მაგალითად, payment call-ს შეიძლება ჰქონდეს provider response, database update-ს transaction result, ხოლო callback-ს correlation ID. ერთი dashboard ვერ ცვლის ამ მიზეზობრივი ჯაჭვის შემოწმებას.</p>
+
+<p>თუ აპის სხვა ნაწილი იყენებს <a href="/ka/blog/webhookis-khelmotseris-shemotsmeba-aiit-shekmnil-apshi">webhook ხელმოწერის კონტროლს</a>, monitoring-მა უნდა აჩვენოს ხელმოწერის უარყოფა, განმეორებითი callback და საბოლოო order state. თვითონ alert არ ასწორებს webhook-ის წესს; ის გაძლევთ დროსა და მტკიცებულებას, რომელი კონტროლი უნდა გადამოწმდეს.</p>
+
+<h2 id="signals">სამი სიგნალი, სამი განსხვავებული კითხვა</h2>
+
+<p><strong>Trace</strong> სასარგებლოა მაშინ, როცა ერთი request რამდენიმე სერვერს ან ფუნქციას გადის. იგი გეხმარებათ გაარჩიოთ ნელი database call, timeout და მესამე მხარის პასუხის არქონა. Trace-ში არ ჩაწეროთ საიდუმლო ან სრული პირადი payload; ID საკმარისია, თუ მისი მიბმა დაშვებულ სისტემაშია შესაძლებელი.</p>
+
+<p><strong>Metric</strong> გვიჩვენებს ტენდენციას: error rate იზრდება, latency უარესდება, queue გროვდება თუ წარმატებული checkout-ების წილი ეცემა. Metric-ს სჭირდება საზომი, დროის ფანჯარა და ზღვარი. სიტყვა „ცუდია“ alert-ის წესი არ არის; წინასწარ დაწერეთ, რა არის warning, რა ითხოვს დაუყოვნებელ რეაგირებას და ვინ იღებს გადაწყვეტილებას.</p>
+
+<p><strong>Log</strong> აღწერს კონკრეტულ მოვლენას. <a href="https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html">OWASP Logging Cheat Sheet</a> ხსნის, რატომ არის application logging მნიშვნელოვანი როგორც უსაფრთხოების, ისე ოპერაციული ანალიზისთვის; ასევე გვაფრთხილებს, რომ ჩანაწერები დაცული უნდა იყოს შეცვლის, წაშლისა და არასანქცირებული წვდომისგან. შეინახეთ event type, timestamp, environment, release, safe actor reference და შედეგი. retention და access ცალკე გადაწყვეტილებად ჩაწერეთ.</p>
+
+<p>სიგნალებს შორის კავშირი უფრო ღირებულია, ვიდრე მათი რაოდენობა. ერთი request-ის trace ID log-ში და alert-ის payload-ში რომ ჩანდეს, ინჟინერს შეუძლია მიზეზის ძებნა. თუ correlation-ის წესი არ გაქვთ, სამი ცალკე dashboard შეიძლება სამ სხვადასხვა პრობლემად ჩათვალოთ ერთი და იგივე ჩავარდნა.</p>
+
+<h2 id="alert-map">alert-ის გზის შემოწმება მფლობელისთვის</h2>
+
+<p>დაწერეთ თითოეული alert-ის პატარა ბარათი: მოვლენა, სავარაუდო გავლენა, ზღვარი, არხი, ძირითადი პასუხისმგებელი, შემცვლელი პასუხისმგებელი, პირველი მოქმედება და escalation-ის პირობა. „ვიღაცამ ნახოს“ პასუხისმგებლობა არ არის. თუ alert მხოლოდ საერთო chat-ში მიდის, გადაწყვეტილება ხშირად იკარგება შეტყობინებებს შორის.</p>
+
+<p>ჩაატარეთ უსაფრთხო, კონტროლირებული failure შესაბამის environment-ში. გადაამოწმეთ, რომ event შეიქმნა, sensitive field არ გასცდა ნებადართულ ფარგლებს, release და correlation ID ჩანს, alert მიდის სწორ owner-მდე და incident-ის ჩანაწერი იხურება. acceptance evidence-ში შეგიძლიათ გამოიყენოთ მოსალოდნელი HTTP <strong>200</strong> და უარყოფილი <strong>403</strong> როგორც მაგალითი, მაგრამ ეს რიცხვები თქვენი აპის რეალურ შედეგს არ ამტკიცებს.</p>
+
+<p>NIST <a href="https://csrc.nist.gov/pubs/sp/800/61/r3/final">SP 800-61 Rev. 3</a> incident response-ს cybersecurity risk management-ში აერთიანებს და ყურადღებას ამახვილებს detection, response და recovery-ის ეფექტიანობაზე. ეს არ არის თქვენი აპის სერტიფიკატი. პრაქტიკული დასკვნაა: monitoring-ის runbook-ში alert-ის შემდეგი ნაბიჯი, decision owner და recovery-ის გზა წინასწარ უნდა ეწეროს.</p>
+
+<p>თუ კრიტიკული endpoint მომხმარებლის მონაცემს ცვლის, შეადარეთ alert-ის გზა <a href="/ka/blog/csrf-state-changing-actions">state-changing action-ის CSRF კონტროლს</a> და <a href="/ka/blog/server-side-input-validation-injection">server-side input validation-ს</a>. monitoring შედეგს აჩვენებს; ის კონტროლის არსებობას თავისთავად არ ამტკიცებს.</p>
+
+<h2 id="limitations">monitoring-ის რეალური საზღვრები</h2>
+
+<p>მონიტორინგი ვერ დაამტკიცებს, რომ authentication, authorization, database permission ან payment state ყველა სცენარში სწორია. ზოგი ხარვეზი საერთოდ არ წარმოქმნის error-ს, ხოლო ტექნიკურად წარმატებულმა პასუხმა შეიძლება არასასურველი მონაცემი დააბრუნოს. ამიტომ alert-ის სიმშვიდე არ ჩათვალოთ უსაფრთხოების დასკვნად და ცალკე შეამოწმეთ წვდომის წესები, input validation და dependency-ის საზღვრები.</p>
+
+<p>ამ კონტექსტში იხილეთ <a href="/ka/blog/csp-da-nonce-aiit-shekmnil-apshi">CSP და nonce AI-ით შექმნილ აპში</a>, <a href="/ka/blog/staging-da-production-secrets-vibe-coded-apshi">staging და production secrets</a> და <a href="/ka/blog/logging-audit-trail">audit trail ჩანაწერები</a>. ეს მასალები სხვადასხვა კონტროლს ეხება; მათი ბმული monitoring-ის შედეგს ამ აპზე ავტომატურად არ ავრცელებს.</p>
+
+<h2 id="scope">vibeCODING-ის scope monitoring-ის თემაში</h2>
+
+<p>vibeCODING ამოწმებს უკვე არსებულ AI-ით შექმნილ აპებს და ეხმარება მფლობელს security და production-readiness საკითხების დალაგებაში. საჯარო scan ხედავს მხოლოდ იმ ფაილებს, რომელთა ჩამოტვირთვაც ჩვეულებრივ visitor-ს შეუძლია. repository, server logic, provider dashboard, private data და alert routing საჯარო გვერდიდან არ დასტურდება.</p>
+
+<p>უფრო ღრმა review, repair ან rescan იწყება მხოლოდ მაშინ, როცა მფლობელთან შეთანხმებულია წვდომა, კონკრეტული test account, გარემო და ტესტის საზღვრები. ანგარიში შეიძლება აღწერდეს დადასტურებულ finding-ს, შესაძლო გავლენას, repair scope-ს და შემდეგი შემოწმების პირობას. ეს სერვისი არ აშენებს ახალ აპლიკაციას, არ წარმოადგენს იურიდიულ ownership transfer-ს და უსაფრთხოების გარანტიას არ გასცემს.</p>
+
+<p>Monitoring-ის დამოუკიდებელი პრაქტიკული ღირებულება მაინც რჩება: შეგიძლიათ აღწეროთ ერთი მომხმარებლის გზა, დაამატოთ safe context, დაასახელოთ owner და კონტროლირებული failure-ით შეამოწმოთ alert. თუ გჭირდებათ არსებული აპის ამ ზედაპირის review, <a href="/ka/contact">დაუკავშირდით vibeCODING-ს</a> და წინასწარ მიუთითეთ რომელი journey, environment და evidence გაქვთ.</p>
+
+<h2 id="faq">ხშირად დასმული კითხვები</h2>
+
+<h3 id="faq-1">საკმარისია თუ არა uptime dashboard?</h3>
+<p>არა. uptime მხოლოდ ხელმისაწვდომობის ნაწილს აჩვენებს. დაამატეთ ერთი ბიზნეს-მოქმედება, მაგალითად signup ან checkout, მისი release, შედეგი, owner და კონტროლირებული failure-ის შემოწმება.</p>
+
+<h3 id="faq-2">რა უნდა ჩაიწეროს alert-ში?</h3>
+<p>მიუთითეთ მოვლენა, დრო, environment, release, უსაფრთხო correlation ID, სავარაუდო გავლენა, owner და პირველი მოქმედება. პაროლი, access token და სრული პირადი payload alert-ში არ უნდა მოხვდეს.</p>
+
+<h3 id="faq-3">ადასტურებს თუ არა alert-ის არარსებობა უსაფრთხოებას?</h3>
+<p>არა. შეიძლება არც ყოფილიყო შესაბამისი ტესტი, instrumentation გამორთული იყოს ან alert არასწორ არხზე მიდიოდეს. უსაფრთხოების დასკვნას სჭირდება განსაზღვრული control, შეთანხმებული ტესტი და კონკრეტული მტკიცებულება.</p>
+
+<p><em>სარედაქციო შენიშვნა: ტექსტის მომზადებაში გამოყენებულია ხელოვნური ინტელექტი.</em></p>

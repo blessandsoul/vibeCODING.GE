@@ -1,0 +1,99 @@
+---
+title: "SQL და command injection AI-ით შექმნილ აპში: სერვერული input review"
+excerpt: "როგორ იპოვოთ user input გზა SQL query-მდე ან OS command-მდე, როგორ გაარჩიოთ validation და parameterization და როდის არის release შეჩერება გამართლებული."
+author: "aiNOW editorial team"
+tags: ["SQL injection", "command injection", "input validation", "vibeCODING"]
+coverQuery: "original vector editorial illustration of untrusted form input separated from database cylinders by a server-side validation gate and blocked payload symbol, dark graphite and amber, no readable words"
+readTime: "9 min"
+locale: "ka"
+site: "vibecoding"
+articleType: "spoke"
+slug: "server-side-input-validation-injection"
+language: "ka"
+coverFile: "cover.png"
+engine: "SEO_ARTICLE_v1"
+contentMode: "STRUCTURAL_SAFE_v1"
+date: 2026-09-26
+updated: 2026-09-26
+status: published
+indexable: true
+public_release: true
+coverImage: "/images/blog-covers/server-side-input-validation-injection.png"
+sources: ["https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html", "https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html", "https://cheatsheetseries.owasp.org/cheatsheets/Injection_Prevention_Cheat_Sheet.html", "https://owasp.org/projects/asvs?tab=main"]
+---
+
+<p><strong>პირდაპირი პასუხი:</strong> SQL ან command injection review უნდა მიჰყვეს მომხმარებლის input-ს სერვერიდან interpreter-მდე. ვალიდაცია ამოწმებს, შეესაბამება თუ არა მნიშვნელობა მოსალოდნელ ფორმას, ხოლო parameterization გამოყოფს მონაცემს executable query-სა და command-ისგან. მხოლოდ browser-ში ფილტრის ან denylist ნახვა release გადაწყვეტილებას ვერ ამყარებს. <a href="/contact">vibeCODING scoped review მოითხოვეთ</a>, თუ არსებული AI-ით შექმნილი აპის კონკრეტული endpoint-ების შემოწმება გჭირდებათ.</p>
+
+<h2 id="injection-boundary">სად იწყება injection რისკი?</h2>
+<p>Injection ჩნდება მაშინ, როცა untrusted მნიშვნელობა interpreter-მდე მიდის ისე, რომ პროგრამა მას მონაცემად და ბრძანებად ვეღარ არჩევს. SQL injection-ში ეს interpreter მონაცემთა ბაზაა. Command injection-ში ეს შეიძლება იყოს ოპერაციული სისტემის shell ან ისეთი ბიბლიოთეკა, რომელიც სისტემურ ბრძანებას ასრულებს. რისკი მხოლოდ ტექსტურ ფორმაზე არ ვრცელდება: filter, sort, file name, URL, import და ადმინისტრატორის პარამეტრიც input-ია.</p>
+<p><a href="https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html">OWASP Input Validation Cheat Sheet</a> გვირჩევს validation ადრეულ გამოყენებას, მაგრამ პირდაპირ ამბობს, რომ ის SQL injection-ისა და XSS მთავარი თავდაცვა არ უნდა გახდეს. ამიტომ review-ში ორი ცალკე კითხვა დასვით: მნიშვნელობა სწორად არის თუ არა შეზღუდული და interpreter იღებს თუ არა მას პარამეტრად, კოდის ნაწილის ნაცვლად.</p>
+
+<h3 id="data-flow-map">როგორ დახატოთ input data flow?</h3>
+<p>AI builder კოდი ხშირად ერთ ფუნქციაში აერთიანებს request მიღებას, string აწყობასა და query შესრულებას. ასეთ დროს ფაილის სახელით უსაფრთხოება ვერ შეფასდება. შექმენით მოკლე data-flow ჩანაწერი, რომელშიც თითოეული ეტაპი ჩანს:</p>
+<ol>
+  <li><strong>წყარო:</strong> რომელი route, form, query parameter, JSON field ან ფაილის სახელი მოდის მომხმარებლისგან?</li>
+  <li><strong>ნორმალიზაცია:</strong> იკარგება თუ არა encoding, Unicode ან ტიპის ინფორმაცია გზაში?</li>
+  <li><strong>შემოწმება:</strong> მოქმედებს თუ არა allowlist, ტიპი, სიგრძე და დიაპაზონი სერვერზე?</li>
+  <li><strong>საზღვარი:</strong> სად გადადის მნიშვნელობა query builder-ში, ORM-ში, shell-ში ან მესამე მხარის პროცესში?</li>
+  <li><strong>შედეგი:</strong> რა მონაცემს ცვლის ან აბრუნებს endpoint და როგორია შეცდომის ქცევა?</li>
+</ol>
+<p>ამ რუკით დაინახავთ იმ გზებსაც, რომლებიც UI-ში არ ჩანს. მაგალითად, search ველი შეიძლება parameterized იყოს, ხოლო sort სახელი პირდაპირ query string-ში იწერებოდეს. ერთი უსაფრთხო ველი მთელ route-ს უსაფრთხოდ არ აქცევს.</p>
+
+<h2 id="decision-matrix">რა განსხვავებაა validation-სა და parameterization-ს შორის?</h2>
+<table>
+  <thead><tr><th>კონტროლი</th><th>რას აკეთებს</th><th>რის დასამტკიცებლად არ კმარა</th></tr></thead>
+  <tbody>
+    <tr><td>ტიპისა და ფორმის validation</td><td>ამოწმებს, რომ მნიშვნელობა მოსალოდნელ ტიპსა და საზღვრებშია</td><td>ვერ ცვლის query parameterization-ს</td></tr>
+    <tr><td>Prepared statement</td><td>SQL კოდსა და user data-ს ცალკე გადასცემს მონაცემთა ბაზას</td><td>ვერ წყვეტს authorization-სა და ზედმეტ database privilege-ს</td></tr>
+    <tr><td>Allowlist არჩევანისთვის</td><td>მხოლოდ წინასწარ განსაზღვრულ sort ან command მნიშვნელობას უშვებს</td><td>ვერ ამტკიცებს, რომ ყველა სხვა input სწორად მუშავდება</td></tr>
+    <tr><td>Escape ან denylist</td><td>შეიძლება დამატებითი ფენა იყოს კონკრეტულ კონტექსტში</td><td>მთავარ დაცვად გამოყენება მყიფეა და გვერდის ავლა შესაძლებელია</td></tr>
+  </tbody>
+</table>
+<p><a href="https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html">OWASP SQL Injection Prevention Cheat Sheet</a> prepared statement-ს მთავარ არჩევანად აღწერს და აღნიშნავს, რომ ზოგიერთი ნაწილი, მაგალითად column name ან sort order, სხვა წესს მოითხოვს. ასეთ ადგილას allowlist და query redesign უნდა ჩაიწეროს ცალკე, ვიდრე ყველა ტექსტის escape-ზე დაყრდნობა.</p>
+
+<h2 id="sql-review">SQL გზის პრაქტიკული შემოწმება</h2>
+<p>SQL review დაიწყეთ ყველაზე მგრძნობიარე endpoint-ებით: login, ძებნა, ანგარიშის არჩევა, admin filter და მონაცემთა ექსპორტი. ჯერ source-ში მოძებნეთ string concatenation, raw query, dynamic table ან order clause. შემდეგ შეადარეთ runtime evidence-ს, რადგან framework უსაფრთხო helper შეიძლება სხვა ფილიალში გვერდის ავლით იყოს გამოყენებული.</p>
+<ul>
+  <li>დაასახელეთ input field და ის query ნაწილი, რომელსაც ის მართავს.</li>
+  <li>დაადასტურეთ, რომ value გადაეცემა bind parameter-ად და არა query string ნაწილად.</li>
+  <li>დარწმუნდით, რომ sort, filter და column არჩევანი allowlist-ით შემოიფარგლება.</li>
+  <li>შეამოწმეთ application database account მინიმალური საჭირო უფლებები.</li>
+  <li>წარუმატებელი validation-ისას query საერთოდ არ გაეშვას და შეცდომა ზედმეტ schema-ს არ ამჟღავნებდეს.</li>
+</ul>
+<p>ავტორიზებული ტესტი უნდა იყოს უსაფრთხო მონაცემზე ან staging გარემოში. მფლობელს წინასწარ მიაწოდეთ რომელი input, route და შედეგი ითვლება წარმატებულ ან წარუმატებელ ტესტად. რეალური მონაცემების ამოღება ან destructive query გაშვება ამ scope-ში ავტომატურად არ შედის.</p>
+
+<h3 id="command-review">command injection შემოწმება</h3>
+<p>Command injection-ისას ყურადღება მიაქციეთ ფუნქციებს, რომლებიც ფაილის კონვერტაციას, სურათის დამუშავებას, არქივის გახსნას, PDF გენერირებას ან ქსელურ დიაგნოსტიკას ასრულებს. <a href="https://cheatsheetseries.owasp.org/cheatsheets/Injection_Prevention_Cheat_Sheet.html">OWASP Injection Prevention Cheat Sheet</a> parameterization-სა და allowlist validation-ს ორ დამცავ ფენად განიხილავს, როცა სისტემური ბრძანების გამოყენება საერთოდ ვერ აიცილება.</p>
+<p>მფლობელის გადაწყვეტილებისთვის მნიშვნელოვანია გაიმიჯნოს უსაფრთხო library call და shell invocation. თუ კოდი user input-ს shell string-ში აერთიანებს, მხოლოდ სპეციალური სიმბოლოების წაშლა არ არის საკმარისი დასკვნა. უფრო ძლიერი გზა არის shell თავიდან აცილება, მკაფიო command allowlist, არგუმენტების ტიპებად გადაყვანა და პროცესის მინიმალური უფლებებით გაშვება.</p>
+<p>შემოწმების ანგარიშში არ ჩასვათ ისეთი payload, რომელიც სხვა სისტემაში პირდაპირ გამეორებას ხელს უწყობს. აღწერეთ input წყარო, გამოყენებული უსაფრთხო ტესტის კლასები, დაკვირვებული response და remediation მოთხოვნა. ანგარიშის მიზანია გადაწყვეტილება და გამოსწორების გზა, არა დაუცველი ბრძანების საცნობარო სია.</p>
+
+<h3 id="release-rule">release გადაწყვეტილება</h3>
+<p>Release შეჩერების მიზეზი უნდა იყოს კონკრეტული data flow და შესაძლო გავლენა. დადასტურებულ პრობლემად ჩათვალეთ შემთხვევა, როცა შეთანხმებულ გარემოში user input query-ს ან command-ს ცვლის, ან როცა კოდი აშკარად გადასცემს მას interpreter-ს parameterization გარეშე. მაღალი პრიორიტეტი აქვს admin, tenant მონაცემების, export და ფაილის დამუშავების გზებს.</p>
+<p>თუ source-ში კონტროლი ჩანს, მაგრამ deployed build ან შესაბამისი route ვერ შემოწმდა, დასკვნა შეიტანეთ როგორც UNKNOWN, არა როგორც უსაფრთხო. მფლობელს მიეცით შემდეგი მტკიცებულება: route, input, კოდის ან runtime ზუსტი ადგილი, შედეგი, შესაძლო ზემოქმედება, გამოსწორების მფლობელი და ხელახალი შემოწმების კრიტერიუმი.</p>
+
+<h2 id="product-boundary">სად მთავრდება vibeCODING review?</h2>
+<p>vibeCODING ამოწმებს უკვე შექმნილ AI-built აპს შეთანხმებული scope-ით. review შეიძლება მოიცავდეს საჯარო ზედაპირს, მოწოდებულ source-ს, API flow-ს, კონკრეტულ test account-ს, აღმოჩენების პრიორიტეტიზაციას, შეზღუდულ repair-სა და rescan-ს. ეს არ არის ახალი პროდუქტის development, უნივერსალური penetration test, compliance certification ან გარანტია, რომ ყველა injection გზა გამორიცხულია.</p>
+<p>მოთხოვნაში ჩამოწერეთ რომელი endpoint-ებია კრიტიკული, არის თუ არა staging, შეიძლება თუ არა source-level წვდომა და რა data boundary უნდა დარჩეს ხელუხლებელი. dependency და supply-chain review ცალკე თემაა და SQL ან command injection შემოწმებას არ ცვლის.</p>
+
+<h2 id="limitations">რა ვერ დაამტკიცა input საჯარო შემოწმებამ?</h2>
+<p>საჯარო ფორმის ან ერთი response დათვალიერება ვერ ამტკიცებს ყველა API მარშრუტის, ფონური დავალების, რიგის დამმუშავებლის, შიდა ადმინისტრაციული ფუნქციისა და deployment branch-ის მდგომარეობას. ასევე, უსაფრთხო validation არ ნიშნავს, რომ მონაცემთა ბაზის უფლებები მინიმალურია, error response არ ამხელს schema-ს ან ბიზნეს-authorization სწორად მუშაობს.</p>
+<p><a href="/ka/blog/ssrf-url-fetch">SSRF URL fetch review</a> დაგეხმარებათ, შემოწმებული და მიუწვდომელი ნაწილი ცალკე ჩამოწეროთ. თუ ღრმა ტესტირება საჭიროა, scope უნდა შეთანხმდეს მფლობელთან და მხოლოდ ნებადართულ გარემოში შესრულდეს. ანგარიშში გამოიყენეთ დადასტურებული, სავარაუდო და უცნობი კატეგორიები.</p>
+
+<h2 id="faq">ხშირად დასმული კითხვები</h2>
+<h3 id="faq-1">თუ input validation მუშაობს, SQL injection გამორიცხულია?</h3>
+<p>არა. validation ამცირებს malformed input-ს, მაგრამ მთავარი SQL კონტროლი parameterized query ან შესაბამისი უსაფრთხო abstraction-ია. dynamic table, column ან sort არჩევანი ცალკე allowlist-ს მოითხოვს.</p>
+<h3 id="faq-2">ORM გამოყენება საკმარისია?</h3>
+<p>არა ავტომატურად. ORM შეიძლება უსაფრთხო query შექმნას, თუმცა raw query, dynamic filter ან სხვა დაბალი დონის escape route ისევ არსებობდეს. review-ს სჭირდება რეალური data flow და არა მხოლოდ framework სახელი.</p>
+<h3 id="faq-3">Command injection-ისთვის ყოველთვის საჭიროა სრული penetration test?</h3>
+<p>არა. კონკრეტული ფუნქციის source და ნებადართული runtime review შეიძლება პირველ ეტაპზე საკმარისი იყოს, თუმცა მას თავისი scope აქვს. სრულ ქსელურ ან ყველა გარემოს ტესტს ცალკე ავტორიზაცია და გეგმა სჭირდება.</p>
+
+<h2 id="related-reading">დაკავშირებული საკითხები</h2>
+<ul>
+<li><a href="/ka/blog/csrf-state-changing-actions">CSRF state-changing მოქმედებების review</a></li>
+<li><a href="/ka/blog/xss-untrusted-html">untrusted HTML და XSS review</a></li>
+<li><a href="/ka/blog/staging-da-production-secrets-vibe-coded-apshi">staging და production secret კონტროლი</a></li>
+<li><a href="/ka/blog/webhookis-khelmotseris-shemotsmeba-aiit-shekmnil-apshi">webhook signature-ის მტკიცებულება</a></li>
+<li><a href="/ka/blog/logging-audit-trail">audit trail და გამოძიებისთვის საჭირო მტკიცებულება</a></li>
+</ul>
+
+<p><em>სარედაქციო შენიშვნა: ტექსტის მომზადებაში გამოყენებულია ხელოვნური ინტელექტი. გამოყენებული წყაროები და ქართული ენა შემოწმებულია. ეს სტატია ზოგად პრაქტიკულ ინფორმაციას გვთავაზობს და არ წარმოადგენს კონკრეტული აპის უსაფრთხოების აუდიტს ან დასკვნას.</em></p>

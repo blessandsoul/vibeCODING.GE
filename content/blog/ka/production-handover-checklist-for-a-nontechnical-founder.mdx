@@ -1,0 +1,110 @@
+---
+title: "AI-ით შექმნილი აპის production handover: მფლობელის checklist"
+excerpt: "როგორ გადაამოწმოს არატექნიკურმა დამფუძნებელმა ანგარიშები, კოდი, deployment, მონაცემები და აღდგენის პასუხისმგებლობა AI-ით შექმნილი აპის გადაბარებისას."
+author: "Andrew Altair / Founder, aiNOW"
+tags: ["vibeCODING", "production handover", "CI/CD", "AI-built app"]
+cluster: "Production readiness"
+coverQuery: "founder receiving production ownership across repository deployment accounts and operating evidence"
+readTime: "8 min read"
+locale: "ka"
+articleType: "spoke"
+engine: "SEO_ARTICLE_v1"
+site: "vibecoding"
+defaultLocale: "ka"
+slug: "production-handover-checklist-for-a-nontechnical-founder"
+date: 2026-09-26
+updated: 2026-09-26
+status: published
+indexable: true
+public_release: true
+coverImage: "/images/blog-covers/production-handover-checklist-for-a-nontechnical-founder.png"
+sources: ["https://csrc.nist.gov/pubs/sp/800/218/final", "https://docs.github.com/en/organizations/managing-user-access-to-your-organizations-repositories/managing-repository-roles/repository-roles-for-an-organization", "https://docs.github.com/en/actions/concepts/workflows-and-actions/deployment-environments"]
+---
+
+<p><strong>მოკლე პასუხი:</strong> production handover დასრულებული არ არის მაშინ, როცა დამფუძნებელს repository zip გაუგზავნეს. დასრულებული გადაბარება ნიშნავს, რომ ბიზნესს შეუძლია ამოიცნოს production revision, მართოს საჭირო ანგარიშები და წვდომები, აკონტროლოს deployment, დაინახოს მონაცემთა გზა, მიიღოს alert და იცოდეს recovery owner. <a href="/ka/contact">მოითხოვეთ არსებული AI-ით შექმნილი აპის scoped review</a>, თუ ეს მტკიცებულება ერთ ადგილას არ გაქვთ.</p>
+
+<h2 id="myth-control">შედარება: მითი და რეალობა ფაილის მიღების შემდეგ</h2>
+
+<p>მფლობელობა რამდენიმე სხვადასხვა უნარის ერთობლიობაა. source archive მიღება მხოლოდ possession-ია. რეალური control გულისხმობს, რომ ბიზნესს აქვს provider ანგარიშებზე საკუთარი ადმინისტრატორი, შეუძლია თანამშრომლის წვდომის მოხსნა, შეუძლია safe deployment დაწყება ან გაჩერება და იცის, როგორ დაბრუნდეს წინა მდგომარეობაზე.</p>
+
+<table>
+  <thead><tr><th>მითი</th><th>რეალობის შემოწმება</th><th>მტკიცებულება</th></tr></thead>
+  <tbody>
+    <tr><td>კოდის ფოლდერი საკმარისია</td><td>გამოიცანით რომელი commit ან build მუშაობს production-ში</td><td>revision, build ნაბიჯები და witness ჩანაწერი</td></tr>
+    <tr><td>shared password ამარტივებს საქმეს</td><td>შექმენით ბიზნესის საკუთარი owner და recovery გზა</td><td>role, recovery contact და access log</td></tr>
+    <tr><td>CI/CD ავტომატურად უსაფრთხოა</td><td>გაარკვიეთ რომელი branch და environment იწვევს deployment-ს</td><td>workflow, protection rule და approval ჩანაწერი</td></tr>
+    <tr><td>database provider აღდგენას თავად მართავს</td><td>დაასახელეთ სარეზერვო ასლი, აღდგენის პასუხისმგებელი და აპის შემოწმება</td><td>runbook, ტესტის შედეგი და ღია საკითხი</td></tr>
+  </tbody>
+</table>
+
+<p><a href="https://csrc.nist.gov/pubs/sp/800/218/final">NIST-ის მასალა</a> SP <strong>800</strong> სერიაშია და ამ კონკრეტული დოკუმენტის ნომერია <strong>218</strong>; იგი secure software development-სა და software acquisition-ს საერთო ენას სთავაზობს. ეს framework არ ადასტურებს კონკრეტული აპლიკაციის უსაფრთხოებას. მისი გამოყენება სასარგებლოა იმის დასაწერად, ვინ აგროვებს provenance-ს, ვინ იცავს build გარემოს და ვინ პასუხობს vulnerability-ს.</p>
+
+<h2 id="accounts">ანგარიშები და წვდომები: პირველი გადაბარების ფურცელი</h2>
+
+<p>შეადგინეთ account register, რომელშიც მოხვდება code host, deployment platform, domain registrar, DNS, database, authentication, object storage, email, payments, analytics, monitoring და external API. თითოეულ სტრიქონს მიამაგრეთ ბიზნესის owner, ტექნიკური ადმინისტრატორი, აღდგენის საკონტაქტო პირი, ბილინგის პასუხისმგებელი და წვდომის მოხსნის პროცედურა.</p>
+
+<p>პირადი credential არ უნდა გახდეს ბიზნესის ერთადერთი გასაღები. შექმენით ცალკე owner ანგარიში, ჩართეთ recovery მეთოდი და დაამოწმეთ, რომ ახალ ადმინისტრატორს შეუძლია საჭირო action შესრულება. მხოლოდ ამის შემდეგ მოხსენით ძველი access. საიდუმლო მნიშვნელობა handover დოკუმენტში არ ჩაწეროთ; ჩაიწერეთ secret manager ადგილი, rotation owner და შეწყვეტის წესი.</p>
+
+<p>GitHub <a href="https://docs.github.com/en/organizations/managing-user-access-to-your-organizations-repositories/managing-repository-roles/repository-roles-for-an-organization">repository roles დოკუმენტაციაში</a> წვდომას granular როლებად ყოფს და least privilege პრინციპის არჩევას ურჩევს. გამოიყენეთ ეს მიდგომა რეალურ პასუხისმგებლობებზე: ადამიანს, რომელსაც მხოლოდ issue და pull request განხილვა სჭირდება, destructive administrator უფლებები არ უნდა ჰქონდეს.</p>
+
+<h2 id="delivery">Deployment და CI/CD: როგორ დაინახოს მფლობელმა ცვლილების გზა</h2>
+
+<p>დამფუძნებელმა უნდა მიიღოს მოკლე პასუხი კითხვაზე: კოდის შეცვლიდან მომხმარებლისთვის ახალი ვერსიის გამოჩენამდე რა ხდება? ჩაიწეროს branch ან tag, build ბრძანება, environment variables წყარო, migration ნაბიჯი, დადასტურების წერტილი, უკან დაბრუნების გზა და პასუხისმგებელი პირი, ვინც შეცდომისას პროცესს აჩერებს.</p>
+
+<p>GitHub <a href="https://docs.github.com/en/actions/concepts/workflows-and-actions/deployment-environments">deployment environments</a> აღწერს production, staging და development გარემოების განცალკევებას, branch შეზღუდვას, approval-ს და environment secrets დაცვას. ეს შესაძლებლობა ავტომატურად არ ნიშნავს, რომ თქვენს workflow-ში სწორადაა დაყენებული. უნდა წაიკითხოთ workflow, გადაამოწმოთ protection rule და ჩაატაროთ უსაფრთხო staging deployment.</p>
+
+<div class="handover-steps">
+  <p><strong>დაასახელეთ production.</strong> ჩაწერეთ host, domain, active revision და deploy-ის მიმდინარე owner.</p>
+  <p><strong>დაასახელეთ staging.</strong> დაადასტურეთ, რომ ტესტის მონაცემი ცოცხალ payment, email ან webhook endpoint-ს არ აგზავნის.</p>
+  <p><strong>აჩვენეთ approval.</strong> გაატარეთ მცირე, უსაფრთხო ცვლილება და დააფიქსირეთ ვინ ამტკიცებს და სად ჩანს მისი გადაწყვეტილება.</p>
+  <p><strong>აჩვენეთ rollback.</strong> გამოიყენეთ წინასწარ განსაზღვრული გზა, არა შემთხვევითი ხელით შეცვლა, და ჩაწერეთ რომელი revision დაბრუნდა.</p>
+  <p><strong>გადაამოწმეთ migration.</strong> დაასახელეთ მონაცემის ცვლილება, backward compatibility და stop პირობა.</p>
+</div>
+
+<p>სასწავლო შემოწმებაში HTTP <code>200</code> შეიძლება ნიშნავდეს მოსალოდნელ პასუხს, ხოლო <code>403</code> უარყოფილ მოქმედებას. ეს არის acceptance evidence-ის მაგალითი და არა თქვენი deployment შედეგი. რეალურ პაკეტში შეინახეთ მოთხოვნა, გარემო, revision და დაკვირვებული პასუხი.</p>
+
+<h2 id="data-operations">მონაცემები, monitoring და recovery</h2>
+
+<p>გადაბარებაში ჩამოწერეთ სად ინახება customer data, ფაილები, authentication state, logs და backups. მიუთითეთ შენახვის ვადის პასუხისმგებელი, ექსპორტის გზა, restore runbook და ნაწილი, რომელიც provider კონტროლში რჩება. backup არსებობა არ ამტკიცებს, რომ აპლიკაცია აღდგენის შემდეგ usable იქნება.</p>
+
+<p>Monitoring-სთვის დამფუძნებელმა უნდა იცოდეს, რომელი alert მიდის ვისთან, რა ითვლება incident-ად და როგორ იხურება საკითხი. თუ dashboard მხოლოდ CPU-ს აჩვენებს, ეს ვერ პასუხობს კითხვას, დასრულდა თუ არა signup, payment ან upload. ერთი კონტროლირებული კრიტიკული journey უფრო useful evidence-ია, ვიდრე მეტრიკების გრძელი სია მკაფიო owner გარეშე.</p>
+
+<h2 id="review-boundary">რას ამოწმებს vibeCODING და სად მთავრდება scope</h2>
+
+<p>vibeCODING-ის შემოწმება უკვე არსებულ AI-ით შექმნილ აპლიკაციას ეხება: საჯარო scan-ით ჩანს მხოლოდ ის ზედაპირი, რომელსაც ჩვეულებრივი visitor ჩამოტვირთავს. repository, CI/CD, provider dashboard და private data ამ გზით არ დასტურდება.</p>
+
+<p>scoped repair ან rescan მფლობელისა და გუნდის წინასწარ შეთანხმებულ წვდომას და ტესტის საზღვრებს მოითხოვს. საბოლოო ანგარიში გამოყოფს შემოწმებულ ზედაპირს, აღმოჩენას, შესაძლო გავლენას და შეთანხმებულ repair scope-ს. სერვისი არ აშენებს ახალ აპლიკაციას, არ ადასტურებს ownership transfer-ს იურიდიული თვალსაზრისით და უსაფრთხოების გარანტიას არ გასცემს.</p>
+
+<h2 id="limits">შეზღუდვები: რა არ უნდა ჩაიწეროს როგორც მიღებული</h2>
+
+<ul>
+  <li>repository ჩამოტვირთვა არ უდრის production access-ს;</li>
+  <li>admin role არ ნიშნავს recovery contact ან billing owner კონტროლს;</li>
+  <li>green deployment არ ამტკიცებს migration ან customer journey წარმატებას;</li>
+  <li>provider feature list არ არის თქვენი workflow ტესტის შედეგი;</li>
+  <li>უცნობი account, secret ან dependency უნდა დარჩეს ღია საკითხად.</li>
+</ul>
+
+<h2 id="faq">ხშირად დასმული კითხვები</h2>
+
+<h3 id="faq-1">საკმარისია თუ არა source code გადმოცემა?</h3>
+<p>არა. საჭიროა ანგარიშების, deployment, მონაცემების, secrets, monitoring და recovery პასუხისმგებლობების დამოწმება. კოდი ამ ჯაჭვის მხოლოდ ერთი ნაწილია.</p>
+
+<h3 id="faq-2">უნდა მივიღო თუ არა ყველა provider owner ანგარიში?</h3>
+<p>ბიზნესმა უნდა აკონტროლოს მისთვის საჭირო ანგარიშები, recovery და billing. ყველასთვის ერთი shared password მოთხოვნა სწორი მიდგომა არ არის. გამოიყენეთ provider role-ები და ცალკე owner identity.</p>
+
+<h3 id="faq-3">ვინ შეამოწმებს ჩემს კონკრეტულ აპლიკაციას?</h3>
+<p>პირველადი review შეიძლება დაიწყოს საჯარო ზედაპირიდან. private repository, CI/CD ან მონაცემების განხილვა შეთანხმებულ წვდომას და მკაფიო scope-ს მოითხოვს. დეტალები მიიღეთ <a href="/ka/contact">vibeCODING contact გვერდზე</a>.</p>
+
+<h2 id="related-reading">დაკავშირებული საკითხები</h2>
+
+<ul>
+  <li><a href="/ka/blog/ssrf-url-fetch">backup და restore მზადყოფნის მსგავსად, dependency საზღვარი ცალკე გადაამოწმეთ</a></li>
+  <li><a href="/ka/blog/csp-da-nonce-aiit-shekmnil-apshi">CSP და nonce AI-ით შექმნილ აპლიკაციაში</a></li>
+  <li><a href="/ka/blog/staging-da-production-secrets-vibe-coded-apshi">staging და production secrets</a></li>
+  <li><a href="/ka/blog/webhookis-khelmotseris-shemotsmeba-aiit-shekmnil-apshi">webhook ხელმოწერის შემოწმება</a></li>
+  <li><a href="/ka/blog/logging-audit-trail">audit trail ჩანაწერები</a></li>
+  <li><a href="/ka/blog/csrf-state-changing-actions">state-changing action CSRF კონტროლი</a></li>
+</ul>
+
+<p><em>სარედაქციო შენიშვნა: ტექსტის მომზადებაში გამოყენებულია ხელოვნური ინტელექტი.</em></p>

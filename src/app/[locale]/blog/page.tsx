@@ -39,7 +39,7 @@ export default async function BlogPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
   const localized = getPosts(locale);
-  const contentLocale = localized.length > 0 ? locale : 'en';
+  const contentLocale = localized.length > 0 ? locale : 'ka';
   const posts = localized.length > 0 ? localized : getPosts(contentLocale);
   return <BlogIndex posts={posts} locale={locale} contentLocale={contentLocale} />;
 }

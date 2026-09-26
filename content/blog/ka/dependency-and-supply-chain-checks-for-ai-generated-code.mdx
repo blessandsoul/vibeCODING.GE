@@ -1,0 +1,94 @@
+---
+title: "დამოკიდებულებებისა და supply chain-ის შემოწმება AI კოდში"
+excerpt: "manifest და lockfile ცვლილება დააკავშირეთ საჭიროებასთან, პაკეტის წყაროსთან, რეალურ reachability-სა და release პასუხისმგებელთან."
+author: "aiNOW editorial team"
+tags: ["vibeCODING", "დამოკიდებულებები", "supply chain", "lockfile"]
+coverQuery: "dependency manifest and lockfile under a provenance and release gate, editorial technical illustration"
+readTime: "10 min"
+locale: "ka"
+site: "vibecoding"
+articleType: "spoke"
+defaultLocale: "ka"
+slug: "dependency-and-supply-chain-checks-for-ai-generated-code"
+language: "ka"
+coverFile: "cover.png"
+engine: "SEO_ARTICLE_v1"
+contentMode: "STRUCTURAL_SAFE_v1"
+date: 2026-09-26
+updated: 2026-09-26
+status: published
+indexable: true
+public_release: true
+coverImage: "/images/blog-covers/dependency-and-supply-chain-checks-for-ai-generated-code.png"
+sources: ["https://docs.github.com/en/code-security/concepts/supply-chain-security/dependency-review", "https://csrc.nist.gov/pubs/sp/800/218/final", "https://slsa.dev/spec/v1.2/threats"]
+---
+
+<p><strong>პირდაპირი პასუხი:</strong> AI-ით გენერირებული ცვლილების supply chain review უნდა დაიწყოს ზუსტი manifest-ითა და lockfile diff-ით. თითოეულ ახალ პაკეტს უნდა ჰქონდეს საჭიროება, იდენტობა, resolved version, runtime reachability, წყაროსა და maintenance-ის მტკიცებულება. სკანერის მწვანე შედეგი პაკეტის სანდოობის სერტიფიკატი არ არის. არსებული აპლიკაციის release-მდე შეფასებისთვის <a href="/contact">მოითხოვეთ vibecoding.ge-ს scoped review</a>.</p>
+
+<h2 id="change-unit">რატომ უნდა შემოწმდეს ცვლილება და არა მხოლოდ AI ინსტრუმენტი?</h2>
+
+<p>AI coding tool-მა შეიძლება ერთ feature-სთან ერთად დაამატოს client library, parser, build plugin და რამდენიმე transitive package. კოდი preview-ში მუშაობს, მაგრამ ეს არ პასუხობს კითხვას, საჭიროა თუ არა ყველა დამატება, რომელ source-ს ეკუთვნის package და რა აღწევს production bundle-მდე.</p>
+
+<p>GitHub-ის <a href="https://docs.github.com/en/code-security/concepts/supply-chain-security/dependency-review">dependency review დოკუმენტაცია</a> განმარტავს, რომ pull request-ში შეიძლება გამოჩნდეს direct და indirect dependency ცვლილებები, მათ შორის lockfile-ში ასახული ცნობადი vulnerability ინფორმაცია. კარგი evidence input-ია, მაგრამ გადაწყვეტილებას ვერ ცვლის: გუნდმა მაინც უნდა შეაფასოს საჭიროება, license, maintenance და აპლიკაციის რეალური reachability.</p>
+
+<p>NIST-ის <a href="https://csrc.nist.gov/pubs/sp/800/218/final">SSDF</a> პრაქტიკები პროგრამული უზრუნველყოფის მიწოდების პროცესში რისკის შემცირებასა და პასუხისმგებლობის განსაზღვრას უკავშირდება. SLSA-ს <a href="https://slsa.dev/spec/v1.2/threats">threats overview</a> კი გვახსენებს, რომ build და provenance ჯაჭვის სხვადასხვა ეტაპს სხვადასხვა მუქარა აქვს. ერთი badge ან CVE feed მთელ chain-ს ვერ ცვლის.</p>
+
+<h2 id="record">როგორ შექმნათ dependency change record?</h2>
+
+<ol>
+  <li><strong>ჩაწერეთ ბიზნეს-საჭიროება.</strong> მიუთითეთ feature ან workflow, რომლისთვისაც package დაემატა. თუ იგივე ფუნქცია პლატფორმას უკვე აქვს, removal ალტერნატივად განიხილეთ.</li>
+  <li><strong>დააფიქსირეთ ზუსტი იდენტობა.</strong> მიუთითეთ ecosystem, package name, resolved version, registry და ოფიციალური source repository. მსგავსი სახელის package-ს არ დაეყრდნოთ.</li>
+  <li><strong>განსაზღვრეთ სად სრულდება კოდი.</strong> browser, server, build pipeline და development-only დამოკიდებულება სხვადასხვა რისკს ქმნის. runtime reachability ცალკე დაასაბუთეთ.</li>
+  <li><strong>შეამოწმეთ release ისტორია და provenance.</strong> დააკვირდით maintainer-ს, source tag-ს, release artifact-ს, ownership ცვლილებასა და registry metadata-ს. პოპულარობა უსაფრთხოების თვისება არ არის.</li>
+  <li><strong>აღწერეთ permissions და data reach.</strong> რა ფაილს, ქსელს, environment-ს ან build credential-ს ხედავს package? ეს კითხვა განსაკუთრებით მნიშვნელოვანია plugin-სა და install script-ებისთვის.</li>
+  <li><strong>დაასახელეთ update owner.</strong> ახალი პაკეტის მიღება ნიშნავს მომავალში advisory, version update, removal და emergency response-ის პასუხისმგებლობასაც.</li>
+  <li><strong>lockfile ხელით არ „გაამწვანოთ“.</strong> გამოიყენეთ პროექტის დამტკიცებული პაკეტების მენეჯერი (package manager) იზოლირებულ გარემოში და review-ს დაურთეთ მიღებული diff. lockfile resolution-ის მტკიცებულებაა, არა ავტომატური ნდობის ბეჭედი.</li>
+</ol>
+
+<h2 id="reachability">რა განსხვავებაა vulnerability-სა და რეალურ reachability-ს შორის?</h2>
+
+<p>ცნობილი advisory ყურადღებას იმსახურებს, მაგრამ მისი არსებობა ავტომატურად არ ნიშნავს, რომ კონკრეტული API ამ გზით exploitable-ია. review-ში გამოყავით პაკეტის ვერსია, გამოყენებული API, runtime path, input-ის წყარო და გარემო, სადაც package რეალურად სრულდება.</p>
+
+<table>
+  <thead><tr><th>შემოწმების ფენა</th><th>კითხვა</th><th>დასკვნის საზღვარი</th></tr></thead>
+  <tbody>
+    <tr><td>manifest</td><td>რატომ არის direct dependency საჭირო?</td><td>საჭიროების ჩანაწერი, არა უსაფრთხოების მტკიცებულება</td></tr>
+    <tr><td>lockfile</td><td>რომელი transitive version resolve-და?</td><td>მიღებული dependency graph</td></tr>
+    <tr><td>source code</td><td>რომელი API და input path გამოიყენება?</td><td>reachability-ის scoped ანალიზი</td></tr>
+    <tr><td>build</td><td>რა აღწევს bundle-სა და production image-ში?</td><td>build-specific მტკიცებულება</td></tr>
+    <tr><td>runtime</td><td>რომელი მონაცემი და უფლება აქვს პროცესს?</td><td>შეთანხმებული გარემოს შედეგი</td></tr>
+  </tbody>
+</table>
+
+<p>license, maintainer და source provenance ასევე ცალკე ველებია. package შეიძლება ტექნიკურად არ აჩენდეს ცნობილი vulnerability-ს, მაგრამ მისი maintenance ან license policy მაინც მიუღებელი იყოს კონკრეტული ბიზნესისთვის. ასეთ საკითხს vulnerability სკანერის result-ში ნუ დამალავთ.</p>
+
+<h2 id="release-gate">dependency release gate-ის ჩანაწერი</h2>
+
+<p>release-მდე გუნდი უნდა ხედავდეს ერთ პაკეტზე შეკრულ ჩანაწერს: მოთხოვნილი feature, manifest diff, lockfile diff, source და registry identity, advisory-ის მიმდინარე მდგომარეობა, გამოყენების გზაზე მისაწვდომობა (reachability), ლიცენზია (license), განახლების პასუხისმგებელი (update owner) და rollback გზა. თუ რომელიმე ველი უცნობია, გადაწყვეტილებაში იგი უნდა დარჩეს UNKNOWN და არა „გავლილად“.</p>
+
+<p>repair-ის შემდეგ ხელახლა შეამოწმეთ resolved graph და production build შესაბამისი evidence. თუ package შეიცვალა, ძველი scan receipt აღარ ამტკიცებს ახალ ვერსიას. ხელover-ში ჩაწერეთ open item, პასუხისმგებელი და შემდეგი verification, რათა ცოდნა ერთ დეველოპერზე არ დარჩეს.</p>
+
+<h2 id="limitations">რა საზღვარი აქვს supply chain review-ს?</h2>
+
+<p>public scan ხედავს მხოლოდ ჩამოსატვირთ ფაილებსა და საჯარო ინფორმაციას. იგი ვერ ამტკიცებს private registry-ს, CI/CD-ის უფლებებს, ყველა transitive build step-ს ან production runtime-ის სრულ მდგომარეობას. deeper review იწყება მხოლოდ owner-ის მიერ access და test boundary-ის შეთანხმების შემდეგ.</p>
+
+<p>vibecoding.ge ამოწმებს უკვე აშენებულ AI-ით შექმნილ აპს და ანგარიშში აერთიანებს დადასტურებულ ბიზნეს-რისკს, მტკიცებულებას, repair-სა და rescan/handover ნაბიჯებს. პროდუქტი არ არის package registry, paid scanner, ახალი აპლიკაციის მშენებლობა ან zero-CVE გარანტია. დასკვნა ვრცელდება მხოლოდ შემოწმებულ scope-ზე.</p>
+
+<h2 id="faq">ხშირად დასმული კითხვები</h2>
+<h3 id="faq-1">CVE-ის არქონა ნიშნავს, რომ ახალი dependency უსაფრთხოა?</h3>
+<p>არა. CVE feed მხოლოდ ერთი სიგნალია. საჭიროა package identity, version, reachability, source, maintenance, license და გამოყენებული input path-ის შეფასება.</p>
+<h3 id="faq-2">lockfile არსებობა supply chain-ს ამტკიცებს?</h3>
+<p>lockfile აჩვენებს resolution-ს, მაგრამ არა იმას, რომ ყველა resolved კომპონენტი აუცილებელი ან სანდოა. მისი diff უნდა შეადაროთ კოდს, build-სა და release owner-ს.</p>
+<h3 id="faq-3">შეიძლება თუ არა უცნობი პაკეტის install script production-ში გავუშვათ?</h3>
+<p>უცნობი install script-ის გაშვება production-ში შემოწმების საზღვარს არღვევს. ჯერ იზოლირებულ გარემოში შეაფასეთ წყარო (source), უფლებები (permissions), ქსელური მოქმედება (network) და build შედეგი.</p>
+
+<h2 id="related-reading">დაკავშირებული საკითხები</h2>
+<ul>
+  <li><a href="/ka/blog/csp-da-nonce-aiit-shekmnil-apshi">CSP და nonce AI-ით შექმნილ აპში</a></li>
+  <li><a href="/ka/blog/staging-da-production-secrets-vibe-coded-apshi">staging და production გარემოების გამიჯვნა</a></li>
+  <li><a href="/ka/blog/webhookis-khelmotseris-shemotsmeba-aiit-shekmnil-apshi">webhook-ის ხელმოწერის შემოწმება</a></li>
+  <li><a href="/ka/blog/staging-da-production-secrets-vibe-coded-apshi">staging და production secrets</a></li>
+  <li><a href="/ka/blog/ssrf-url-fetch">SSRF და URL fetch-ის საზღვარი</a></li>
+  <li><a href="/contact">scoped review-ის მოთხოვნა</a></li></ul>
+
+<p><em>სარედაქციო შენიშვნა: ტექსტის მომზადებაში გამოყენებულია ხელოვნური ინტელექტი. წყაროების შესაბამისობა, ენა და releaseთვის საჭირო ფარგლები ცალკე გადამოწმებას საჭიროებს.</em></p>

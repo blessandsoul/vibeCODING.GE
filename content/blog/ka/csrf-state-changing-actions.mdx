@@ -1,0 +1,98 @@
+---
+title: "CSRF AI-ით შექმნილ აპში: ანგარიშის ცვლილებების შემოწმება"
+excerpt: "როგორ გადაამოწმოთ, შეუძლია თუ არა უცხო ვებსაიტს ავტორიზებული მომხმარებლის სახელით ანგარიშის ცვლილების გამოწვევა და რა საზღვარი აქვს ასეთ review-ს."
+author: "aiNOW editorial team"
+tags: ["CSRF", "ვებ-უსაფრთხოება", "ავტორიზაცია", "vibeCODING"]
+coverQuery: "original vector editorial illustration of a browser account form protected from a cross-site request forgery arrow, security token shield, dark navy and cyan, no readable words"
+readTime: "8 min"
+locale: "ka"
+site: "vibecoding"
+articleType: "spoke"
+slug: "csrf-state-changing-actions"
+language: "ka"
+coverFile: "cover.png"
+engine: "SEO_ARTICLE_v1"
+contentMode: "STRUCTURAL_SAFE_v1"
+date: 2026-09-26
+updated: 2026-09-26
+status: published
+indexable: true
+public_release: true
+coverImage: "/images/blog-covers/csrf-state-changing-actions.png"
+sources: ["https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html", "https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/06-Session_Management_Testing/06-Testing_for_CSRF", "https://owasp.org/projects/asvs?tab=main"]
+---
+
+<p><strong>პირდაპირი პასუხი:</strong> CSRF review ამოწმებს, შეუძლია თუ არა სხვა origin გვერდს უკვე ავტორიზებული ბრაუზერის გამოყენებით ანგარიშის შეცვლის მოთხოვნის გამოწვევა. მხოლოდ CSRF ტოკენის არსებობა საკმარისი დასკვნა არ არის. უნდა შემოწმდეს კონკრეტული state-changing route, cookie ქცევა, token შემოწმება და ისიც, ხომ არ აგენერირებს კლიენტის კოდი მოთხოვნას თავდამსხმელის მიერ კონტროლირებადი input-იდან. <a href="/contact">vibeCODING scoped review მოითხოვეთ</a>, თუ გჭირდებათ არსებული AI-ით შექმნილი აპის ამ საზღვრით შემოწმება.</p>
+
+<h2 id="csrf-meaning">რას ამოწმებს CSRF review?</h2>
+<p>Cross-Site Request Forgery, ანუ CSRF, არის სცენარი, როცა მომხმარებელი ერთ საიტზე შესულია, ხოლო სხვა საიტი მის ბრაუზერს სანდო აპის სახელით მოქმედების შესრულებას ატყუებს. საფრთხე ეხება მოქმედებას, რომელიც მონაცემს ცვლის: ელფოსტის მისამართის შეცვლას, პაროლის განახლებას, მიწერის გაგზავნას, გამოწერის შეწყვეტას ან ადმინისტრაციული პარამეტრის შეცვლას. საკითხი განსხვავდება XSS-ისგან. XSS კოდის შესრულებას ეხება, CSRF კი უკვე არსებული სესიის გამოყენებით არასასურველ მოთხოვნას.</p>
+<p><a href="https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html">OWASP CSRF Prevention Cheat Sheet</a> ხაზს უსვამს, რომ დაცვა უნდა მიებას იმ მოთხოვნებს, რომლებიც მდგომარეობას ცვლის. უსაფრთხოების review-ში ამიტომ თავიდანვე უნდა შეიქმნას route-ების სია და თითოეულ მოქმედებას მიეთითოს, რა მონაცემს ცვლის, როგორ იდენტიფიცირდება მომხმარებელი და რა მტკიცებულება ადასტურებს დაცვას.</p>
+
+<h2 id="state-changing-surface">პირველი შემოწმების ზედაპირი</h2>
+<p>არ დაიწყოთ მხოლოდ login გვერდით. CSRF-ისთვის უფრო საინტერესოა უკვე შესული მომხმარებლის მოქმედებები. მოძებნეთ ანგარიშის პარამეტრები, მოწვევები, პროფილის წვდომები, გადახდის მეთოდის არჩევა, ფაილის წაშლა, API token შექმნა და ადმინისტრატორის ბრძანებები. ერთი ფორმა შეიძლება უსაფრთხოდ ჩანდეს, მაშინ როცა იმავე ცვლილებას სხვა API route ან კლიენტის JavaScript ასრულებს.</p>
+<table>
+  <thead><tr><th>შემოწმების ობიექტი</th><th>საკვანძო კითხვა</th><th>რა არ მტკიცდება</th></tr></thead>
+  <tbody>
+    <tr><td>ფორმა და cookie</td><td>იგზავნება თუ არა მოქმედი სესია cross-site მოთხოვნასთან ერთად?</td><td>ვერ მტკიცდება backend ყველა route დაცვა</td></tr>
+    <tr><td>CSRF ტოკენი</td><td>მოთხოვნა უარყოფილია თუ ტოკენი არ არის ან არ ემთხვევა?</td><td>ტოკენი ვერ ცვლის authorization შემოწმებას</td></tr>
+    <tr><td>SameSite პოლიტიკა</td><td>cookie წესები ამცირებს თუ არა cross-site გაგზავნას?</td><td>ვერ ფარავს ყველა browser-სა და ყველა client-side სცენარს</td></tr>
+    <tr><td>კლიენტის კოდი</td><td>შეიძლება თუ არა URL-დან ან სხვა untrusted input-იდან მოთხოვნის მიზნის შეცვლა?</td><td>სათაურში token დამატება მარტო ვერ ხურავს რისკს</td></tr>
+  </tbody>
+</table>
+<p>ეს ცხრილი გადაწყვეტილების საწყისი რუკაა. საბოლოო დასკვნაში თითოეული route ცალკე უნდა ჩაიწეროს. თუ ფორმა დაცულია, იგივე ბიზნეს-მოქმედების API ვერსია ავტომატურად დაცულად არ ითვლება.</p>
+
+<h2 id="review-sequence">უსაფრთხო შემოწმების თანმიმდევრობა</h2>
+<p>პრაქტიკული review უნდა იყოს განმეორებადი და შეზღუდული. <a href="https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/06-Session_Management_Testing/06-Testing_for_CSRF">OWASP Web Security Testing Guide</a> CSRF ტესტირებას სესიის მართვის კონტექსტში განიხილავს. ამ წყაროს გამოყენებით შემოწმება ასე დაალაგეთ:</p>
+<ol>
+  <li><strong>დაასახელეთ მოქმედება:</strong> აირჩიეთ ერთი მოთხოვნა, რომელიც მონაცემს ცვლის, ჩაიწერეთ method, route, მომხმარებლის როლი და მოსალოდნელი შედეგი.</li>
+  <li><strong>გააცალკევეთ მტკიცებულება:</strong> შეინახეთ request მაგალითი token-ით, მის გარეშე და არასწორი მნიშვნელობით. მგრძნობიარე cookie ან token სრულად ანგარიშში არ გადაიტანოთ.</li>
+  <li><strong>შეადარეთ პასუხები:</strong> დაცულ შემთხვევაში server-მა მოთხოვნა უნდა უარყოს ან არ შეასრულოს ცვლილება. მხოლოდ განსხვავებული status code არ არის საკმარისი, თუ მონაცემი მაინც შეიცვალა.</li>
+  <li><strong>გაიმეორეთ სხვა გზით:</strong> იგივე ბიზნეს-მოქმედება შეამოწმეთ ბრაუზერის ფორმით, fetch-ით და საჭიროების შემთხვევაში სხვა როლით. მიზანია დამცავი კონტროლის რეალური საზღვრის დანახვა.</li>
+  <li><strong>დააფიქსირეთ უცნობი:</strong> თუ private route, native app, proxy ან მესამე მხარის კლიენტი არ შემოწმებულა, ის ღია საკითხად დატოვეთ.</li>
+</ol>
+<p>ტესტი უნდა შესრულდეს მხოლოდ აპის მფლობელის მიერ შეთანხმებულ გარემოში. ცოცხალ მომხმარებელზე ცვლილების გამოწვევა, უცნობი origin გამოყენება ან რეალური გადახდის flow შეხება ცალკე ავტორიზაციას მოითხოვს.</p>
+
+<h2 id="token-cookie-comparison">ტოკენი, SameSite და custom header</h2>
+<p>CSRF ტოკენი server-ს აძლევს შესაძლებლობას, მოთხოვნა შეადაროს სესიასთან ან გვერდზე გაცემულ საიდუმლო მნიშვნელობას. SameSite cookie წესი ბრაუზერს ეუბნება, რა კონტექსტში გააგზავნოს cookie. custom header მოთხოვნა კი ხშირად ართულებს უბრალო cross-site ფორმის გამოყენებას. ეს კონტროლები ერთი და იგივე არ არის და არც ყველა კლიენტზე ერთნაირად მუშაობს.</p>
+<p><a href="https://owasp.org/projects/asvs?tab=main">OWASP Application Security Verification Standard</a> კონტროლების შემოწმებას კონტექსტში გვთავაზობს. ამიტომ ანგარიშში ჩაწერეთ, რომელი layer ნახეთ და რომელი არა. მაგალითად, cookie-ს SameSite ატრიბუტი შეიძლება სწორად ჩანდეს, მაგრამ server მაინც არ ამოწმებდეს მომხმარებლის უფლებას კონკრეტულ ობიექტზე. პირიქითაც შესაძლებელია: token სწორად მოწმდებოდეს, მაგრამ client-side flow-მა untrusted URL-იდან მოქმედების მიზანი შეცვალოს.</p>
+<p>განსაკუთრებული ყურადღება მიაქციეთ client-side CSRF-ს. OWASP მითითებით, attacker-controlled URL ან სხვა input შეიძლება JavaScript-ს სანდო API-ზე მოთხოვნის აგენერირებინოს. ასეთ შემთხვევაში token ან custom header შესაძლოა თვითონ აპმა დაამატოს, ამიტომ მხოლოდ მათი არსებობა საკმარისი მტკიცებულება აღარ არის.</p>
+
+<h3 id="decision-rule">რომელი შედეგი ითხოვს გამოსწორებას release-მდე?</h3>
+<p>Release გადაწყვეტილება სჯობს დაიყოს მტკიცებულების დონეებად. <strong>დადასტურებული პრობლემა</strong> არის შემთხვევა, როცა ავტორიზებული სესიის პირობებში შეთანხმებული ტესტი state-changing მოქმედებას token გარეშე ან არასწორი კონტექსტიდან ასრულებს. <strong>სავარაუდო რისკი</strong> არის route, რომლის დამცავი კონტროლი კოდში ჩანს, მაგრამ იმავე კონტროლის მოქმედება ვერ დადასტურდა ნებადართული გარემოს გარეშე. <strong>უცნობი</strong> რჩება ყველაფერი, რაც private API-ს, სხვა client-ს ან არანახულ deployment-ს ეხება.</p>
+<p>პრიორიტეტი მიანიჭეთ მოქმედებას და არა მხოლოდ ტექნიკურ სახელს. პაროლის, წვდომის, ფულის ან ორგანიზაციის წევრობის ცვლილება უფრო მკაცრ გადაწყვეტილებას ითხოვს, ვიდრე არაკრიტიკული UI პარამეტრი. ანგარიშში მიუთითეთ user role, route, ზემოქმედების შესაძლო ტიპი, მტკიცებულება, გამოსწორების მფლობელი და ხელახალი შემოწმების პირობა. სიტყვა „დაცულია“ გამოიყენეთ მხოლოდ კონკრეტულ შემოწმებულ scope-ზე.</p>
+
+<h2 id="common-mistakes">რა შეცდომები აბნევს AI-ით შექმნილი აპის CSRF review-ს?</h2>
+<ul>
+  <li>მხოლოდ frontend ფორმის დათვალიერება და backend route გამოტოვება.</li>
+  <li>GET მოთხოვნის გამოყენება მონაცემის შესაცვლელად და შემდეგ token დამატებით პრობლემის დაფარვა.</li>
+  <li>CSRF დაცვის XSS დაცვის შემცვლელად მიჩნევა.</li>
+  <li>SameSite ჩართვა ისე, რომ სხვა client-ები და cross-origin ბიზნეს-მოთხოვნები არ შემოწმდეს.</li>
+  <li>token სრულად ჩაწერა ანგარიშში, სადაც ის შემდეგ ახალი საიდუმლო ხდება.</li>
+  <li>ერთ route-ზე წარმატებული ტესტის მთელ აპზე განზოგადება.</li>
+</ul>
+<p>AI builder მიერ გენერირებული კოდი შეიძლება ერთსა და იმავე მოქმედებას რამდენიმე helper-ით ასრულებდეს. ამიტომ review სამუშაო ფურცელი route-ს, ბიზნეს-მოქმედებას და მტკიცებულებას ერთმანეთს უნდა უკავშირებდეს, ვიდრე მხოლოდ ფაილის სახელს ან framework default-ს დაეყრდნობოდეს.</p>
+
+<h2 id="product-boundary">რას მოიცავს vibeCODING scoped review?</h2>
+<p>vibeCODING შეთავაზება ეხება უკვე შექმნილი AI-built აპის უსაფრთხოებისა და production-readiness review-ს. შეთანხმებული scope მიხედვით შეიძლება შემოწმდეს საჯარო ზედაპირი, მოწოდებული source ან API მასალა, კონკრეტული user flow-ები, აღმოჩენების პრიორიტეტი და repair/rescan შემდგომი საზღვარი. ეს სამუშაო არ ნიშნავს ახალი აპის აშენებას, სრულ penetration test-ს ყველა გარემოსთვის, იურიდიულ სერტიფიკაციას ან უსაფრთხოების გარანტიას.</p>
+<p>მოთხოვნის გაგზავნისას სასარგებლოა მიუთითოთ აპის საჯარო URL, test account-ების ტიპი, დასაშვები გარემო, რომელი state-changing flow-ები არის კრიტიკული და რა მტკიცებულება შეგიძლიათ გადასცეთ. თუ ეს მონაცემი ჯერ არ გაქვთ, მოთხოვნაში ცალკე ჩაწერეთ, რომ scope დაზუსტებაა საჭირო. სესიის credential შენახვის checklist დაგეხმარებათ, ზედმეტი წვდომა თავიდან აიცილოთ.</p>
+
+<h2 id="limitations">რა ვერ დაამტკიცა CSRF საჯარო review-მ?</h2>
+<p>საჯარო გვერდის დათვალიერება ვერ ამტკიცებს private API route-ების, mobile client, ყველა როლის, სერვერის session store ან deployment სრული მდგომარეობის უსაფრთხოებას. Browser-ში token დანახვა ვერ ამბობს, სწორად ამოწმებს თუ არა ყველა server endpoint. ასევე, ერთი მომხმარებლის flow სხვა tenant მონაცემთა იზოლაციას არ ამტკიცებს. <a href="/ka/blog/staging-da-production-secrets-vibe-coded-apshi">staging და production secret კონტროლი</a> ამ განსხვავებას ცალკე ხსნის.</p>
+<p>CSRF კონტროლის არსებობა არც XSS-ს, authorization bypass-ს, session theft-სა და ბიზნეს-ლოგიკის ხარვეზებს აუქმებს. საბოლოო ტექსტში მკაფიოდ გამოყავით დადასტურებული დაკვირვება, დაშვებული ვარაუდი და მიუწვდომელი გარემო. ეს სიზუსტე მფლობელს აძლევს სწორ შემდეგ ნაბიჯს და არ ქმნის მთელ აპზე ვარგისობის ილუზიას.</p>
+
+<h2 id="faq">ხშირად დასმული კითხვები</h2>
+<h3 id="faq-1">SameSite და CSRF token ერთად მაინც საჭიროა?</h3>
+<p>დიახ. SameSite ამცირებს გარკვეული cross-site მოთხოვნების რისკს, მაგრამ ვერ ამტკიცებს ყველა browser, client-side flow-ისა და server route-ის სწორ დაცვას. Token უნდა მოწმდებოდეს იმ server route-ზე, რომელიც მონაცემს ცვლის; კლიენტის კოდმა untrusted input-იდან მოთხოვნის მიზანი არ უნდა შეცვალოს. XSS და authorization საკითხებიც ცალკე რჩება.</p>
+<h3 id="faq-2">შეიძლება თუ არა საჯარო URL-ით მთელი აპის CSRF დასკვნა?</h3>
+<p>არა. საჯარო URL მხოლოდ ნანახ ზედაპირს აჩვენებს. private API, სხვა როლები, სხვა კლიენტები და source-level კონტროლები მხოლოდ შეთანხმებული deeper review-ით ან მოწოდებული მტკიცებულებით შეიძლება შეფასდეს.</p>
+
+<h2 id="related-reading">დაკავშირებული საკითხები</h2>
+<ul>
+<li><a href="/ka/blog/xss-untrusted-html">untrusted HTML და XSS review</a></li>
+<li><a href="/ka/blog/server-side-input-validation-injection">SQL და command injection review</a></li>
+<li><a href="/ka/blog/ssrf-url-fetch">SSRF URL fetch review</a></li>
+<li><a href="/ka/blog/webhookis-khelmotseris-shemotsmeba-aiit-shekmnil-apshi">webhook signature-ის მტკიცებულება</a></li>
+<li><a href="/ka/blog/csp-da-nonce-aiit-shekmnil-apshi">CSP და nonce review</a></li>
+</ul>
+
+<p><em>სარედაქციო შენიშვნა: ტექსტის მომზადებაში გამოყენებულია ხელოვნური ინტელექტი. გამოყენებული წყაროები და ქართული ენა შემოწმებულია. ეს სტატია ზოგად პრაქტიკულ ინფორმაციას გვთავაზობს და არ წარმოადგენს კონკრეტული აპის უსაფრთხოების აუდიტს ან დასკვნას.</em></p>

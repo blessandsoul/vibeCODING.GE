@@ -1,0 +1,99 @@
+---
+title: "სესიისა და JWT lifecycle: logout და revocation-ის შემოწმება"
+excerpt: "შეამოწმეთ, სად ცხოვრობს სესიის credential, როგორ სრულდება ვადა და რა ხდება logout, პაროლის შეცვლისა და როლის მოხსნის შემდეგ."
+author: "aiNOW editorial team"
+tags: ["vibeCODING", "სესია", "JWT", "cookie", "ავტორიზაცია"]
+coverQuery: "session token lifecycle turning through login refresh logout and revocation, editorial technical illustration"
+readTime: "9 min"
+locale: "ka"
+site: "vibecoding"
+articleType: "spoke"
+defaultLocale: "ka"
+slug: "session-cookie-and-token-storage-security-checklist"
+language: "ka"
+coverFile: "cover.png"
+engine: "SEO_ARTICLE_v1"
+contentMode: "STRUCTURAL_SAFE_v1"
+date: 2026-09-26
+updated: 2026-09-26
+status: published
+indexable: true
+public_release: true
+coverImage: "/images/blog-covers/session-cookie-and-token-storage-security-checklist.png"
+sources: ["https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html", "https://developer.mozilla.org/en-US/docs/Web/Security/Practical_implementation_guides/Cookies", "https://supabase.com/docs/guides/auth/sessions"]
+---
+
+<p><strong>პირდაპირი პასუხი:</strong> სესიის უსაფრთხოება არის სრული lifecycle, რომელიც მოიცავს შექმნას, შენახვას, request-ში გაგზავნას, განახლებას, ვადის გასვლასა და გაუქმებას. cookie ან JWT სწორი flag მარტო ვერ ამტკიცებს logout-ს. უკვე აშენებული AI აპლიკაციის flow-ების შესაფასებლად <a href="/contact">მოითხოვეთ vibecoding.ge-ს scoped review</a> და წინასწარ განსაზღვრეთ სატესტო ანგარიშები.</p>
+
+<p>საკონტროლო მიზანია არა კონკრეტული ბიბლიოთეკის არჩევა, არამედ ძველი credential-ის მოქმედების შეწყვეტის დამტკიცება ყველა შეთანხმებულ protected flow-ში. დოკუმენტში ცალკე ჩაწერეთ ახალი შესვლის, refresh-ის, მოწყობილობის შეცვლისა და როლის გაუქმების შემთხვევები, რადგან თითოეული შემთხვევა termination-ის განსხვავებულ გზას შეიძლება მოითხოვდეს.</p>
+
+<h2 id="lifecycle-map">რას უნდა აღწერდეს სესიის lifecycle რუკა?</h2>
+
+<p>სესიის credential აკავშირებს ბრაუზერს authenticated ანგარიშთან. შემოწმების პირველ დოკუმენტში ჩაწერეთ, როგორ იქმნება session, სად ინახება, რა ამატებს request-ს, როგორ ამოწმებს სერვერი, როგორ განახლდება და რა აუქმებს მას. OWASP-ის <a href="https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html">Session Management Cheat Sheet</a> გვახსენებს, რომ session identifier-ის გამოცნობისგან დაცვა მხოლოდ ერთი ფენაა; მოპარული credential სხვა გზითაც შეიძლება გამოიყენონ.</p>
+
+<p>Supabase-ის <a href="https://supabase.com/docs/guides/auth/sessions">session დოკუმენტაცია</a> access და refresh token-ებს განსხვავებულ როლებს აძლევს. კონკრეტული lifetime გარემოსა და კონფიგურაციაზეა დამოკიდებული. ამიტომ სტატიაში მითითებული პლატფორმის მექანიზმი არ უნდა გადაიქცეს ყველა აპლიკაციისთვის ერთნაირ რეკომენდაციად.</p>
+
+<table>
+    <thead><tr><th>ეტაპი</th><th>საკონტროლო კითხვა</th><th>მტკიცებულება</th></tr></thead>
+  <tbody>
+    <tr><td>sign-in</td><td>როგორ იქმნება session და რომელი identity მოწმდება?</td><td>request, response და provider flow</td></tr>
+    <tr><td>storage</td><td>შეუძლია თუ არა browser script-ს credential-ის წაკითხვა?</td><td>cookie ან storage პარამეტრები</td></tr>
+    <tr><td>refresh</td><td>როგორ ხდება ახალი access credential-ის მიღება?</td><td>განახლების მოთხოვნა და rotation წესი</td></tr>
+    <tr><td>termination</td><td>რა აუქმებს ძველ session-ს?</td><td>logout, password change და role removal ტესტი</td></tr>
+  </tbody>
+</table>
+
+<h2 id="review-steps">cookie, token და logout: შემოწმების ნაბიჯები</h2>
+
+<ol>
+  <li><strong>დახატეთ ერთი სესიის გზა.</strong> მონიშნეთ browser, server, provider, cache, log და analytics ადგილი. credential URL-ში ან error report-ში არ უნდა მოხვდეს.</li>
+  <li><strong>გამოყავით cookie-ს ატრიბუტები.</strong> MDN-ის <a href="https://developer.mozilla.org/en-US/docs/Web/Security/Practical_implementation_guides/Cookies">cookie პრაქტიკული გზამკვლევი</a> განმარტავს Secure, HttpOnly, SameSite, Domain, Path და expiry პარამეტრებს. თითოეული მიუთითეთ თქვენი არქიტექტურის კონტექსტში.</li>
+  <li><strong>გადაამოწმეთ server-side validation.</strong> სერვერმა არ უნდა ენდოს მხოლოდ ბრაუზერის მიერ გამოგზავნილ role-ს ან account ID-ს. მას სჭირდება მიმდინარე სესიის დამოწმება და შემდეგ authorization.</li>
+  <li><strong>შეამოწმეთ refresh.</strong> დააკვირდით, ძველი refresh credential როდის იცვლება, რა ხდება replay-ისას და როგორ იწმინდება ლოგებში დარჩენილი მნიშვნელობა.</li>
+  <li><strong>გაუშვით termination test.</strong> sign-out-ის შემდეგ გაიმეორეთ ადრე მიღებული protected request. იგივე გაიმეორეთ პაროლის შეცვლის, როლის მოხსნისა და ანგარიშის წაშლის შემდეგ, თუ ეს სცენარები პროდუქტს აქვს.</li>
+  <li><strong>ჩაწერეთ შედეგის საზღვარი.</strong> test ანგარიშის წარმატებული გათიშვა ამ კონკრეტულ flow-ს ამტკიცებს. იგი სხვა device-ს, სხვა provider-სა და ყველა private route-ს ავტომატურად არ ფარავს.</li>
+</ol>
+
+<h2 id="cookie-token-choice">როგორ განსხვავდება server cookie და browser token?</h2>
+
+<p>ერთი უნივერსალური არჩევანი არ არსებობს. გადაწყვეტილება უნდა დაეყრდნოს rendering-ს, cross-site მოთხოვნებს, provider-ს, revocation-ის საჭიროებასა და იმაზე, რა უნდა ნახოს ბრაუზერის JavaScript-მა.</p>
+
+<table>
+  <thead><tr><th>კრიტერიუმი</th><th>server-managed cookie</th><th>client-managed token</th></tr></thead>
+  <tbody>
+    <tr><td>browser script-ის წვდომა</td><td>HttpOnly-ით შეიძლება შეიზღუდოს</td><td>storage ტიპზეა დამოკიდებული</td></tr>
+    <tr><td>logout</td><td>სერვერმა უნდა გააუქმოს ან უარყოს session</td><td>client-ის წაშლა საკმარისი არ არის, თუ server კვლავ ენდობა token-ს</td></tr>
+    <tr><td>cross-site ქცევა</td><td>SameSite და CSRF საზღვარი უნდა გაითვალისწინოთ</td><td>header-ის გაგზავნის გზა ცალკე კონტროლდება</td></tr>
+    <tr><td>refresh</td><td>provider ან server session მართავს განახლებას</td><td>rotation, expiry და replay-ის წესები მკაფიო უნდა იყოს</td></tr>
+  </tbody>
+</table>
+
+<p>JWT არსებობა თავისთავად უსაფრთხოების მტკიცებულება არ არის. ხელმოწერა ტოკენის მთლიანობას ეხება, მაგრამ ვადის, revocation-ის, audience-ის, issuer-ისა და მიმდინარე როლის შემოწმება მაინც საჭიროა. პირიქით, cookie HttpOnly flag XSS-ს ყველა შედეგს ვერ აუქმებს, თუ სერვერზე მოქმედება სხვა დაუცველი გზით სრულდება.</p>
+
+<h2 id="decision-rule">რომელი ტოკენები გჭირდებათ release-მდე?</h2>
+
+<p>სესიის flow მზადაა განხილვისთვის, როცა გუნდს შეუძლია ერთი test ანგარიშის სრული გზა აჩვენოს: login-ის შემდეგ დაცული მოქმედება მუშაობს, logout შემდეგ ძველი request უარყოფილია, პაროლის ან როლის ცვლილება ძველ credential-ს არ ტოვებს მოქმედად, refresh-ის წესს ჰყავს owner და ლოგებში credential-ის სრული მნიშვნელობა არ ჩანს.</p>
+
+<p>თუ პასუხი მხოლოდ UI redirect-ია, ეს არასაკმარის მტკიცებულებად ჩათვალეთ. redirect მომხმარებლის გამოცდილებას აღწერს, მაგრამ protected endpoint-ის რეალურ უარს ვერ ცვლის. repair-ის შემდეგ იგივე request-ები ხელახლა შეასრულეთ და handover-ში ჩაწერეთ, რომელი უცნობი private flow დარჩა შეთანხმებულ ფარგლებს მიღმა.</p>
+
+<h2 id="limitations">რა შეზღუდვა აქვს საჯარო სესიის review-ს?</h2>
+
+<p>საჯარო scan ხედავს downloadable bundle-ს, საჯარო response-სა და ზოგიერთ header-ს. საჯარო scan ვერ კითხულობს private provider settings-ს, ვერ ცვლის test ანგარიშის პაროლს და ვერ ამტკიცებს revocation-ს, თუ protected request-ზე შეთანხმებული წვდომა არ არსებობს.</p>
+
+<p>vibecoding.ge ამოწმებს უკვე აშენებულ AI-ით შექმნილ აპს, ადგენს დადასტურებული მიგნებების ბიზნეს-რისკს და repair/rescan ნაბიჯებს. ღრმა review იწყება მხოლოდ access და test boundary-ის შეთანხმების შემდეგ. ანგარიში scoped evidence-ს აღწერს; იგი არ არის hack-proof გარანტია, ახალი აპლიკაციის აშენება ან compliance certification.</p>
+
+<h2 id="faq">ხშირად დასმული კითხვები</h2>
+<h3 id="faq-1">HttpOnly cookie logout-ს ავტომატურად აგვარებს?</h3>
+<p>არა. HttpOnly ამცირებს browser script-ის მიერ cookie წაკითხვის შესაძლებლობას, მაგრამ logout შემდეგ სერვერმა ძველი session ან credential აღარ უნდა მიიღოს.</p>
+<h3 id="faq-2">JWT ვადის გასვლა საკმარისი revocation-ია?</h3>
+<p>არა. ვადა მხოლოდ დროის წესია. პაროლის შეცვლის, როლის მოხსნის ან ანგარიშის გაუქმების შემდეგ საჭირო ქცევა ცალკე უნდა განისაზღვროს და შემოწმდეს.</p>
+
+<h2 id="related-reading">დაკავშირებული საკითხები</h2>
+<ul>
+  <li><a href="/ka/blog/csp-da-nonce-aiit-shekmnil-apshi">CSP და nonce AI-ით შექმნილ აპში</a></li>
+  <li><a href="/ka/blog/staging-da-production-secrets-vibe-coded-apshi">staging და production გარემოების გამიჯვნა</a></li>
+  <li><a href="/ka/blog/webhookis-khelmotseris-shemotsmeba-aiit-shekmnil-apshi">webhook-ის ხელმოწერის შემოწმება</a></li>
+  <li><a href="/ka/blog/logging-audit-trail">session event-ის audit trail</a></li>
+  <li><a href="/contact">scoped review-ის მოთხოვნა</a></li></ul>
+
+<p><em>სარედაქციო შენიშვნა: ტექსტის მომზადებაში გამოყენებულია ხელოვნური ინტელექტი. წყაროების შესაბამისობა, ენა და releaseთვის საჭირო ფარგლები ცალკე გადამოწმებას საჭიროებს.</em></p>

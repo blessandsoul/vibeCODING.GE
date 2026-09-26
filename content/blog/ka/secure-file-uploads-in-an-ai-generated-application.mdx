@@ -1,0 +1,95 @@
+---
+title: "ფაილის ატვირთვა და storage უფლებები AI-ით შექმნილ აპში"
+excerpt: "გადაამოწმეთ ატვირთვის სრული გზა, ფაილის ტიპი, ზომა, private storage, ჩამოტვირთვის უფლება და წაშლის მტკიცებულება."
+author: "aiNOW editorial team"
+tags: ["vibeCODING", "ფაილის ატვირთვა", "storage", "წვდომა"]
+coverQuery: "private document upload entering quarantine storage behind authorization gates, editorial technical illustration"
+readTime: "10 min"
+locale: "ka"
+site: "vibecoding"
+articleType: "spoke"
+defaultLocale: "ka"
+slug: "secure-file-uploads-in-an-ai-generated-application"
+language: "ka"
+coverFile: "cover.png"
+engine: "SEO_ARTICLE_v1"
+contentMode: "STRUCTURAL_SAFE_v1"
+date: 2026-09-26
+updated: 2026-09-26
+status: published
+indexable: true
+public_release: true
+coverImage: "/images/blog-covers/secure-file-uploads-in-an-ai-generated-application.png"
+sources: ["https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html", "https://www.rfc-editor.org/rfc/rfc9110.html#section-15.5.14", "https://docs.aws.amazon.com/AmazonS3/latest/userguide/checking-object-integrity-upload.html"]
+---
+
+<p><strong>პირდაპირი პასუხი:</strong> ატვირთული ფაილი სანდო არ არის მხოლოდ იმიტომ, რომ მომხმარებელმა იგი ბრაუზერში აირჩია. სერვერმა უნდა შეამოწმოს მოთხოვნა, ზომა, ტიპი და ხელმოწერა, შეინახოს ობიექტი კონტროლირებულ სივრცეში, დაადასტუროს ვის შეუძლია მისი ნახვა და დაგეგმოს სრული წაშლა. უკვე აშენებული AI აპლიკაციის upload flow-ზე <a href="/contact">მოითხოვეთ vibecoding.ge-ს scoped review</a>.</p>
+
+<h2 id="failure-scene">სად იკარგება ატვირთვის ნდობის საზღვარი?</h2>
+
+<p>ფაილის ატვირთვა რამდენიმე განსხვავებულ რისკს აერთიანებს: მომხმარებლის მიერ არჩეულ filename-ს, content type-ს, ბაიტების ზომას, parser-ს, storage bucket-სა და ჩამოტვირთვის ავტორიზაციას. OWASP-ის <a href="https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html">File Upload Cheat Sheet</a> ურჩევს საჭირო გაფართოებების allowlist-ს, ფაილის ტიპისა და signature-ის შემოწმებას, სახელის server-side გენერაციას, ზომის შეზღუდვას და webroot-ისგან განცალკევებულ შენახვას.</p>
+
+<p>ერთი შემოწმება ვერ პასუხობს ყველა კითხვას. filename შეიძლება შეიცვალოს, MIME header შეიძლება ყალბი იყოს, ხოლო ფორმალურად სწორი სურათი მაინც შეიცავდეს მგრძნობიარე metadata-ს ან parser-ისთვის რთულ შინაარსს. ამიტომ upload-ს შეხედეთ როგორც pipeline-ს, სადაც თითოეულ ეტაპს თავისი მტკიცებულება და უარის გზა აქვს.</p>
+
+<h2 id="risk-register">upload risk register: ძირითადი კონტროლები</h2>
+
+<table>
+  <thead><tr><th>რისკი</th><th>კონტროლი</th><th>რას ინახავთ მტკიცებულებად</th></tr></thead>
+  <tbody>
+    <tr><td>გადაჭარბებული ზომა ან რაოდენობა</td><td>request და processing limit</td><td>უარი 413 ან შესაბამისი აპლიკაციის პასუხი</td></tr>
+    <tr><td>ყალბი გაფართოება ან MIME</td><td>დეტექტირებული ტიპი და signature</td><td>შემოწმების შედეგი და reject მიზეზი</td></tr>
+    <tr><td>მეზობელ ობიექტზე წვდომა</td><td>object-level authorization</td><td>owner-ისა და requester-ის test record</td></tr>
+    <tr><td>საჯარო bucket</td><td>private storage და scoped delivery</td><td>bucket policy და download response</td></tr>
+    <tr><td>დაგროვილი ასლები</td><td>retention და derived-object cleanup</td><td>წაშლის job-ის მდგომარეობა და owner</td></tr>
+  </tbody>
+</table>
+
+<p>RFC 9110-ის <a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-15.5.14">413 სტატუსი</a> გამოიყენება მაშინ, როცა content სერვერის დამუშავების ზღვარს აჭარბებს. სტატუსის გამოყენება სასარგებლოა, მაგრამ პასუხში არ გამოაჩინოთ შიდა ლიმიტების ისეთი დეტალი, რომელიც abuse-ს გაუადვილებს. AWS-ის <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/checking-object-integrity-upload.html">S3 object integrity დოკუმენტაცია</a> ცალკე ეხება ატვირთვის მთლიანობის შემოწმებას; ეს არ ცვლის მომხმარებლის უფლებების შემოწმებას.</p>
+
+<h2 id="pipeline">კონტროლირებული upload pipeline</h2>
+
+<ol>
+  <li><strong>დაამოწმეთ მოქმედი workflow.</strong> გადაწყვიტეთ, ვინ ატვირთავს, ვის შეუძლია გახსნა, საჭიროა თუ არა საჯარო გაზიარება, რამდენ ხანს ინახება ფაილი და რა ხდება scanner-ის მიუწვდომლობისას.</li>
+  <li><strong>შეზღუდეთ მოთხოვნა წინასწარ.</strong> დააწესეთ ზომის, რაოდენობისა და დამუშავების ხარჯის ზღვარი edge ფენაზე და აპშიც. უარი უნდა მოხდეს ძვირადღირებული parsing-ის დაწყებამდე.</li>
+  <li><strong>დააგენერირეთ საცავის გასაღები (storage key) სერვერზე.</strong> მომხმარებლის filename შეინახეთ მხოლოდ საჭირო metadata-დ. არ მისცეთ submitted path-ს სერვერზე ადგილმდებარეობის არჩევის უფლება.</li>
+  <li><strong>გადაიყვანეთ ობიექტი quarantine-ში.</strong> საჭიროა extension, detected type, signature, ზომა და შესაბამისი parser ან malware პროცესი. თუ აუცილებელი შემოწმება ვერ სრულდება, ordinary user-ს ფაილი მზადყოფნად არ აჩვენოთ.</li>
+  <li><strong>შეინახეთ private სივრცეში.</strong> სრული bucket-ის public გახსნის ნაცვლად გამოიყენეთ აპლიკაციის ავტორიზაცია ან მოკლე ვადის delivery ბმული, როცა ეს მოდელს შეესაბამება.</li>
+  <li><strong>გამოაქვეყნეთ business record მხოლოდ შემოწმების შემდეგ.</strong> ჩანაწერს ჰქონდეს accepted, rejected და pending მდგომარეობა. reject მიზეზი ოპერატორს უნდა დაეხმაროს, მაგრამ detector-ის ზედმეტი დეტალი არ უნდა გაამჟღავნოს.</li>
+  <li><strong>წაშალეთ მთელი ობიექტის ოჯახი.</strong> original, thumbnail, converted copy და database reference ერთი retention გადაწყვეტილებით მოიცავით. წარუმატებელი cleanup ცალკე ოპერატიულ საკითხებად ჩაწერეთ.</li>
+</ol>
+
+<h2 id="public-private">რა განსხვავებაა public scan-სა და private upload review-ს შორის?</h2>
+
+<p>საჯარო scan ხედავს მხოლოდ ჩვეულებრივი სტუმრისთვის ჩამოსატვირთ ზედაპირს. private upload review ამოწმებს ისეთ კითხვებს, რომლებიც public URL-ით არ ჩანს: ვის ეკუთვნის ობიექტი, შეუძლია თუ არა სხვა account-ს signed link-ის გამოყენება, როგორ იბლოკება rejected ფაილი და რა ხდება deletion job-ის დროს.</p>
+
+<p>ფაილის არსებობა public path-ზე შეიძლება იყოს მნიშვნელოვანი აღმოჩენა, მაგრამ იგი ჯერ კიდევ არ აღწერს მთელ storage policy-ს. ერთი private bucket-ის არსებობა არც სწორი retention-ის და არც ყველა delivery გზის მტკიცებულებაა.</p>
+
+<h2 id="release-check">რომელი ტოკენები უნდა ნახოთ release-მდე?</h2>
+
+<p>release გადაწყვეტილებისთვის შეინახეთ upload matrix: მოქმედი actor, დაშვებული ტიპი, ზომის ზღვარი, საცავის გასაღები (storage key), ობიექტის მფლობელი (object owner), ჩამოტვირთვის წესი (download rule), უარყოფის მდგომარეობა (rejection state) და deletion owner. დადებით ტესტთან ერთად ჩაწერეთ უარყოფითი ტესტიც: სხვა account-მა უნდა ვერ ნახოს private object, rejected file-მა არ უნდა მიიღოს delivery URL და წაშლილმა ობიექტმა აღარ უნდა გაიაროს მოქმედი route.</p>
+
+<p>თუ workflow ითხოვს customer document-ს, ნუ გადაიტანთ რეალურ პირად მონაცემს სატესტო გარემოში. გამოიყენეთ synthetic fixture და წინასწარ დაადასტურეთ, რომ ტესტი არ აგზავნის რეალურ შეტყობინებას ან ბიზნეს-მოქმედებას. repair-ის შემდეგ იგივე upload matrix ხელახლა გაიარეთ და handover-ში მიუთითეთ დარჩენილი უცნობი ასლები ან backup boundary.</p>
+
+<h2 id="limitations">რა ვერ დაამტკიცებს ფაილის public შემოწმება?</h2>
+
+<p>საჯარო ფაილის არსებობა ან არარსებობა ვერ ამტკიცებს malware-სგან სრულ დაცვას, private bucket-ის ყველა წესს, parser-ის ყველა მდგომარეობას ან backup-ში დარჩენილი ასლების წაშლას. deep review მოითხოვს owner-ის თანხმობას, სატესტო ანგარიშებს და ზუსტ, არადესტრუქციულ ფარგლებს.</p>
+
+<p>vibecoding.ge განიხილავს უკვე აშენებულ AI-ით შექმნილ აპს, ადგენს დადასტურებულ მიგნებებსა და მათი repair/rescan-ის ნაბიჯებს. პროდუქტი არ არის ფაილების საცავი, malware service, ახალი აპლიკაციის მშენებლობა ან უსაფრთხოების სერტიფიკაციის დაპირება. ანგარიშის დასკვნა ვრცელდება მხოლოდ შეთანხმებულ scope-ზე.</p>
+
+<h2 id="faq">ხშირად დასმული კითხვები</h2>
+<h3 id="faq-1">filename-ის extension შემოწმება საკმარისია?</h3>
+<p>არა. extension შეიძლება გადაერქვას, ხოლო MIME header spoofed იყოს. საჭიროა საჭირო ტიპის, signature-ის, ზომის, storageა და access rule-ის კომბინაცია.</p>
+<h3 id="faq-2">private bucket ნიშნავს, რომ ყველა ფაილი დაცულია?</h3>
+<p>არა. თითოეული download გზა მაინც უნდა ამოწმებდეს actor-სა და object-ს. private bucket-ის პოლიტიკა ვერ ჩაანაცვლებს აპლიკაციის route-ს, signed link-ის წესს და retention-ს.</p>
+<h3 id="faq-3">შეიძლება scanner-ის შეცდომისას ფაილი მომხმარებელს მივაწოდოთ?</h3>
+<p>ეს ბიზნესისა და რისკის წესია, რომელიც წინასწარ უნდა განისაზღვროს. აუცილებელი შემოწმების ჩავარდნისას უსაფრთხო default ხშირად pending ან rejected მდგომარეობაა, სანამ owner სხვა გადაწყვეტილებას არ დაადასტურებს.</p>
+
+<h2 id="related-reading">დაკავშირებული საკითხები</h2>
+<ul>
+  <li><a href="/ka/blog/csp-da-nonce-aiit-shekmnil-apshi">CSP და nonce AI-ით შექმნილ აპში</a></li>
+  <li><a href="/ka/blog/staging-da-production-secrets-vibe-coded-apshi">staging და production გარემოების გამიჯვნა</a></li>
+  <li><a href="/ka/blog/webhookis-khelmotseris-shemotsmeba-aiit-shekmnil-apshi">webhook-ის ხელმოწერის შემოწმება</a></li>
+  <li><a href="/ka/blog/server-side-input-validation-injection">server-side input validation</a></li>
+  <li><a href="/contact">scoped review-ის მოთხოვნა</a></li></ul>
+
+<p><em>სარედაქციო შენიშვნა: ტექსტის მომზადებაში გამოყენებულია ხელოვნური ინტელექტი. წყაროების შესაბამისობა, ენა და releaseთვის საჭირო ფარგლები ცალკე გადამოწმებას საჭიროებს.</em></p>
