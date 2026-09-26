@@ -23,13 +23,13 @@ coverImage: "/images/blog-covers/session-cookie-and-token-storage-security-check
 sources: ["https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html", "https://developer.mozilla.org/en-US/docs/Web/Security/Practical_implementation_guides/Cookies", "https://supabase.com/docs/guides/auth/sessions"]
 ---
 
-<p><strong>პირდაპირი პასუხი:</strong> სესიის უსაფრთხოება არის სრული lifecycle, რომელიც მოიცავს შექმნას, შენახვას, request-ში გაგზავნას, განახლებას, ვადის გასვლასა და გაუქმებას. cookie ან JWT სწორი flag მარტო ვერ ამტკიცებს logout-ს. უკვე აშენებული AI აპლიკაციის flow-ების შესაფასებლად <a href="/contact">მოითხოვეთ vibecoding.ge-ს scoped review</a> და წინასწარ განსაზღვრეთ სატესტო ანგარიშები.</p>
+<p><strong>პირდაპირი პასუხი:</strong> სესიის უსაფრთხოება არის სრული lifecycle, რომელიც მოიცავს შექმნას, შენახვას, request-ში გაგზავნას, განახლებას, ვადის გასვლასა და გაუქმებას. cookie ან JWT სწორი flag მარტო ვერ ამტკიცებს logout-ს. სატესტო ანგარიშებისა და უკვე აშენებული AI აპლიკაციის flow-ების შესაფასებლად <a href="/contact">მოითხოვეთ vibecoding.ge-ს scoped review</a>.</p>
 
 <p>საკონტროლო მიზანია არა კონკრეტული ბიბლიოთეკის არჩევა, არამედ ძველი credential-ის მოქმედების შეწყვეტის დამტკიცება ყველა შეთანხმებულ protected flow-ში. დოკუმენტში ცალკე ჩაწერეთ ახალი შესვლის, refresh-ის, მოწყობილობის შეცვლისა და როლის გაუქმების შემთხვევები, რადგან თითოეული შემთხვევა termination-ის განსხვავებულ გზას შეიძლება მოითხოვდეს.</p>
 
 <h2 id="lifecycle-map">რას უნდა აღწერდეს სესიის lifecycle რუკა?</h2>
 
-<p>სესიის credential აკავშირებს ბრაუზერს authenticated ანგარიშთან. შემოწმების პირველ დოკუმენტში ჩაწერეთ, როგორ იქმნება session, სად ინახება, რა ამატებს request-ს, როგორ ამოწმებს სერვერი, როგორ განახლდება და რა აუქმებს მას. OWASP-ის <a href="https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html">Session Management Cheat Sheet</a> გვახსენებს, რომ session identifier-ის გამოცნობისგან დაცვა მხოლოდ ერთი ფენაა; მოპარული credential სხვა გზითაც შეიძლება გამოიყენონ.</p>
+<p>სესიის credential ბრაუზერს ავტორიზებულ ანგარიშთან აკავშირებს. შემოწმების პირველ დოკუმენტში ჩაწერეთ, როგორ იქმნება session, სად ინახება, რა ემატება request-ს, როგორ ამოწმებს სერვერი, როგორ განახლდება და როგორ უქმდება. OWASP-ის <a href="https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html">Session Management Cheat Sheet</a> გვახსენებს, რომ session identifier-ის გამოცნობისგან დაცვა მხოლოდ ერთი ფენაა; მოპარული credential სხვა გზითაც შეიძლება გამოიყენონ.</p>
 
 <p>Supabase-ის <a href="https://supabase.com/docs/guides/auth/sessions">session დოკუმენტაცია</a> access და refresh token-ებს განსხვავებულ როლებს აძლევს. კონკრეტული lifetime გარემოსა და კონფიგურაციაზეა დამოკიდებული. ამიტომ სტატიაში მითითებული პლატფორმის მექანიზმი არ უნდა გადაიქცეს ყველა აპლიკაციისთვის ერთნაირ რეკომენდაციად.</p>
 
@@ -68,7 +68,7 @@ sources: ["https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Che
   </tbody>
 </table>
 
-<p>JWT არსებობა თავისთავად უსაფრთხოების მტკიცებულება არ არის. ხელმოწერა ტოკენის მთლიანობას ეხება, მაგრამ ვადის, revocation-ის, audience-ის, issuer-ისა და მიმდინარე როლის შემოწმება მაინც საჭიროა. პირიქით, cookie HttpOnly flag XSS-ს ყველა შედეგს ვერ აუქმებს, თუ სერვერზე მოქმედება სხვა დაუცველი გზით სრულდება.</p>
+<p>JWT არსებობა თავისთავად უსაფრთხოების მტკიცებულება არ არის. ხელმოწერა ტოკენის მთლიანობას ეხება, მაგრამ ვადის, revocation-ის, audience-ის, issuer-ისა და მიმდინარე როლის შემოწმება მაინც საჭიროა. HttpOnly cookie XSS-ის ყველა შედეგს ვერ აუქმებს, თუ სერვერზე მოქმედება სხვა დაუცველი გზით სრულდება.</p>
 
 <h2 id="decision-rule">რომელი ტოკენები გჭირდებათ release-მდე?</h2>
 
@@ -96,4 +96,4 @@ sources: ["https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Che
   <li><a href="/ka/blog/logging-audit-trail">session event-ის audit trail</a></li>
   <li><a href="/contact">scoped review-ის მოთხოვნა</a></li></ul>
 
-<p><em>სარედაქციო შენიშვნა: ტექსტის მომზადებაში გამოყენებულია ხელოვნური ინტელექტი. წყაროების შესაბამისობა, ენა და releaseთვის საჭირო ფარგლები ცალკე გადამოწმებას საჭიროებს.</em></p>
+<p><em>სარედაქციო შენიშვნა: ტექსტის მომზადებაში გამოყენებულია ხელოვნური ინტელექტი. ეს მასალა ხსნის სესიის ციკლისა და წვდომის გაუქმების შემოწმებას; კონკრეტული აპის private provider settings და protected flow-ები ამ ტექსტით არ დასტურდება.</em></p>

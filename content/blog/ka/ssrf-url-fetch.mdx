@@ -22,11 +22,11 @@ coverImage: "/images/blog-covers/ssrf-url-fetch.png"
 sources: ["https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html", "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html", "https://owasp.org/projects/asvs?tab=main", "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html"]
 ---
 
-<p><strong>პირდაპირი პასუხი:</strong> SSRF review ამოწმებს, შეუძლია თუ არა მომხმარებლის მიერ მიწოდებულმა URL-მა სერვერი არასასურველ შიდა ან გარე რესურსთან დააკავშიროს. URL fetch, image preview, import და custom callback ფუნქციები რისკს ქმნის მაშინაც, როცა ბრაუზერი მხოლოდ ჩვეულებრივ ბმულს აჩვენებს. სწორი შეფასება აერთიანებს URL parser-ს, allowlist-ს, redirect ქცევას, DNS-სა და ქსელურ უფლებებს. <a href="/contact">vibeCODING scoped review მოითხოვეთ</a>, თუ ეს ფუნქცია უკვე შექმნილ AI-built აპში release წინ უნდა შეამოწმოთ.</p>
+<p><strong>პირდაპირი პასუხი:</strong> SSRF review ამოწმებს, შეუძლია თუ არა მომხმარებლის მიერ მიწოდებულმა URL-მა სერვერი არასასურველ შიდა ან გარე რესურსთან დააკავშიროს. URL fetch, image preview, import და custom callback ფუნქციების შეფასება უნდა მოიცავდეს URL parser-ს, allowlist-ს, redirect-ის ქცევას, DNS-სა და ქსელურ უფლებებს. <a href="/contact">vibeCODING scoped review მოითხოვეთ</a>, თუ ეს ფუნქცია უკვე შექმნილ AI-built აპში release-მდე უნდა შეამოწმოთ.</p>
 
 <h2 id="ssrf-boundary">რას ნიშნავს SSRF URL ფუნქციისთვის?</h2>
 <p>Server-Side Request Forgery, ანუ SSRF, არის შემთხვევა, როცა აპის სერვერი მომხმარებლის გავლენით თვითონ აკეთებს ქსელურ მოთხოვნას. მფლობელი შეიძლება URL-ს იყენებდეს სურათის preview-სთვის, დოკუმენტის import-ისთვის, webhook შემოწმებისთვის ან მესამე მხარის API-ს დასაკავშირებლად. თუ საბოლოო დანიშნულება და გამოყენებული protocol მკაფიოდ არ არის შეზღუდული, server შეიძლება გახდეს proxy იმ მიმართულებისთვის, რომლის ნახვაც მომხმარებელს არ უნდა შეეძლოს.</p>
-<p><a href="https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html">OWASP SSRF Prevention Cheat Sheet</a> განასხვავებს შემთხვევას, როცა აპმა მხოლოდ წინასწარ ცნობილ სერვისებს უნდა მიმართოს, იმ შემთხვევისგან, როცა ნებისმიერი გარე მისამართი ბიზნესის ფუნქციის ნაწილია. ეს განსხვავება review პირველ გადაწყვეტილებად აქციეთ. allowlist მქონე ფუნქცია და თავისუფალი URL proxy ერთნაირი რისკითა და კონტროლით არ ფასდება.</p>
+<p><a href="https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html">OWASP SSRF Prevention Cheat Sheet</a> განასხვავებს შემთხვევას, როცა აპმა მხოლოდ წინასწარ ცნობილ სერვისებს უნდა მიმართოს, იმ შემთხვევისგან, როცა ნებისმიერი გარე მისამართი ბიზნესის ფუნქციის ნაწილია. ეს განსხვავება review-ის პირველ გადაწყვეტილებად აქციეთ. allowlist-ით დაცული ფუნქცია და თავისუფალი URL proxy ერთნაირი რისკითა და კონტროლით არ ფასდება.</p>
 
 <h2 id="url-feature-inventory">URL ფუნქციების ინვენტარი</h2>
 <p>ინვენტარი შეადგინეთ ფუნქციის სახელით და არა მხოლოდ route სახელით. მოძებნეთ:</p>
@@ -38,7 +38,7 @@ sources: ["https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Fo
   <li>ადმინისტრაციული ხელსაწყო, რომელიც მომხმარებლის მითითებულ endpoint-ს ამოწმებს;</li>
   <li>background worker, queue ან scheduled job, რომელიც იგივე URL-ს მოგვიანებით იყენებს.</li>
 </ul>
-<p>შემდეგ თითოეულ ჩანაწერს მიუთითეთ input source, server component, protocol, შესაძლო destination და response გამოყენება. თუ პასუხი პირდაპირ ბრუნდება browser-ში, დაამატეთ content-type, size და error handling კითხვა. საჯარო UI-ში URL ველის არქონა ვერ ამტკიცებს, რომ background import უსაფრთხოა.</p>
+<p>შემდეგ თითოეულ ჩანაწერს მიუთითეთ input source, server component, protocol, შესაძლო destination და response-ის გამოყენება. თუ პასუხი პირდაპირ ბრუნდება browser-ში, დაამატეთ content-type, size და error handling-ის საკითხი. საჯარო UI-ში URL ველის არქონა ვერ ამტკიცებს, რომ background import უსაფრთხოა.</p>
 
 <h2 id="allowlist-decision">როგორ ავირჩიოთ allowlist თუ ფართო URL მხარდაჭერა?</h2>
 <table>
@@ -50,22 +50,22 @@ sources: ["https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Fo
     <tr><td>custom webhook</td><td>დამტკიცებული destination, secret handshake და audit trail</td><td>test request არ აღწევს დაუშვებელ ქსელურ ზონაში</td></tr>
   </tbody>
 </table>
-<p>OWASP გვირჩევს, სადაც შესაძლებელია, მომხმარებელს სრული URL ნაცვლად მხოლოდ ცნობადი host ან სხვა მარტივი მნიშვნელობა მიაწოდოთ და მოთხოვნა აპმა ააგოს. parser-ებს შორის განსხვავება, კოდის redirect და DNS ცვლილება allowlist გვერდის ავლის მიზეზი შეიძლება გახდეს.</p>
+<p>OWASP გვირჩევს, სადაც შესაძლებელია, მომხმარებელს სრული URL-ის ნაცვლად მხოლოდ ცნობადი host ან სხვა მარტივი მნიშვნელობა მიაწოდოთ და მოთხოვნა აპმა ააგოს. parser-ებს შორის განსხვავება, კოდის redirect და DNS-ის ცვლილება allowlist-ის გვერდის ავლის მიზეზი შეიძლება გახდეს.</p>
 
 <h2 id="safe-fetch-sequence">უსაფრთხო fetch თანმიმდევრობა</h2>
-<p>უსაფრთხო იმპლემენტაციის playbook ერთ კონტროლზე არ ჩერდება. თითოეული ნაბიჯი ცალკე მტკიცებულებად ჩაიწეროს:</p>
+<p>უსაფრთხო იმპლემენტაციის playbook ერთ კონტროლზე არ ჩერდება. ჩაწერეთ თითოეული ნაბიჯი ცალკე მტკიცებულებად:</p>
 <ol>
-  <li><strong>შეამოწმეთ ფორმატი:</strong> გამოიყენეთ ერთი URL parser და უარყავით parser disagreement, უცნობი scheme და დაუშვებელი port.</li>
+  <li><strong>შეამოწმეთ ფორმატი:</strong> გამოიყენეთ ერთი URL parser და უარყავით parser-ებს შორის შეუსაბამობა, უცნობი scheme და დაუშვებელი port.</li>
   <li><strong>მიაბით დანიშნულებას:</strong> allowlist-ს შეადარეთ canonical host და შესაბამისი IP-ები, როცა ფუნქცია ცნობილ სერვისებს ეხება.</li>
-  <li><strong>გააკონტროლეთ redirect:</strong> redirect ავტომატურად არ მიჰყვეს client-მა, ან ყოველი ახალი დანიშნულება თავიდან გაიაროს იგივე წესები.</li>
-  <li><strong>შეამოწმეთ DNS დროითი ცვლილება:</strong> hostname შემოწმება და საბოლოო connection მისამართი ერთსა და იმავე დაცვას უნდა დაექვემდებაროს.</li>
+  <li><strong>გააკონტროლეთ redirect:</strong> client-მა redirect-ს ავტომატურად არ უნდა მიჰყვეს, ან ყოველი ახალი დანიშნულება თავიდან უნდა გაიაროს იგივე წესები.</li>
+  <li><strong>შეამოწმეთ DNS-ის დროში ცვლილება:</strong> hostname-ის შემოწმება და საბოლოო connection-ის მისამართი ერთსა და იმავე დაცვას უნდა დაექვემდებაროს.</li>
   <li><strong>შეზღუდეთ protocol და response:</strong> გამოიყენეთ საჭირო scheme, timeout, ზომა და content type. raw response არ გადასცეთ პირდაპირ მომხმარებელს.</li>
   <li><strong>გაყავით ქსელური უფლებები:</strong> fetch worker-ს არ უნდა ჰქონდეს იმაზე მეტი შიდა წვდომა, ვიდრე ფუნქციას სჭირდება.</li>
 </ol>
-<p>ეს ნაბიჯები არ არის კონკრეტული framework მზა კონფიგურაცია. მათი მიზანია review-ისთვის შემოწმებადი კრიტერიუმების შექმნა. საბოლოო implementation დამოკიდებულია hosting-ზე, network policy-ზე და გამოყენებულ ბიბლიოთეკებზე.</p>
+<p>ეს ნაბიჯები არ არის კონკრეტული framework-ის მზა კონფიგურაცია. მათი მიზანია review-ისთვის შემოწმებადი კრიტერიუმების შექმნა. საბოლოო implementation დამოკიდებულია hosting-ზე, network policy-ზე და გამოყენებულ ბიბლიოთეკებზე.</p>
 
 <h3 id="cloud-boundary">რატომ არის cloud metadata ცალკე საკითხი?</h3>
-<p>Cloud გარემოში SSRF შედეგი შეიძლება იყოს instance metadata-ს ან service identity არასასურველი წვდომა. <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html">AWS ოფიციალური დოკუმენტაცია</a> IMDSv2-ს დამატებით დაცვის ფენად აღწერს, თუმცა metadata service წესები SSRF application კონტროლს არ ცვლის. ამიტომ review-ში ჩაიწერეთ, შეუძლია თუ არა fetch პროცესს metadata ქსელთან კავშირი და როგორია workload network boundary.</p>
+<p>Cloud გარემოში SSRF-ის შედეგი შეიძლება იყოს instance metadata-ზე ან service identity-ზე არასასურველი წვდომა. <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html">AWS ოფიციალური დოკუმენტაცია</a> IMDSv2-ს დამატებით დაცვის ფენად აღწერს, თუმცა metadata service-ის წესები SSRF-ის აპლიკაციის კონტროლებს არ ცვლის. ამიტომ review-ში ჩაიწერეთ, შეუძლია თუ არა fetch პროცესს metadata ქსელთან კავშირი და როგორია workload network boundary.</p>
 <p><a href="https://owasp.org/projects/asvs?tab=main">OWASP ASVS</a> application კონტროლების შემოწმების ჩარჩოს იძლევა, მაგრამ კონკრეტულ cloud account-ს ან firewall-ს თვითონ არ ამოწმებს. თუ infra evidence არ არის მოწოდებული, cloud რისკი მონიშნეთ როგორც UNKNOWN. არ დაწეროთ, რომ metadata სრულად დაცულია მხოლოდ იმიტომ, რომ URL validation კოდში ჩანს.</p>
 
 <h2 id="review-test-record">ავტორიზებული test record ველები</h2>
@@ -78,11 +78,11 @@ sources: ["https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Fo
   <li>რომელი internal, cloud ან alternate protocol boundary დარჩა მიუწვდომელი;</li>
   <li>რა არის repair-ისა და rescan ზუსტი pass კრიტერიუმი.</li>
 </ul>
-<p>ამ სტრუქტურით მფლობელი არჩევანს აკეთებს მტკიცებულებით. report-ში არ ჩასვათ მოქმედი credential, რეალური metadata ან ისეთი payload, რომელიც სხვა სისტემაში პირდაპირ შეიძლება იქნეს გამოყენებული. ცალკე ჩაწერეთ, რა ტესტი არ ჩატარებულა.</p>
+<p>ამ სტრუქტურით მფლობელი არჩევანს მტკიცებულებაზე დაყრდნობით აკეთებს. ანგარიშში არ ჩასვათ მოქმედი credential, რეალური metadata ან ისეთი payload, რომელიც სხვა სისტემაში პირდაპირ შეიძლება იქნეს გამოყენებული. ცალკე ჩაწერეთ, რა ტესტი არ ჩატარებულა.</p>
 
 <h2 id="product-boundary">რას მოიცავს vibeCODING scoped review?</h2>
-<p>vibeCODING პროდუქტი ამოწმებს უკვე შექმნილ AI-built აპს: საჯარო ზედაპირს, შეთანხმებულ source-სა და API flow-ს, კონკრეტულ URL-fetch ფუნქციას, აღმოჩენების პრიორიტეტს და repair/rescan ფარგლებს. ღრმა შეფასება მხოლოდ მფლობელის მიერ დადასტურებულ წვდომასა და გარემოში ტარდება.</p>
-<p>ეს არ არის ახალი აპის development, ქსელის სრული penetration test, cloud provider სერტიფიკაცია, uptime დაპირება ან გარანტია, რომ ყველა SSRF გზა გამორიცხულია. მოთხოვნაში მიუთითეთ URL feature, test destination, hosting გარემო და ის მონაცემები, რომლებიც არ უნდა დატოვოს worker-მა. <a href="/ka/blog/csp-da-nonce-aiit-shekmnil-apshi">CSP და nonce კონტროლების საზღვარი</a> წინასწარ დაგეხმარებათ scope სწორად აღწერაში.</p>
+<p>vibeCODING-ის პროდუქტი ამოწმებს უკვე შექმნილ AI-built აპს: საჯარო ზედაპირს, შეთანხმებულ source-სა და API flow-ს, კონკრეტულ URL-fetch ფუნქციას, აღმოჩენების პრიორიტეტს და repair/rescan-ის ფარგლებს. ღრმა შეფასება მხოლოდ მფლობელის მიერ დადასტურებულ წვდომასა და გარემოში ტარდება.</p>
+<p>ეს არ არის ახალი აპის development, ქსელის სრული penetration test, cloud provider-ის სერტიფიკაცია, uptime დაპირება ან გარანტია, რომ ყველა SSRF გზა გამორიცხულია. მოთხოვნაში მიუთითეთ URL ფუნქცია, test destination, hosting გარემო და ის მონაცემები, რომლებიც worker-მა არ უნდა დატოვოს. <a href="/ka/blog/csp-da-nonce-aiit-shekmnil-apshi">CSP და nonce კონტროლების საზღვარი</a> წინასწარ დაგეხმარებათ scope-ის სწორად აღწერაში.</p>
 
 <h2 id="limitations">რას ვერ დაამტკიცებს მარტო URL validation?</h2>
 <p>URL ფორმატის შემოწმება ვერ ამტკიცებს, რომ DNS საბოლოო პასუხი უსაფრთხოა, redirect არ იცვლის დანიშნულებას, worker-ს არ აქვს შიდა ქსელის წვდომა ან raw response არ ბრუნდება მომხმარებელთან. ასევე, ერთ endpoint-ზე allowlist ვერ ფარავს background job-ს, ადმინისტრაციულ ხელსაწყოსა და სხვა client-ს.</p>
@@ -90,7 +90,7 @@ sources: ["https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Fo
 
 <h2 id="faq">ხშირად დასმული კითხვები</h2>
 <h3 id="faq-1">HTTPS ან denylist საკმარისია SSRF-ისთვის?</h3>
-<p>არა. HTTPS protocol თავისთავად არ ზღუდავს destination-ს, ხოლო denylist-ის გვერდის ავლა parser, DNS ან redirect სხვაობით შეიძლება. საჭიროა host, IP, redirect, DNS, ქსელური წვდომისა და response-ის კონტროლი; სადაც შესაძლებელია, გამოიყენეთ allowlist და აპმა თვითონ ააგოს მოთხოვნის დანიშნულება.</p>
+<p>არა. HTTPS protocol თავისთავად არ ზღუდავს destination-ს, ხოლო denylist-ის გვერდის ავლა parser-ის, DNS-ის ან redirect-ის განსხვავებით შეიძლება. საჭიროა host, IP, redirect, DNS, ქსელური წვდომისა და response-ის კონტროლი; სადაც შესაძლებელია, გამოიყენეთ allowlist და აპმა თვითონ ააგოს მოთხოვნის დანიშნულება.</p>
 <h3 id="faq-2">SSRF review სრულ ქსელურ pentest-ს ნიშნავს?</h3>
 <p>არა. scoped review შეიძლება ერთ ფუნქციასა და შეთანხმებულ test environment-ს მოიცავდეს. ქსელის, cloud account ან სხვა სისტემების სრული ტესტირება ცალკე scope და ავტორიზაციას მოითხოვს.</p>
 
@@ -103,4 +103,4 @@ sources: ["https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Fo
 <li><a href="/ka/blog/webhookis-khelmotseris-shemotsmeba-aiit-shekmnil-apshi">webhook signature-ის მტკიცებულება</a></li>
 </ul>
 
-<p><em>სარედაქციო შენიშვნა: ტექსტის მომზადებაში გამოყენებულია ხელოვნური ინტელექტი. გამოყენებული წყაროები და ქართული ენა შემოწმებულია. ეს სტატია ზოგად პრაქტიკულ ინფორმაციას გვთავაზობს და არ წარმოადგენს კონკრეტული აპის უსაფრთხოების აუდიტს ან დასკვნას.</em></p>
+<p><em>სარედაქციო შენიშვნა: ტექსტის მომზადებაში გამოყენებულია ხელოვნური ინტელექტი. ეს სტატია URL fetch-ის SSRF საზღვრების შეფასების მიდგომას ხსნის და კონკრეტული აპის უსაფრთხოების დასკვნას არ წარმოადგენს.</em></p>

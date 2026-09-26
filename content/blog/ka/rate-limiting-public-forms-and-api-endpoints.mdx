@@ -31,9 +31,7 @@ sources: ["https://owasp.org/API-Security/editions/2023/en/0xa4-unrestricted-res
 
 <p>HTTP <a href="https://www.rfc-editor.org/rfc/rfc6585.html#section-4">429 სტატუსი</a> აღნიშნავს, რომ მოთხოვნა ძალიან ბევრია. <a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-10.2.3">Retry-After</a> კლიენტს ეუბნება, როდის ან რამდენ ხანში სცადოს ხელახლა. header მარტო abuse-ს ვერ აჩერებს, თუ API ძვირ ოპერაციას უკვე ასრულებს და მხოლოდ შემდეგ აბრუნებს უარს.</p>
 
-<p>ეს განსხვავება გეხმარებათ, რომ ლიმიტის გადაწყვეტილება ოპერაციის რეალურ ღირებულებას დაუკავშიროთ და მხოლოდ სტატისტიკურ request count-ს არ დაეყრდნოთ.</p>
-
-<h2 id="playbook">endpoint-specific ლიმიტის playbook</h2>
+<h2 id="playbook">endpoint-ის მიხედვით ლიმიტის დაყენება</h2>
 
 <ol>
   <li><strong>ჩამოწერეთ ოპერაციები.</strong> route-ების სიის გარდა გამოყავით login, email, file upload, search, record creation და paid provider call. ერთ endpoint-ში რამდენიმე სხვადასხვა ხარჯი შეიძლება იმალებოდეს.</li>
@@ -59,7 +57,7 @@ sources: ["https://owasp.org/API-Security/editions/2023/en/0xa4-unrestricted-res
 
 <p>rate limiting DDoS დაცვის სინონიმი არ არის. ინფრასტრუქტურული შეტევა, WAF, queue და application-level budget სხვადასხვა ფენაა. ერთ კონტროლს ნუ დაარქმევთ „სრულ დაცვას“, თუ რეალურად მხოლოდ ერთ endpoint-სა და ერთ counter-ს ამოწმებთ.</p>
 
-<h2 id="customer-failure">customer-safe failure-ის წესები</h2>
+<h2 id="customer-failure">მომხმარებლისთვის უსაფრთხო უარის წესები</h2>
 
 <p>customer-safe failure იწყება იმით, რომ უარი კონკრეტულ ოპერაციას ეხება და არა მთელ account-ს გაურკვეველი მიზეზით. rate rule-ში წინასწარ ჩაწერეთ, რომელი ლიმიტი დაირღვა, რა არის retry გზა და ვის შეუძლია ხელით გადახედვა.</p>
 
@@ -69,13 +67,13 @@ sources: ["https://owasp.org/API-Security/editions/2023/en/0xa4-unrestricted-res
 
 <p>თითოეული აღმოჩენა დააბით endpoint-ზე, counter-ზე, ზღვარზე, response-ზე, downstream ხარჯზე და ხელახლა შემოწმების წესზე. კარგი ჩანაწერი პასუხობს ოთხ კითხვას: რა ითვლება, როდის ხდება უარი, რა მტკიცებულება დარჩა და რა შეუძლია ლეგიტიმურ მომხმარებელს შემდეგ.</p>
 
-<p>vibecoding.ge ამოწმებს უკვე აშენებულ AI-ით შექმნილ აპს, ადგენს დადასტურებულ მიგნებებს ბიზნეს-რისკთან ერთად და repair/rescan ნაბიჯებს აღწერს. public scan მხოლოდ ჩამოსატვირთ და დაკვირვებად ზედაპირს ხედავს. private rate configuration, paid provider ან ანგარიშზე მიბმული test flow-სთვის access და test boundary წინასწარ უნდა შეთანხმდეს.</p>
+<p>rate-limit review-ში vibecoding.ge endpoint-ის, counter-ისა და უარის response-ის მტკიცებულებებს აერთიანებს, შემდეგ კი repair და rescan ნაბიჯებს აღწერს. public scan ხედავს მხოლოდ ჩამოსატვირთ და დაკვირვებად ზედაპირს; private rate configuration, paid provider და ანგარიშზე მიბმული test flow ცალკე access-სა და შეთანხმებულ test boundary-ს მოითხოვს.</p>
 
 <h2 id="limitations">შეზღუდვა: რა ვერ დადასტურდება საჯარო URL-ით?</h2>
 
 <p>საჯარო URL შეიძლება აჩვენებდეს status code-ს, ფორმას ან ერთ response-ს, მაგრამ იგი ვერ ამტკიცებს, როგორ ითვლება burst, სად ინახება counter, რა ხდება მრავალინსტანციურ გარემოში ან რომელი downstream ხარჯი იბლოკება. 429-ის არქონა არ ნიშნავს, რომ ყველა resource limit სწორად მუშაობს.</p>
 
-<p>ანგარიში ვრცელდება შეთანხმებულ scope-ზე და დადასტურებულ მტკიცებულებაზე. პროდუქტი არ არის DDoS სერვისი, uptime-ის გარანტია, ახალი აპლიკაციის მშენებლობა ან ყველა abuse სცენარის სერტიფიკაცია. გაურკვეველი counter ან უცნობი provider წესი ცალკე ღია საკითხად უნდა დარჩეს.</p>
+<p>ანგარიში ვრცელდება შეთანხმებულ scope-სა და დადასტურებულ მტკიცებულებაზე. იგი არ არის DDoS სერვისი, uptime-ის გარანტია, ახალი აპლიკაციის მშენებლობა ან ყველა abuse სცენარის სერტიფიკაცია. უცნობი counter და provider-ის გაურკვეველი წესი ღია საკითხად უნდა დარჩეს.</p>
 
 <h2 id="faq">ხშირად დასმული კითხვები</h2>
 <h3 id="faq-1">429 პასუხი საკმარისია rate limiting-ის დასამტკიცებლად?</h3>
@@ -91,4 +89,4 @@ sources: ["https://owasp.org/API-Security/editions/2023/en/0xa4-unrestricted-res
   <li><a href="/ka/blog/logging-audit-trail">rate-limit event-ის audit trail</a></li>
   <li><a href="/contact">scoped review-ის მოთხოვნა</a></li></ul>
 
-<p><em>სარედაქციო შენიშვნა: ტექსტის მომზადებაში გამოყენებულია ხელოვნური ინტელექტი. წყაროების შესაბამისობა, ენა და releaseთვის საჭირო ფარგლები ცალკე გადამოწმებას საჭიროებს.</em></p>
+<p><em>სარედაქციო შენიშვნა: ტექსტის მომზადებაში გამოყენებულია ხელოვნური ინტელექტი. ეს გზამკვლევი rate-limit-ის კონკრეტულ კონფიგურაციას ვერ ანაცვლებს; წყაროები და შემოწმების ფარგლები ცალკე გადაამოწმეთ.</em></p>

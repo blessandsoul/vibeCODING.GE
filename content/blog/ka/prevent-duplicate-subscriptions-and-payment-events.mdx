@@ -33,7 +33,7 @@ sources: ["https://docs.stripe.com/api/idempotent_requests", "https://docs.strip
 
 <h2 id="retry-path">ერთი intent, ორი retry: სად იბადება დუბლირება?</h2>
 
-<p>ვივარაუდოთ, რომ მომხმარებელი subscription start-ს ითხოვს. server provider-ს request-ს უგზავნის, მაგრამ პასუხამდე connection წყდება. მომხმარებელს ეჩვენება, რომ გადახდა ვერ დასრულდა და ისევ აჭერს ღილაკს. თუ მეორე request-ს ახალი key აქვს, provider-ს შეიძლება ორი დამოუკიდებელი ოპერაცია მიუვიდეს. თუ ერთი key გამოიყენეთ სხვა პარამეტრებთან ერთად, provider წესი უნდა დაგიბრუნოთ კონფლიქტს და თქვენ უნდა შეაჩეროთ გაურკვეველი განმეორება.</p>
+<p>subscription start-ის მოთხოვნისას server provider-ს request-ს უგზავნის, მაგრამ პასუხამდე connection წყდება. მომხმარებელს ეჩვენება, რომ გადახდა ვერ დასრულდა და ისევ აჭერს ღილაკს. თუ მეორე request-ს ახალი key აქვს, provider-ს შეიძლება ორი დამოუკიდებელი ოპერაცია მიუვიდეს. ერთი key-ის სხვა პარამეტრებთან reuse-მ კონფლიქტი უნდა დააბრუნოს; გაურკვეველი განმეორება შეაჩერეთ.</p>
 
 <p>კიდევ ერთი გზა webhook-ია. Provider-მა შეიძლება მოვლენა თავიდან მიაწოდოს, რადგან endpoint-ის პასუხი ვერ დაინახა. Event-ის მეორედ მიღება არ ნიშნავს, რომ invoice ან access მეორედ უნდა შეიქმნას. ჩაიწერეთ provider event ID, შეამოწმეთ ხელმოწერა, შეეცადეთ ერთხელ ჩასვათ event ledger-ში და მხოლოდ ახალი ჩანაწერის შემთხვევაში გაუშვით state transition.</p>
 
@@ -68,11 +68,11 @@ sources: ["https://docs.stripe.com/api/idempotent_requests", "https://docs.strip
 
 <h2 id="scope">vibeCODING scope payment თემაში</h2>
 
-<p>vibeCODING განიხილავს უკვე არსებულ AI-ით შექმნილ აპებს და ეხმარება მფლობელს security და production-readiness საკითხების დალაგებაში. საჯარო scan ამოწმებს მხოლოდ იმას, რასაც ჩვეულებრივი visitor ჩამოტვირთავს. provider dashboard, server-side payment logic, private webhook secret, database state და რეალური ფინანსური settlement საჯარო გვერდიდან არ დასტურდება.</p>
+<p>payment idempotency-ის review უკვე არსებულ AI-ით შექმნილ აპში ამოწმებს საჯაროდ ჩამოსატვირთ მტკიცებულებასა და შეთანხმებულ sandbox flow-ს. provider dashboard, server-side payment logic, private webhook secret, database state და რეალური ფინანსური settlement საჯარო გვერდიდან არ დასტურდება.</p>
 
-<p>უფრო ღრმა review, repair ან rescan იწყება მხოლოდ owner-approved წვდომისა და წინასწარ შეთანხმებული sandbox/test საზღვრების შემდეგ. ანგარიში აღწერს დადასტურებულ finding-ს, შესაძლო გავლენას, repair scope-ს და შემოწმების პირობას. სერვისი არ აშენებს ახალ აპლიკაციას, არ ასრულებს live charge-ს თქვენი სახელით და უსაფრთხოების ან ფინანსური შედეგის გარანტიას არ გასცემს.</p>
+<p>ღრმა review, repair ან rescan მხოლოდ owner-ის მიერ დამტკიცებული access-ისა და წინასწარ შეთანხმებული sandbox/test boundary-ის შემდეგ იწყება. ანგარიში აღწერს დადასტურებულ finding-ს, შესაძლო გავლენას, repair scope-სა და შემოწმების პირობას. სერვისი არ აშენებს ახალ აპლიკაციას, თქვენი სახელით live charge-ს არ ასრულებს და უსაფრთხოების ან ფინანსური შედეგის გარანტიას არ გასცემს.</p>
 
-<p>საკუთარი პრაქტიკული შემოწმება შეგიძლიათ დაიწყოთ sandbox-ში: ერთი key-ით გაიმეორეთ request, იგივე signed webhook ორჯერ მიაწოდეთ, ორი worker გაუშვით კონკურენტულად და შემდეგ შეადარეთ ერთი transition, ერთი set of side effects და საბოლოო provider state. <a href="/ka/blog/logging-audit-trail">audit trail</a> დაგეხმარებათ processing failure-ის კვალში, ხოლო <a href="/ka/blog/csrf-state-changing-actions">state-changing action-ის კონტროლი</a> შეგახსენებთ, რომ browser-ის მოქმედება server-side წესს ვერ ცვლის.</p>
+<p>საკუთარი პრაქტიკული შემოწმება შეგიძლიათ დაიწყოთ sandbox-ში: ერთი key-ით გაიმეორეთ request, იგივე signed webhook ორჯერ მიაწოდეთ, ორი worker გაუშვით კონკურენტულად და შემდეგ შეადარეთ ერთი transition, side effect-ების ერთი ნაკრები და საბოლოო provider state. <a href="/ka/blog/logging-audit-trail">audit trail</a> დაგეხმარებათ processing failure-ის კვალში, ხოლო <a href="/ka/blog/csrf-state-changing-actions">state-changing action-ის კონტროლი</a> შეგახსენებთ, რომ browser-ის მოქმედება server-side წესს ვერ ცვლის.</p>
 
 <p>payment flow-სთან დაკავშირებული ზედაპირი შეადარეთ <a href="/ka/blog/csp-da-nonce-aiit-shekmnil-apshi">CSP და nonce კონტროლს</a> და <a href="/ka/blog/server-side-input-validation-injection">server-side input validation-ს</a>; ეს ბმულები სხვადასხვა რისკს ეხება და idempotency-ის მტკიცებულებად არ ითვლება.</p>
 
@@ -92,4 +92,4 @@ sources: ["https://docs.stripe.com/api/idempotent_requests", "https://docs.strip
 
 <p><a href="/ka/contact">დაუკავშირდით vibeCODING-ს ერთი sandbox payment flow-ის scoped review-სთვის.</a></p>
 
-<p><em>სარედაქციო შენიშვნა: ტექსტის მომზადებაში გამოყენებულია ხელოვნური ინტელექტი.</em></p>
+<p><em>სარედაქციო შენიშვნა: ტექსტის მომზადებაში გამოყენებულია ხელოვნური ინტელექტი. ეს გზამკვლევი live billing-ის შედეგს ვერ ამტკიცებს; კონკრეტული payment flow sandbox-ში ცალკე გადაამოწმეთ.</em></p>

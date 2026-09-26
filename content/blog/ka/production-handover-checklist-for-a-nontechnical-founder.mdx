@@ -25,7 +25,7 @@ sources: ["https://csrc.nist.gov/pubs/sp/800/218/final", "https://docs.github.co
 
 <h2 id="myth-control">შედარება: მითი და რეალობა ფაილის მიღების შემდეგ</h2>
 
-<p>მფლობელობა რამდენიმე სხვადასხვა უნარის ერთობლიობაა. source archive მიღება მხოლოდ possession-ია. რეალური control გულისხმობს, რომ ბიზნესს აქვს provider ანგარიშებზე საკუთარი ადმინისტრატორი, შეუძლია თანამშრომლის წვდომის მოხსნა, შეუძლია safe deployment დაწყება ან გაჩერება და იცის, როგორ დაბრუნდეს წინა მდგომარეობაზე.</p>
+<p>მფლობელობა რამდენიმე სხვადასხვა უნარის ერთობლიობაა. source archive მხოლოდ possession-ს ადასტურებს. რეალური control ნიშნავს, რომ ბიზნესს provider ანგარიშებზე საკუთარი ადმინისტრატორი ჰყავს, შეუძლია წვდომის მოხსნა, safe deployment-ის გაჩერება და წინა მდგომარეობაზე დაბრუნება.</p>
 
 <table>
   <thead><tr><th>მითი</th><th>რეალობის შემოწმება</th><th>მტკიცებულება</th></tr></thead>
@@ -71,9 +71,9 @@ sources: ["https://csrc.nist.gov/pubs/sp/800/218/final", "https://docs.github.co
 
 <h2 id="review-boundary">რას ამოწმებს vibeCODING და სად მთავრდება scope</h2>
 
-<p>vibeCODING-ის შემოწმება უკვე არსებულ AI-ით შექმნილ აპლიკაციას ეხება: საჯარო scan-ით ჩანს მხოლოდ ის ზედაპირი, რომელსაც ჩვეულებრივი visitor ჩამოტვირთავს. repository, CI/CD, provider dashboard და private data ამ გზით არ დასტურდება.</p>
+<p>vibeCODING-ის შემოწმება უკვე არსებულ AI-ით შექმნილ აპლიკაციას ეხება: საჯარო scan-ით ჩანს მხოლოდ ის ზედაპირი, რომელსაც ჩვეულებრივი visitor ჩამოტვირთავს. handover review-ში ამას ემატება წინასწარ შეთანხმებული გადაბარების მტკიცებულებები; repository, CI/CD, provider dashboard და private data public scan-ით არ დასტურდება.</p>
 
-<p>scoped repair ან rescan მფლობელისა და გუნდის წინასწარ შეთანხმებულ წვდომას და ტესტის საზღვრებს მოითხოვს. საბოლოო ანგარიში გამოყოფს შემოწმებულ ზედაპირს, აღმოჩენას, შესაძლო გავლენას და შეთანხმებულ repair scope-ს. სერვისი არ აშენებს ახალ აპლიკაციას, არ ადასტურებს ownership transfer-ს იურიდიული თვალსაზრისით და უსაფრთხოების გარანტიას არ გასცემს.</p>
+<p>scoped repair ან rescan წინასწარ შეთანხმებულ access-სა და test boundary-ს მოითხოვს. ანგარიში გამოყოფს შემოწმებულ ზედაპირს, აღმოჩენას, შესაძლო გავლენასა და repair scope-ს. სერვისი არ აშენებს ახალ აპლიკაციას, ownership transfer-ს იურიდიულად არ ადასტურებს და უსაფრთხოების გარანტიას არ გასცემს.</p>
 
 <h2 id="limits">შეზღუდვები: რა არ უნდა ჩაიწეროს როგორც მიღებული</h2>
 
@@ -99,7 +99,7 @@ sources: ["https://csrc.nist.gov/pubs/sp/800/218/final", "https://docs.github.co
 <h2 id="related-reading">დაკავშირებული საკითხები</h2>
 
 <ul>
-  <li><a href="/ka/blog/ssrf-url-fetch">backup და restore მზადყოფნის მსგავსად, dependency საზღვარი ცალკე გადაამოწმეთ</a></li>
+<li><a href="/ka/blog/database-backups-for-a-production-vibe-coded-application">backup და restore მზადყოფნის შემოწმება</a></li>
   <li><a href="/ka/blog/csp-da-nonce-aiit-shekmnil-apshi">CSP და nonce AI-ით შექმნილ აპლიკაციაში</a></li>
   <li><a href="/ka/blog/staging-da-production-secrets-vibe-coded-apshi">staging და production secrets</a></li>
   <li><a href="/ka/blog/webhookis-khelmotseris-shemotsmeba-aiit-shekmnil-apshi">webhook ხელმოწერის შემოწმება</a></li>
@@ -107,4 +107,4 @@ sources: ["https://csrc.nist.gov/pubs/sp/800/218/final", "https://docs.github.co
   <li><a href="/ka/blog/csrf-state-changing-actions">state-changing action CSRF კონტროლი</a></li>
 </ul>
 
-<p><em>სარედაქციო შენიშვნა: ტექსტის მომზადებაში გამოყენებულია ხელოვნური ინტელექტი.</em></p>
+<p><em>სარედაქციო შენიშვნა: ტექსტის მომზადებაში გამოყენებულია ხელოვნური ინტელექტი. ეს checklist repository-ის ან ანგარიშების ფაქტობრივ კონტროლს ვერ ამტკიცებს; handover-ის თითოეული მტკიცებულება ცალკე გადაამოწმეთ.</em></p>

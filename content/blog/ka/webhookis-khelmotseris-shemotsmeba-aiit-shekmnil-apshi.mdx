@@ -22,14 +22,14 @@ coverImage: "/images/blog-covers/webhookis-khelmotseris-shemotsmeba-aiit-shekmni
 sources: ["https://docs.stripe.com/webhooks/signature", "https://docs.github.com/en/webhooks/using-webhooks/validating-webhook-deliveries", "https://docs.stripe.com/webhooks#best-practices"]
 ---
 
-<p><strong>პირდაპირი პასუხი:</strong> webhook მიღებულ შეტყობინებად ჩათვალეთ და არა სანდო მოვლენად, სანამ აპლიკაცია provider წესით არ გადაამოწმებს ხელმოწერას ზუსტად იმ raw body-ზე, რომელიც ქსელიდან მოვიდა. შემდეგ ცალკე უნდა გადაწყდეს, შეიძლება თუ არა ეს უკვე დადასტურებული event ბიზნეს-მოქმედებად გამოყენება. ხელმოწერა ვერ ანაცვლებს idempotency-ს, authorization-ს ან მონაცემთა კონტროლს. თუ გჭირდებათ კონკრეტული endpoint საზღვრის დადგენა, <a href="/contact">vibeCODING scoped review მოთხოვნა გააგზავნეთ</a>.</p>
+<p><strong>პირდაპირი პასუხი:</strong> webhook მიღებულ შეტყობინებად ჩათვალეთ და არა სანდო მოვლენად, სანამ აპლიკაცია provider წესით არ გადაამოწმებს ხელმოწერას ზუსტად იმ raw body-ზე, რომელიც ქსელიდან მოვიდა. დადასტურებული event-ის ბიზნეს-მოქმედებად გამოყენება ცალკე უნდა გადაწყდეს. ხელმოწერა ვერ ანაცვლებს idempotency-ს, authorization-ს ან მონაცემთა კონტროლს. კონკრეტული endpoint-ის საზღვრის დასადგენად <a href="/contact">vibeCODING scoped review მოთხოვნა გააგზავნეთ</a>.</p>
 
 <h2 id="delivery-is-not-proof">რატომ არ არის webhook მიღება მტკიცებულება?</h2>
-<p>Webhook არის HTTP მოთხოვნა, რომელსაც provider აგზავნის თქვენს endpoint-ზე. ქსელიდან მოსული ნებისმიერი მოთხოვნა შეიძლება იყოს შეცვლილი, განმეორებული ან სხვა წყაროდან გამოგზავნილი. აპლიკაციამ ჯერ უნდა დაადგინოს, რომ payload ხელმოწერა შეესაბამება provider საიდუმლო წესს, შემდეგ კი გადაწყვიტოს, რა შეიძლება გააკეთოს ამ მონაცემით.</p>
+<p>Webhook არის HTTP მოთხოვნა, რომელსაც provider აგზავნის თქვენს endpoint-ზე. ქსელიდან მოსული ნებისმიერი მოთხოვნა შეიძლება იყოს შეცვლილი, განმეორებული ან სხვა წყაროდან გამოგზავნილი. აპლიკაციამ ჯერ უნდა დაადგინოს, რომ payload-ის ხელმოწერა შეესაბამება provider-ის მიერ განსაზღვრულ საიდუმლო წესს, შემდეგ კი გადაწყვიტოს, რა შეიძლება გააკეთოს ამ მონაცემით.</p>
 <p>AI-ით შექმნილ აპლიკაციაში გავრცელებული შეცდომაა JSON parse, ველების გადალაგება ან middleware გავლა ხელმოწერის შემოწმებამდე. ეს მოქმედებები შეიძლება შეცვალოს ის ბაიტები, რომლებზეც ხელმოწერა დაითვალა. <a href="https://docs.stripe.com/webhooks/signature">Stripe ოფიციალური დოკუმენტაცია</a> პირდაპირ უსვამს ხაზს raw request body საჭიროებას. ამიტომ review პირველ კითხვად ჩაწერეთ: რომელ ეტაპზე ინახება და რომელ ეტაპზე მოწმდება თავდაპირველი body?</p>
 
 <h2 id="signature-components">შედარება: რისგან შედგება ხელმოწერის შემოწმება?</h2>
-<p>ზუსტი წესი provider-ზეა დამოკიდებული, მაგრამ review-ში ჩვეულებრივ ოთხი ელემენტი უნდა ჩანდეს: provider მიერ მითითებული signature header, endpoint secret, raw body და იმავე provider verification ალგორითმი ან SDK. არც ერთი მათგანი არ უნდა ჩაანაცვლოთ საკუთარი „მსგავსი“ ჰეშით მხოლოდ იმიტომ, რომ კოდი მოკლე გამოვიდეს.</p>
+<p>ზუსტი წესი provider-ზეა დამოკიდებული, მაგრამ review-ში ჩვეულებრივ ოთხი ელემენტი უნდა ჩანდეს: provider-ის მიერ მითითებული signature header, endpoint secret, raw body და იმავე provider-ის verification ალგორითმი ან SDK. არც ერთი მათგანი არ უნდა ჩაანაცვლოთ საკუთარი „მსგავსი“ ჰეშით მხოლოდ იმიტომ, რომ კოდი მოკლე გამოვიდეს.</p>
 <table>
   <thead><tr><th>შემოწმების ნაწილი</th><th>რა უნდა დადასტურდეს</th><th>სად შეიძლება შეცდომა</th></tr></thead>
   <tbody>
@@ -39,7 +39,7 @@ sources: ["https://docs.stripe.com/webhooks/signature", "https://docs.github.com
     <tr><td>Event handling</td><td>დადასტურებული event ერთჯერად ბიზნეს-მოქმედებას სწორად უკავშირდება</td><td>ერთი delivery ორჯერ დამუშავება</td></tr>
   </tbody>
 </table>
-<p><a href="https://docs.github.com/en/webhooks/using-webhooks/validating-webhook-deliveries">GitHub ოფიციალურ სახელმძღვანელოშიც</a> ხელმოწერის header და secret ერთად არის verification ნაწილი. ეს არ ნიშნავს, რომ Stripe, GitHub-ისა და სხვა provider header-ები ერთმანეთს ემთხვევა. ანგარიშში ყოველთვის მიუთითეთ კონკრეტული provider და გამოყენებული დოკუმენტაციის ვერსია.</p>
+<p><a href="https://docs.github.com/en/webhooks/using-webhooks/validating-webhook-deliveries">GitHub-ის ოფიციალურ სახელმძღვანელოშიც</a> ხელმოწერის header და secret ერთად არის verification-ის ნაწილი. ეს არ ნიშნავს, რომ Stripe-ის, GitHub-ისა და სხვა provider-ების header-ები ერთმანეთს ემთხვევა. ანგარიშში ყოველთვის მიუთითეთ კონკრეტული provider და გამოყენებული დოკუმენტაციის ვერსია.</p>
 
 <h2 id="review-sequence">უსაფრთხო review თანმიმდევრობა</h2>
 <p>შემოწმება არ უნდა დაიწყოთ production-ზე ახალი event ხელოვნურად გაგზავნით. ჯერ შეაგროვეთ endpoint მისამართი, provider, test account ან fixture და უკვე დამტკიცებული უსაფრთხო საზღვარი. შემდეგ გამოიყენეთ ოთხი ნაბიჯი.</p>
@@ -49,16 +49,16 @@ sources: ["https://docs.stripe.com/webhooks/signature", "https://docs.github.com
   <li><strong>შეამოწმეთ უარის გზა:</strong> არასწორი signature, დაკარგული header და სხვა endpoint secret უნდა მთავრდებოდეს უსაფრთხო უარით და არა business action-ით.</li>
   <li><strong>გაყავით event და მოქმედება:</strong> დადასტურებული delivery მაინც უნდა მოხვდეს idempotency ან deduplication წესში, სანამ წვდომას, თანხის სტატუსს ან შეტყობინებას შეცვლის.</li>
 </ol>
-<p>vibe coding security audit scope დაგეხმარებათ ამ ოთხი ნაბიჯიდან რომელი იყო საჯაროდ შემოწმებადი და რომელი მოითხოვს repository-ს ან სატესტო ანგარიშს. საჯარო URL-ზე მხოლოდ endpoint არსებობა ჩანს; საიდუმლო verification სწორი კონფიგურაცია ავტომატურად არ ჩანს.</p>
+<p>vibeCODING-ის security audit-ის scope დაგეხმარებათ განსაზღვროთ, ამ ოთხი ნაბიჯიდან რომელი მოწმდება საჯაროდ და რომელი მოითხოვს repository-ზე ან სატესტო ანგარიშზე წვდომას. საჯარო URL-ზე მხოლოდ endpoint-ის არსებობა ჩანს; ხელმოწერის verification-ის სწორი კონფიგურაცია კი ავტომატურად არ დასტურდება.</p>
 
 <h2 id="replay-and-idempotency">Replay და idempotency ცალკე საზღვარი</h2>
 <p>ხელმოწერა პასუხობს კითხვას, შეიცვალა თუ არა payload და იცოდა თუ არა გამომგზავნმა secret წესი. ის თავისით არ ამბობს, უკვე დამუშავდა თუ არა ეს event. ხელმოწერილი payload ხელახლა გაგზავნამ შეიძლება ერთსა და იმავე ბიზნეს-მოქმედებას კვლავ მიაღწიოს, თუ handler-ს event ID, timestamp, deduplication ან შესაბამისი transaction boundary არ აქვს.</p>
-<p><a href="https://docs.stripe.com/webhooks#best-practices">Stripe webhook საუკეთესო პრაქტიკის დოკუმენტაცია</a> duplicate delivery უსაფრთხო დამუშავებას ცალკე საკითხავად ასახელებს. ვალიდური retry განმეორებითი მოქმედების შეჩერების სახელმძღვანელო სწორედ ამ განსხვავებას აგრძელებს. სხვა სიტყვებით, verification არის შესასვლელი, ხოლო idempotency არის ის წესი, რომელიც უკვე შემოსულ event-ს ბიზნესის მდგომარეობის ორჯერ შეცვლას არ აძლევს.</p>
+<p><a href="https://docs.stripe.com/webhooks#best-practices">Stripe-ის webhook-ის საუკეთესო პრაქტიკის დოკუმენტაცია</a> duplicate delivery-ის უსაფრთხო დამუშავებას ცალკე საკითხად ასახელებს. verification არის შესასვლელი, ხოლო idempotency არის წესი, რომელიც უკვე შემოსულ event-ს ბიზნესის მდგომარეობის ორჯერ შეცვლის საშუალებას არ აძლევს.</p>
 <p>თბილისის გამოგონილ ონლაინ-სერვისს შეიძლება subscription დასრულების webhook ორჯერ მიუვიდეს: ერთხელ provider retry-ით და ერთხელ ქსელის აღდგენის შემდეგ. თუ handler მხოლოდ ხელმოწერას ამოწმებს და event ID-ს არ იმახსოვრებს, იგი შეიძლება ორჯერ გაგზავნოს ელფოსტა ან არასწორად განაახლოს სტატუსი. ეს სასწავლო სცენარია და aiNOW კლიენტის შედეგს არ აღწერს.</p>
 
 <h2 id="access-and-payment-boundary">Payment და access გადაწყვეტილების საზღვარი</h2>
 <p>Webhook event შეიძლება შეიცავდეს payment ან subscription მდგომარეობას, მაგრამ აპლიკაციის წვდომის შეცვლა მაინც უნდა დაეყრდნოს provider დოკუმენტირებულ event type-ს, საკუთარ მონაცემთა მოდელს და მომხმარებლის იდენტობის შესაბამისობას. უბრალოდ ველის არსებობა ან წარმატებული HTTP პასუხი არ არის საკმარისი.</p>
-<p>Payment webhook შემდეგ წვდომის მიცემის შემოწმება ცალკე უნდა წაიკითხოთ: იქ მთავარი კითხვა არის როდის შეიძლება subscription მდგომარეობა მომხმარებელზე აისახოს. დუბლირებული subscription event-ების თავიდან აცილება კი დაგეხმარებათ, delivery, event და business record ერთმანეთისგან არ აურიოთ.</p>
+<p>Payment webhook-ის შემდეგ წვდომის მინიჭება ცალკე შეამოწმეთ: მთავარი კითხვაა, როდის შეიძლება subscription-ის მდგომარეობა მომხმარებელზე აისახოს. დუბლირებული subscription event-ების თავიდან აცილება დაგეხმარებათ, delivery, event და business record ერთმანეთში არ აურიოთ.</p>
 
 <h2 id="safe-test">როგორ გავაკეთოთ ტესტი ცოცხალი მომხმარებლის დაზიანების გარეშე?</h2>
 <p>სატესტო შემოწმებაში გამოიყენეთ provider test mode, იზოლირებული endpoint ან წინასწარ დამტკიცებული fixture. არ გამოიყენოთ ნამდვილი customer მონაცემი, არ შეცვალოთ რეალური გადახდის მდგომარეობა და არ გადააგზავნოთ უცნობი payload production-ზე. endpoint timeout და პასუხის კოდი მხოლოდ ერთ ნაწილს ამოწმებს, ამიტომ შედეგი ცალკე ჩაიწერეთ verification log-ში.</p>
@@ -97,4 +97,4 @@ sources: ["https://docs.stripe.com/webhooks/signature", "https://docs.github.com
   <li><a href="/ka/blog/production-handover-checklist-for-a-nontechnical-founder">Production handover-ის კონტროლი</a></li>
 </ul>
 
-<p><em>სარედაქციო შენიშვნა: ტექსტის მომზადებაში გამოყენებულია ხელოვნური ინტელექტი. მითითებული წყაროები და პროდუქტის აღწერა სარედაქციო წესით შემოწმებულია. ეს ზოგადი პრაქტიკული გზამკვლევია და არა კონკრეტული webhook უსაფრთხოების დასკვნა.</em></p>
+<p><em>სარედაქციო შენიშვნა: ტექსტის მომზადებაში გამოყენებულია ხელოვნური ინტელექტი. ეს გზამკვლევი ხსნის ხელმოწერისა და replay კონტროლის პრინციპებს; კონკრეტული endpoint-ის კონფიგურაცია და provider-ის შედეგი ამ ტექსტით არ დასტურდება.</em></p>

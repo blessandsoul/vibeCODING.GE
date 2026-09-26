@@ -22,11 +22,11 @@ coverImage: "/images/blog-covers/xss-untrusted-html.png"
 sources: ["https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html", "https://cheatsheetseries.owasp.org/cheatsheets/DOM_based_XSS_Prevention_Cheat_Sheet.html", "https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/07-Injection/01-Reflected_Cross_Site_Scripting", "https://developer.mozilla.org/en-US/docs/Web/API/Trusted_Types_API"]
 ---
 
-<p><strong>პირდაპირი პასუხი:</strong> XSS review უნდა ადგენდეს, სად ხვდება მომხმარებლის ტექსტი HTML-ში, attribute-ში, URL-ში, JavaScript კონტექსტში ან Markdown renderer-ში. ტექსტის ავტომატურად გაქცევა ყველა კონტექსტისთვის არ მუშაობს. უნდა შეირჩეს შესაბამისი output encoding, საჭიროების შემთხვევაში დამტკიცებული sanitizer და მკაფიო წესები იმ კომპონენტებისთვის, რომლებიც raw HTML-ს საერთოდ არ უნდა იღებდნენ. <a href="/contact">vibeCODING scoped review მოითხოვეთ</a>, თუ არსებული AI-built აპის user content რეალური საზღვარი უნდა გადაამოწმოთ.</p>
+<p><strong>პირდაპირი პასუხი:</strong> XSS review უნდა ადგენდეს, სად ხვდება მომხმარებლის ტექსტი HTML-ში, attribute-ში, URL-ში, JavaScript კონტექსტში ან Markdown renderer-ში. ერთი escape წესი ყველა კონტექსტს ვერ დაიცავს: საჭიროა შესაბამისი output encoding, საჭიროების შემთხვევაში დამტკიცებული sanitizer და raw HTML-ის მკაფიო საზღვარი. <a href="/contact">vibeCODING scoped review მოითხოვეთ</a>, თუ არსებული AI-built აპის user content-ის რეალური საზღვარი უნდა გადაამოწმოთ.</p>
 
 <h2 id="xss-meaning">რას ნიშნავს untrusted HTML რისკი?</h2>
 <p>Cross-Site Scripting, ანუ XSS, ხდება მაშინ, როცა თავდამსხმელის მიერ კონტროლირებადი მნიშვნელობა ბრაუზერში კოდის ან აქტიური markup სახით სრულდება. წყარო შეიძლება იყოს კომენტარი, პროფილის სახელი, Markdown, URL fragment, search query, ფაილის სახელი ან მესამე მხარის API პასუხი. საკითხი არ შემოიფარგლება <code>&lt;script&gt;</code> ტეგით. კონკრეტული browser context და renderer წყვეტს, რომელი სიმბოლო ან თვისება ხდება საშიში.</p>
-<p><a href="https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html">OWASP XSS Prevention Cheat Sheet</a> სხვადასხვა output context-ს სხვადასხვა დაცვას უკავშირებს. ამიტომ review არ უნდა დაკმაყოფილდეს კითხვით, „არის თუ არა input გაწმენდილი“. ჯერ უნდა ჩაიწეროს სად ინახება value, სად გადადის და რა ფუნქცია ქმნის საბოლოო DOM-ს.</p>
+<p><a href="https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html">OWASP XSS Prevention Cheat Sheet</a> სხვადასხვა output context-ს სხვადასხვა დაცვას უკავშირებს. ამიტომ review არ უნდა დაკმაყოფილდეს კითხვით, „არის თუ არა input გაწმენდილი“. ჯერ ჩაიწერეთ, სად ინახება value, სად გადადის და რომელი ფუნქცია ქმნის საბოლოო DOM-ს.</p>
 
 <h2 id="rendering-contexts">რომელი rendering context უნდა გამოყოთ?</h2>
 <p>ერთსა და იმავე input-ს სხვადასხვა ადგილას განსხვავებული წესით უნდა მოექცეთ. ჩვეულებრივი ტექსტის HTML body-ში ჩასმა, attribute value-ში ჩასმა, URL-ში გამოყენება და JavaScript string-ში ჩასმა ერთი შემთხვევა არ არის.</p>
@@ -42,10 +42,10 @@ sources: ["https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_P
 <p>ეს დაყოფა ასევე გეხმარებათ, ერთი კონტროლი ზედმეტად არ განაზოგადოთ. მაგალითად, HTML body-ში encoding სწორად გაკეთდეს, მაგრამ URL protocol ან DOM sink ცალკე დაუცველი დარჩეს.</p>
 
 <h2 id="markdown-boundary">როგორ შევამოწმოთ Markdown და rich text?</h2>
-<p>Markdown უბრალო ტექსტი არ არის, თუ renderer-ს ბმულების, სურათების ან raw HTML შექმნა შეუძლია. review-ში განსაზღვრეთ, რომელი syntax არის საჭირო პროდუქტისთვის და რომელი უნდა მოიჭრას. შემდეგ შეადარეთ ეს წესი რეალურ renderer-სა და იმ ყველა გზას, რომლითაც მომხმარებლის ჩანაწერი შეიძლება გამოჩნდეს.</p>
+<p>Markdown უბრალო ტექსტი არ არის, თუ renderer-ს ბმულების, სურათების ან raw HTML-ის შექმნა შეუძლია. review-ში განსაზღვრეთ, რომელი syntax არის საჭირო პროდუქტისთვის და რომელი უნდა მოიჭრას. შემდეგ შეადარეთ ეს წესი რეალურ renderer-სა და იმ ყველა გზას, რომლითაც მომხმარებლის ჩანაწერი შეიძლება გამოჩნდეს.</p>
 <ul>
   <li>ჩაწერეთ, შეუძლია თუ არა ავტორს HTML ტეგის, URL ან attribute მიწოდება.</li>
-  <li>დააკვირდით, sanitizer გამოიყენება თუ არა შენახვამდე, რენდერისას ან ორივე ეტაპზე.</li>
+  <li>დააკვირდით, sanitizer-ის გამოყენება ხდება თუ არა შენახვამდე, რენდერისას ან ორივე ეტაპზე.</li>
   <li>შეამოწმეთ ბმულის scheme, სურათის წყარო და target ქცევა.</li>
   <li>დააფიქსირეთ განსხვავება preview renderer-სა და გამოქვეყნებულ გვერდს შორის.</li>
   <li>გაიმეორეთ იგივე input სხვადასხვა role-ით და სხვადასხვა მოწყობილობის client-ში, თუ ეს scope-შია.</li>
@@ -64,13 +64,13 @@ sources: ["https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_P
 <p><a href="https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/07-Injection/01-Reflected_Cross_Site_Scripting">OWASP Web Security Testing Guide</a> reflected XSS-ს response-ში დაბრუნებულ აქტიურ input-ს უკავშირებს. მისი ტესტირების ლოგიკა დაგვეხმარება, source, response და rendered browser state ერთმანეთისგან გავმიჯნოთ. რეალურ მომხმარებელთა მონაცემებზე payload-ების გამოყენება ამ სტატიის ან ზოგადი review ავტომატური ნაწილი არ არის.</p>
 
 <h3 id="framework-and-csp">რას ცვლის framework და CSP?</h3>
-<p>თანამედროვე framework auto-escaping ამცირებს შეცდომის შანსს, მაგრამ raw HTML helper, dangerously set inner HTML მსგავსი API, template string ან client-side library შეიძლება ამ დაცვას გვერდი აუაროს. review-ში მოძებნეთ ის გამონაკლისები, რომლებიც დიზაინერმა ან AI builder-მა კონკრეტული UI-სთვის დაამატა.</p>
+<p>თანამედროვე framework-ის auto-escaping ამცირებს შეცდომის შანსს, მაგრამ raw HTML helper-მა, <code>dangerouslySetInnerHTML</code>-ის მსგავსმა API-მ, template string-მა ან client-side library-მ შეიძლება ამ დაცვას გვერდი აუაროს. review-ში მოძებნეთ ის გამონაკლისები, რომლებიც დიზაინერმა ან AI builder-მა კონკრეტული UI-სთვის დაამატა.</p>
 <p>CSP შეიძლება დამატებითი დამცავი ფენა იყოს, თუმცა ის output encoding-სა და sanitizer-ს არ ცვლის. <a href="/ka/blog/csp-da-nonce-aiit-shekmnil-apshi">CSP და nonce review</a> ცალკე ხსნის ბრაუზერის policy-სა და სხვა application კონტროლების საზღვარს. თუ CSP header არსებობს, ანგარიშში აღწერეთ მისი ფაქტობრივი წესები და არა ის, რომ „XSS აღარ არსებობს“.</p>
 <p>Trusted Types, როცა შესაბამისი browser და framework მხარდაჭერა არსებობს, შეიძლება dangerous DOM sink-ების მართვაში დაგეხმაროთ. მაგრამ მისი ჩართვა არ ამტკიცებს, რომ ყველა source, sanitizer და legacy route სწორად მუშაობს. საბოლოო გადაწყვეტილება კონკრეტულ flow-სა და შემოწმებულ გარემოს უნდა მიებას.</p>
 
 <h2 id="product-boundary">vibeCODING scoped review საზღვარი</h2>
 <p>vibeCODING review ეხება უკვე შექმნილ AI-built აპს: მის საჯარო ზედაპირს, შეთანხმებულ source-ს, კონკრეტულ user flow-ს, აღმოჩენის აღწერას, repair scope-სა და rescan კრიტერიუმს. შესაძლებელია შემოწმდეს, როგორ რენდერდება კომენტარი, Markdown ან profile field, თუ მფლობელი შესაბამის მტკიცებულებასა და ავტორიზებულ გარემოს გადასცემს.</p>
-<p>ეს შეთავაზება არ არის ახალი აპის development, ყველა browser სრულად დაფარვის გარანტია, compliance certificate ან იმაზე მეტი penetration test, ვიდრე scope-ში ჩაიწერა. მოთხოვნაში მიუთითეთ რომელი content type არის კრიტიკული, სად ხდება მისი რენდერი და რომელი test account-ებია დასაშვები. ფაილის ატვირთვის review ცალკე რისკებს მოიცავს და XSS დადასტურებად არ ჩაითვლება.</p>
+<p>ეს შეთავაზება არ არის ახალი აპის development, ყველა browser-ის სრულად დაფარვის გარანტია, compliance certificate ან იმაზე მეტი penetration test, ვიდრე scope-ში ჩაიწერა. მოთხოვნაში მიუთითეთ, რომელი content type არის კრიტიკული, სად ხდება მისი რენდერი და რომელი test account-ებია დასაშვები. ფაილის ატვირთვის review ცალკე რისკებს მოიცავს და XSS დადასტურებად არ ჩაითვლება.</p>
 
 <h3 id="mistakes">XSS დასკვნის სუსტი მხარეები</h3>
 <ul>
@@ -89,8 +89,8 @@ sources: ["https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_P
 
 <h2 id="faq">ხშირად დასმული კითხვები</h2>
 <h3 id="faq-1">framework auto-escape და CSP ერთად გამორიცხავს XSS-ს?</h3>
-<p>არა. raw HTML helper-ები, dangerous DOM sink-ები, Markdown renderer-ები და legacy კომპონენტები framework-ის ჩვეულებრივ დაცვას შეიძლება გვერდი აუაროს. CSP დამატებითი browser policyა და არ ცვლის context-aware encoding-ს, sanitizer-სა და source-level გამოსწორებას. საჭიროა კონკრეტული data flow-ის შემოწმება.</p>
-<h3 id="faq-2">Markdown სრულად აკრძალვა საუკეთესო გზაა?</h3>
+<p>არა. raw HTML helper-ებმა, dangerous DOM sink-ებმა, Markdown renderer-ებმა და legacy კომპონენტებმა framework-ის ჩვეულებრივ დაცვას შეიძლება გვერდი აუარონ. CSP დამატებითი browser policy-ია და არ ცვლის context-aware encoding-ს, sanitizer-სა და source-level გამოსწორებას. საჭიროა კონკრეტული data flow-ის შემოწმება.</p>
+<h3 id="faq-2">Markdown-ის სრული აკრძალვა საჭიროა?</h3>
 <p>ეს დამოკიდებულია პროდუქტზე. თუ rich text აუცილებელია, საჭიროა მცირე allowlist, sanitizer და renderer ყველა გზის ტესტი. თუ ფუნქცია არ არის საჭირო, მისი გამორთვა ამცირებს ზედაპირს, თუმცა სხვა content path-ები მაინც უნდა შემოწმდეს.</p>
 
 <h2 id="related-reading">დაკავშირებული საკითხები</h2>
@@ -102,4 +102,4 @@ sources: ["https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_P
   <li><a href="/ka/blog/csp-da-nonce-aiit-shekmnil-apshi">CSP და nonce review AI-ით შექმნილ აპში</a></li>
 </ul>
 
-<p><em>სარედაქციო შენიშვნა: ტექსტის მომზადებაში გამოყენებულია ხელოვნური ინტელექტი. გამოყენებული წყაროები და ქართული ენა შემოწმებულია. ეს სტატია ზოგად პრაქტიკულ ინფორმაციას გვთავაზობს და არ წარმოადგენს კონკრეტული აპის უსაფრთხოების აუდიტს ან დასკვნას.</em></p>
+<p><em>სარედაქციო შენიშვნა: ტექსტის მომზადებაში გამოყენებულია ხელოვნური ინტელექტი. ეს სტატია user content-ის სხვადასხვა rendering context-ის შემოწმებას ხსნის და კონკრეტული აპის უსაფრთხოების დასკვნას არ წარმოადგენს.</em></p>

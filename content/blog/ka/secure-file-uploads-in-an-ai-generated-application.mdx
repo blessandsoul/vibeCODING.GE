@@ -23,7 +23,7 @@ coverImage: "/images/blog-covers/secure-file-uploads-in-an-ai-generated-applicat
 sources: ["https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html", "https://www.rfc-editor.org/rfc/rfc9110.html#section-15.5.14", "https://docs.aws.amazon.com/AmazonS3/latest/userguide/checking-object-integrity-upload.html"]
 ---
 
-<p><strong>პირდაპირი პასუხი:</strong> ატვირთული ფაილი სანდო არ არის მხოლოდ იმიტომ, რომ მომხმარებელმა იგი ბრაუზერში აირჩია. სერვერმა უნდა შეამოწმოს მოთხოვნა, ზომა, ტიპი და ხელმოწერა, შეინახოს ობიექტი კონტროლირებულ სივრცეში, დაადასტუროს ვის შეუძლია მისი ნახვა და დაგეგმოს სრული წაშლა. უკვე აშენებული AI აპლიკაციის upload flow-ზე <a href="/contact">მოითხოვეთ vibecoding.ge-ს scoped review</a>.</p>
+<p><strong>პირდაპირი პასუხი:</strong> ატვირთული ფაილი სანდო არ არის მხოლოდ იმიტომ, რომ მომხმარებელმა იგი ბრაუზერში აირჩია. სერვერმა უნდა შეამოწმოს მოთხოვნა, ზომა, ტიპი და ხელმოწერა, შეინახოს ობიექტი კონტროლირებულ სივრცეში, დაადასტუროს ვის შეუძლია მისი ნახვა და დაგეგმოს სრული წაშლა. უკვე აშენებული AI აპლიკაციის upload flow-ის შესაფასებლად <a href="/contact">მოითხოვეთ vibecoding.ge-ს scoped review</a>.</p>
 
 <h2 id="failure-scene">სად იკარგება ატვირთვის ნდობის საზღვარი?</h2>
 
@@ -52,7 +52,7 @@ sources: ["https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Shee
   <li><strong>დაამოწმეთ მოქმედი workflow.</strong> გადაწყვიტეთ, ვინ ატვირთავს, ვის შეუძლია გახსნა, საჭიროა თუ არა საჯარო გაზიარება, რამდენ ხანს ინახება ფაილი და რა ხდება scanner-ის მიუწვდომლობისას.</li>
   <li><strong>შეზღუდეთ მოთხოვნა წინასწარ.</strong> დააწესეთ ზომის, რაოდენობისა და დამუშავების ხარჯის ზღვარი edge ფენაზე და აპშიც. უარი უნდა მოხდეს ძვირადღირებული parsing-ის დაწყებამდე.</li>
   <li><strong>დააგენერირეთ საცავის გასაღები (storage key) სერვერზე.</strong> მომხმარებლის filename შეინახეთ მხოლოდ საჭირო metadata-დ. არ მისცეთ submitted path-ს სერვერზე ადგილმდებარეობის არჩევის უფლება.</li>
-  <li><strong>გადაიყვანეთ ობიექტი quarantine-ში.</strong> საჭიროა extension, detected type, signature, ზომა და შესაბამისი parser ან malware პროცესი. თუ აუცილებელი შემოწმება ვერ სრულდება, ordinary user-ს ფაილი მზადყოფნად არ აჩვენოთ.</li>
+  <li><strong>გადაიყვანეთ ობიექტი quarantine-ში.</strong> საჭიროა extension, detected type, signature, ზომა და შესაბამისი parser ან malware პროცესი. თუ აუცილებელი შემოწმება ვერ სრულდება, ჩვეულებრივ მომხმარებელს ფაილი მზადყოფნად არ აჩვენოთ.</li>
   <li><strong>შეინახეთ private სივრცეში.</strong> სრული bucket-ის public გახსნის ნაცვლად გამოიყენეთ აპლიკაციის ავტორიზაცია ან მოკლე ვადის delivery ბმული, როცა ეს მოდელს შეესაბამება.</li>
   <li><strong>გამოაქვეყნეთ business record მხოლოდ შემოწმების შემდეგ.</strong> ჩანაწერს ჰქონდეს accepted, rejected და pending მდგომარეობა. reject მიზეზი ოპერატორს უნდა დაეხმაროს, მაგრამ detector-ის ზედმეტი დეტალი არ უნდა გაამჟღავნოს.</li>
   <li><strong>წაშალეთ მთელი ობიექტის ოჯახი.</strong> original, thumbnail, converted copy და database reference ერთი retention გადაწყვეტილებით მოიცავით. წარუმატებელი cleanup ცალკე ოპერატიულ საკითხებად ჩაწერეთ.</li>
@@ -66,7 +66,7 @@ sources: ["https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Shee
 
 <h2 id="release-check">რომელი ტოკენები უნდა ნახოთ release-მდე?</h2>
 
-<p>release გადაწყვეტილებისთვის შეინახეთ upload matrix: მოქმედი actor, დაშვებული ტიპი, ზომის ზღვარი, საცავის გასაღები (storage key), ობიექტის მფლობელი (object owner), ჩამოტვირთვის წესი (download rule), უარყოფის მდგომარეობა (rejection state) და deletion owner. დადებით ტესტთან ერთად ჩაწერეთ უარყოფითი ტესტიც: სხვა account-მა უნდა ვერ ნახოს private object, rejected file-მა არ უნდა მიიღოს delivery URL და წაშლილმა ობიექტმა აღარ უნდა გაიაროს მოქმედი route.</p>
+<p>release-ის გადაწყვეტილებისთვის შეინახეთ upload matrix: მოქმედი actor, დაშვებული ტიპი, ზომის ზღვარი, საცავის გასაღები (storage key), ობიექტის მფლობელი (object owner), ჩამოტვირთვის წესი (download rule), უარყოფის მდგომარეობა (rejection state) და deletion owner. დადებით ტესტთან ერთად ჩაწერეთ უარყოფითი ტესტიც: სხვა account-მა უნდა ვერ ნახოს private object, rejected file-მა არ უნდა მიიღოს delivery URL და წაშლილმა ობიექტმა აღარ უნდა გაიაროს მოქმედი route.</p>
 
 <p>თუ workflow ითხოვს customer document-ს, ნუ გადაიტანთ რეალურ პირად მონაცემს სატესტო გარემოში. გამოიყენეთ synthetic fixture და წინასწარ დაადასტურეთ, რომ ტესტი არ აგზავნის რეალურ შეტყობინებას ან ბიზნეს-მოქმედებას. repair-ის შემდეგ იგივე upload matrix ხელახლა გაიარეთ და handover-ში მიუთითეთ დარჩენილი უცნობი ასლები ან backup boundary.</p>
 
@@ -78,7 +78,7 @@ sources: ["https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Shee
 
 <h2 id="faq">ხშირად დასმული კითხვები</h2>
 <h3 id="faq-1">filename-ის extension შემოწმება საკმარისია?</h3>
-<p>არა. extension შეიძლება გადაერქვას, ხოლო MIME header spoofed იყოს. საჭიროა საჭირო ტიპის, signature-ის, ზომის, storageა და access rule-ის კომბინაცია.</p>
+<p>არა. extension შეიძლება გადაერქვას, ხოლო MIME header ყალბი იყოს. საჭიროა საჭირო ტიპის, signature-ის, ზომის, storage-ისა და access rule-ის კომბინაცია.</p>
 <h3 id="faq-2">private bucket ნიშნავს, რომ ყველა ფაილი დაცულია?</h3>
 <p>არა. თითოეული download გზა მაინც უნდა ამოწმებდეს actor-სა და object-ს. private bucket-ის პოლიტიკა ვერ ჩაანაცვლებს აპლიკაციის route-ს, signed link-ის წესს და retention-ს.</p>
 <h3 id="faq-3">შეიძლება scanner-ის შეცდომისას ფაილი მომხმარებელს მივაწოდოთ?</h3>
@@ -92,4 +92,4 @@ sources: ["https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Shee
   <li><a href="/ka/blog/server-side-input-validation-injection">server-side input validation</a></li>
   <li><a href="/contact">scoped review-ის მოთხოვნა</a></li></ul>
 
-<p><em>სარედაქციო შენიშვნა: ტექსტის მომზადებაში გამოყენებულია ხელოვნური ინტელექტი. წყაროების შესაბამისობა, ენა და releaseთვის საჭირო ფარგლები ცალკე გადამოწმებას საჭიროებს.</em></p>
+<p><em>სარედაქციო შენიშვნა: ტექსტის მომზადებაში გამოყენებულია ხელოვნური ინტელექტი. ეს მასალა ხსნის upload pipeline-ისა და storage უფლებების შემოწმებას; კონკრეტული აპის ფაილები, bucket policy და malware კონტროლი ამ ტექსტით არ დასტურდება.</em></p>

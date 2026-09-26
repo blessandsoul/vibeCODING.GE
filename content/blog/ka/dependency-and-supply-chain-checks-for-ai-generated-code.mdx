@@ -29,9 +29,9 @@ sources: ["https://docs.github.com/en/code-security/concepts/supply-chain-securi
 
 <p>AI coding tool-მა შეიძლება ერთ feature-სთან ერთად დაამატოს client library, parser, build plugin და რამდენიმე transitive package. კოდი preview-ში მუშაობს, მაგრამ ეს არ პასუხობს კითხვას, საჭიროა თუ არა ყველა დამატება, რომელ source-ს ეკუთვნის package და რა აღწევს production bundle-მდე.</p>
 
-<p>GitHub-ის <a href="https://docs.github.com/en/code-security/concepts/supply-chain-security/dependency-review">dependency review დოკუმენტაცია</a> განმარტავს, რომ pull request-ში შეიძლება გამოჩნდეს direct და indirect dependency ცვლილებები, მათ შორის lockfile-ში ასახული ცნობადი vulnerability ინფორმაცია. კარგი evidence input-ია, მაგრამ გადაწყვეტილებას ვერ ცვლის: გუნდმა მაინც უნდა შეაფასოს საჭიროება, license, maintenance და აპლიკაციის რეალური reachability.</p>
+<p>GitHub-ის <a href="https://docs.github.com/en/code-security/concepts/supply-chain-security/dependency-review">dependency review დოკუმენტაცია</a> განმარტავს, რომ pull request-ში შეიძლება გამოჩნდეს direct და indirect dependency ცვლილებები, მათ შორის lockfile-ში ასახული ცნობადი vulnerability ინფორმაცია. ეს სასარგებლო მტკიცებულებაა, თუმცა გადაწყვეტილებას ვერ ცვლის: გუნდმა მაინც უნდა შეაფასოს საჭიროება, ლიცენზია, maintenance და აპლიკაციაში გამოყენების რეალური გზა.</p>
 
-<p>NIST-ის <a href="https://csrc.nist.gov/pubs/sp/800/218/final">SSDF</a> პრაქტიკები პროგრამული უზრუნველყოფის მიწოდების პროცესში რისკის შემცირებასა და პასუხისმგებლობის განსაზღვრას უკავშირდება. SLSA-ს <a href="https://slsa.dev/spec/v1.2/threats">threats overview</a> კი გვახსენებს, რომ build და provenance ჯაჭვის სხვადასხვა ეტაპს სხვადასხვა მუქარა აქვს. ერთი badge ან CVE feed მთელ chain-ს ვერ ცვლის.</p>
+<p>NIST-ის <a href="https://csrc.nist.gov/pubs/sp/800/218/final">SSDF</a> პრაქტიკები პროგრამული უზრუნველყოფის მიწოდების პროცესში რისკის შემცირებასა და პასუხისმგებლობის განსაზღვრას უკავშირდება. SLSA-ს <a href="https://slsa.dev/spec/v1.2/threats">threats overview</a> აჩვენებს, რომ build და provenance ჯაჭვის სხვადასხვა ეტაპს სხვადასხვა საფრთხე აქვს. ერთი badge ან CVE feed მთელ chain-ს ვერ ცვლის.</p>
 
 <h2 id="record">როგორ შექმნათ dependency change record?</h2>
 
@@ -70,15 +70,15 @@ sources: ["https://docs.github.com/en/code-security/concepts/supply-chain-securi
 
 <h2 id="limitations">რა საზღვარი აქვს supply chain review-ს?</h2>
 
-<p>public scan ხედავს მხოლოდ ჩამოსატვირთ ფაილებსა და საჯარო ინფორმაციას. იგი ვერ ამტკიცებს private registry-ს, CI/CD-ის უფლებებს, ყველა transitive build step-ს ან production runtime-ის სრულ მდგომარეობას. deeper review იწყება მხოლოდ owner-ის მიერ access და test boundary-ის შეთანხმების შემდეგ.</p>
+<p>დამოკიდებულებების public scan შემოიფარგლება ჩამოსატვირთი ფაილებითა და საჯარო metadata-ით. იგი ვერ ამტკიცებს private registry-ს, CI/CD-ის უფლებებს, ყველა transitive build step-ს ან production runtime-ის სრულ მდგომარეობას. ღრმა review მხოლოდ owner-ის მიერ access-ისა და test boundary-ის შეთანხმების შემდეგ იწყება.</p>
 
-<p>vibecoding.ge ამოწმებს უკვე აშენებულ AI-ით შექმნილ აპს და ანგარიშში აერთიანებს დადასტურებულ ბიზნეს-რისკს, მტკიცებულებას, repair-სა და rescan/handover ნაბიჯებს. პროდუქტი არ არის package registry, paid scanner, ახალი აპლიკაციის მშენებლობა ან zero-CVE გარანტია. დასკვნა ვრცელდება მხოლოდ შემოწმებულ scope-ზე.</p>
+<p>vibecoding.ge-ს supply chain review უკვე აშენებული AI-ით შექმნილი აპის dependency chain-ს, მტკიცებულებებსა და release-ის პასუხისმგებლობას ეხება; ანგარიშში repair და rescan/handover ნაბიჯებიც იწერება. ეს არ არის package registry, paid scanner, ახალი აპლიკაციის მშენებლობა ან zero-CVE გარანტია. დასკვნა მხოლოდ შემოწმებულ scope-ს მოიცავს.</p>
 
 <h2 id="faq">ხშირად დასმული კითხვები</h2>
-<h3 id="faq-1">CVE-ის არქონა ნიშნავს, რომ ახალი dependency უსაფრთხოა?</h3>
+<h3 id="faq-1">CVE-ს არარსებობა ნიშნავს, რომ ახალი dependency უსაფრთხოა?</h3>
 <p>არა. CVE feed მხოლოდ ერთი სიგნალია. საჭიროა package identity, version, reachability, source, maintenance, license და გამოყენებული input path-ის შეფასება.</p>
 <h3 id="faq-2">lockfile არსებობა supply chain-ს ამტკიცებს?</h3>
-<p>lockfile აჩვენებს resolution-ს, მაგრამ არა იმას, რომ ყველა resolved კომპონენტი აუცილებელი ან სანდოა. მისი diff უნდა შეადაროთ კოდს, build-სა და release owner-ს.</p>
+<p>lockfile აჩვენებს resolution-ს, მაგრამ არ ამტკიცებს, რომ ყველა resolved კომპონენტი აუცილებელი ან სანდოა. მიღებული diff კოდს, build-სა და release owner-ს შეადარეთ.</p>
 <h3 id="faq-3">შეიძლება თუ არა უცნობი პაკეტის install script production-ში გავუშვათ?</h3>
 <p>უცნობი install script-ის გაშვება production-ში შემოწმების საზღვარს არღვევს. ჯერ იზოლირებულ გარემოში შეაფასეთ წყარო (source), უფლებები (permissions), ქსელური მოქმედება (network) და build შედეგი.</p>
 
@@ -87,8 +87,8 @@ sources: ["https://docs.github.com/en/code-security/concepts/supply-chain-securi
   <li><a href="/ka/blog/csp-da-nonce-aiit-shekmnil-apshi">CSP და nonce AI-ით შექმნილ აპში</a></li>
   <li><a href="/ka/blog/staging-da-production-secrets-vibe-coded-apshi">staging და production გარემოების გამიჯვნა</a></li>
   <li><a href="/ka/blog/webhookis-khelmotseris-shemotsmeba-aiit-shekmnil-apshi">webhook-ის ხელმოწერის შემოწმება</a></li>
-  <li><a href="/ka/blog/staging-da-production-secrets-vibe-coded-apshi">staging და production secrets</a></li>
+<li><a href="/ka/blog/logging-audit-trail">dependency release audit trail</a></li>
   <li><a href="/ka/blog/ssrf-url-fetch">SSRF და URL fetch-ის საზღვარი</a></li>
   <li><a href="/contact">scoped review-ის მოთხოვნა</a></li></ul>
 
-<p><em>სარედაქციო შენიშვნა: ტექსტის მომზადებაში გამოყენებულია ხელოვნური ინტელექტი. წყაროების შესაბამისობა, ენა და releaseთვის საჭირო ფარგლები ცალკე გადამოწმებას საჭიროებს.</em></p>
+<p><em>სარედაქციო შენიშვნა: ტექსტის მომზადებაში გამოყენებულია ხელოვნური ინტელექტი. ეს გზამკვლევი კონკრეტული package-ის უსაფრთხოებას ან ლიცენზიის შესაბამისობას ვერ ამტკიცებს; source და release scope ცალკე გადაამოწმეთ.</em></p>
