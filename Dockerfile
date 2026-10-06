@@ -1,8 +1,11 @@
 # syntax=docker/dockerfile:1.7
 # Stage 1: Dependencies
-# Built outside BuildKit because the VPS BuildKit npm resolver is unreliable.
-# The tag is the shared package-lock SHA-256 prefix for this landing family.
-FROM localhost:5000/landing-deps:4c3aadd82edc AS deps
+# Installed here with `npm ci` from the committed lockfile. This replaces a prebuilt image kept in a private registry
+# on one server (localhost:5000/landing-deps), which made the build fail on any other host.
+FROM node:24-bookworm-slim AS deps
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci
 
 # Stage 2: Build
 FROM node:24-bookworm-slim AS builder
