@@ -1,188 +1,189 @@
-import { getTranslations } from 'next-intl/server';
-import { SITE } from '@/config/site';
-import { CONTACT_EMAIL, CONTACT_PHONE } from '@/lib/constants/app.constants';
+import { getLocale } from "next-intl/server";
+import { PRODUCT_OG_URL } from "@/lib/product-og";
+import { CONTACT_PHONE, SITE_CONTENT_UPDATED } from "@/lib/constants/app.constants";
+import { getAiNowHomeCopy } from "@/features/home/components/ainow/AiNowHomeCopy";
+import { PRODUCT_BASE_URL, PRODUCT_FACTS } from "@/lib/product-public-facts";
 
-/* =========================================================================
-   StructuredData: the layer that decides whether an assistant can recommend us.
-
-   A page with no structured data forces ChatGPT, Perplexity and Gemini to guess what
-   the product is, who it is for, and how it differs from the next tab. They guess
-   badly, and a model that is unsure does not recommend.
-
-   Three things make this graph work, and all three are easy to get wrong:
-
-   1. ENTITY EDGES. Every product points to the same aiNOW provider entity. Without that edge each domain is an
-      orphan brand with no history, and an assistant treats it as an unknown.
-
-   2. DISAMBIGUATION. `disambiguatingDescription` exists to say what we are NOT. It is the
-      only field that stops a model confusing aiCALL with a US voice-AI startup, or
-      vibecoding.ge with the vibe-coding fad itself.
-
-   3. THE BOUNDARY. Each landing names the sibling that owns the adjacent job. That is the
-      anti-cannibalization signal for humans, and for a model it is the thing that lets it
-      route a question to the right one of our six domains instead of picking at random.
-
-   The FAQPage is generated from the SAME message keys the visible accordion renders, per
-   locale, so the schema can never drift from the page. That is deliberate: a FAQPage that
-   contradicts the visible text is worse than none.
-   ========================================================================= */
-
-const ORG_ID = 'https://ainow.ge#organization';
-const SERVICE_ID = `${SITE.baseUrl}/#service`;
-const SITE_ID = `${SITE.baseUrl}/#website`;
-const FAQ_LIMIT = 5;
-const CONTENT_MODIFIED = '2026-07-14';
-const AINOW_SAME_AS = [
-  'https://www.facebook.com/ainow.ge',
-  'https://www.instagram.com/ainow.ge/',
-  'https://t.me/ainow_ge',
-  'https://www.linkedin.com/company/ainowgeorgia',
-  'https://github.com/ainowgeorgia',
-] as const;
-
-const BRAND = SITE.wordmark.prefix + SITE.wordmark.mark;
-const LOCALE_TAGS = SITE.locales.map((l) => ({ ka: 'ka-GE', en: 'en-US', ru: 'ru-RU' }[l] ?? l));
-
-// site.ts is `as const`, so areaServed narrows to the literal "GE" on the Georgian landings and
-// "WORLD" on the export ones. Comparing a literal to the other literal is a type error even
-// though the code is correct, so widen it once here rather than casting at each use.
-const AREA: string = SITE.seo.areaServed;
-
-/* Only the two export landings publish a price, so this file compiles against six different
-   SITE shapes and has to read the field as genuinely optional. A landing with no public price
-   emits no Offer, rather than an Offer with a price of zero, which a model would read as free. */
-type PublicOffer = { name: string; price: string; currency: string; description: string };
-const OFFER = (SITE.seo as { offer?: PublicOffer }).offer;
-
-const organization = {
-  '@type': 'Organization',
-  '@id': ORG_ID,
-  name: 'aiNOW',
-  legalName: 'შპს ეი აი ნაუ',
-  alternateName: 'AI NOW Georgia',
-  disambiguatingDescription: 'AI agency in Georgia, the country, serving Georgian businesses.',
-  url: 'https://ainow.ge',
+const organizationSchema = {
+  "@type": "Organization",
+  name: PRODUCT_FACTS.name,
+  "@id": `${PRODUCT_BASE_URL}#organization`,
+  legalName: "შპს ეი აი ნაუ",
+  alternateName: ["AI NOW Georgia"],
+  disambiguatingDescription: PRODUCT_FACTS.purpose,
+  url: PRODUCT_BASE_URL,
   logo: {
-    '@type': 'ImageObject',
-    url: 'https://ainow.ge/logo.png',
-    width: 192,
-    height: 192,
+    "@type": "ImageObject",
+    url: `${PRODUCT_BASE_URL}/icon.svg`,
   },
-  sameAs: [...AINOW_SAME_AS],
+  image: PRODUCT_OG_URL,
+  slogan: "AI that works",
+  description: PRODUCT_FACTS.purpose,
   address: {
-    '@type': 'PostalAddress',
-    streetAddress: 'Tornike Eristavi St. 3',
-    addressLocality: 'Tbilisi',
-    addressCountry: 'GE',
+    "@type": "PostalAddress",
+    streetAddress: "Tornike Eristavi St. 3",
+    addressLocality: "Tbilisi",
+    addressCountry: "GE",
   },
   contactPoint: {
-    '@type': 'ContactPoint',
-    email: CONTACT_EMAIL.toLowerCase(),
+    "@type": "ContactPoint",
+    email: "CONTACT@aiNOW.GE",
     telephone: CONTACT_PHONE,
-    contactType: 'sales',
-    availableLanguage: [...SITE.locales],
+    contactType: "sales",
+    availableLanguage: ["ka", "en", "ru"],
+  },
+  sameAs: ["https://ainow.ge"],
+  knowsAbout: [
+    "Artificial Intelligence",
+    "Software Development",
+    "Web Development",
+    "Mobile App Development",
+    "AI Chatbot Development",
+    "AI Automation",
+    "AI Marketing",
+    "AI Content Production",
+    "Generative Engine Optimization",
+    "LLM SEO",
+  ],
+  // Reciprocal cross-domain entity edge: aiNOW's founder is Andrew Altair
+  // (andrewaltair.ge#person). Pairs with personSchema.worksFor -> ainow.ge#organization
+  // on andrewaltair.ge so Google associates the two domains as one entity graph.
+  founder: {
+    "@type": "Person",
+    "@id": "https://andrewaltair.ge/#person",
+    name: "Andrew Altair",
+    url: "https://andrewaltair.ge/about",
   },
 };
 
-const service = {
-  '@type': 'Service',
-  '@id': SERVICE_ID,
-  name: BRAND,
-  brand: { '@type': 'Brand', name: BRAND },
-  serviceType: SITE.seo.serviceType,
-  url: SITE.baseUrl,
-  image: `${SITE.baseUrl}/og/landing-20260905.png`,
-  description: SITE.manifest.description,
-  provider: { '@id': ORG_ID },
-  areaServed:
-    AREA === 'GE' ? { '@type': 'Country', name: 'Georgia' } : { '@type': 'Place', name: 'Worldwide' },
-  audience: {
-    '@type': 'BusinessAudience',
-    name: SITE.seo.audienceName,
+const websiteSchema = {
+  "@type": "WebSite",
+  "@id": `${PRODUCT_BASE_URL}#website`,
+  name: PRODUCT_FACTS.name,
+  alternateName: PRODUCT_FACTS.name,
+  url: PRODUCT_BASE_URL,
+  inLanguage: ["ka-GE", "en-US", "ru-RU"],
+  publisher: { "@id": `${PRODUCT_BASE_URL}#organization` },
+  // WebSite is a CreativeWork, so `author` and `dateModified` are valid properties here.
+  // They are also the exact two things Google's E-E-A-T guidance asks a page to state (who is
+  // behind this, and when was it last touched) and the two our own audit engine looks for
+  // (seo_engine.check_eeat_signals reads author + datePublished/dateModified out of any JSON-LD
+  // node). A crawl on 2026-07-11 found 20 of 20 non-blog pages failing that check on
+  // "no clear author; no date": the founder existed only as Organization.founder, which is an
+  // ownership edge, not an authorship one. Blog posts already passed, they carry their own
+  // Article node with a Person author and a datePublished.
+  author: {
+    "@type": "Person",
+    "@id": "https://andrewaltair.ge/#person",
+    name: "Andrew Altair",
+    url: "https://andrewaltair.ge/about",
+    jobTitle: "Founder, aiNOW",
+    worksFor: { "@id": "https://ainow.ge#organization" },
   },
-  hasOfferCatalog: {
-    '@type': 'OfferCatalog',
-    name: BRAND,
-    itemListElement: SITE.seo.features.map((f) => ({
-      '@type': 'Offer',
-      itemOffered: { '@type': 'Service', name: f },
-    })),
+  dateModified: SITE_CONTENT_UPDATED,
+};
+
+const localBusinessSchema = {
+  "@type": "ProfessionalService",
+  "@id": `${PRODUCT_BASE_URL}#localbusiness`,
+  name: PRODUCT_FACTS.name,
+  url: PRODUCT_BASE_URL,
+  image: PRODUCT_OG_URL,
+  email: "CONTACT@aiNOW.GE",
+  telephone: CONTACT_PHONE,
+  sameAs: ["https://ainow.ge"],
+  slogan: "AI that works",
+  description: PRODUCT_FACTS.purpose,
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "Tornike Eristavi St. 3",
+    addressLocality: "Tbilisi",
+    addressRegion: "Tbilisi",
+    addressCountry: "GE",
   },
-  // A model asked "how much" answers from this or it answers "contact them for a quote", which
-  // is the answer that loses the recommendation.
-  ...(OFFER
-    ? {
-        offers: {
-          '@type': 'Offer',
-          name: OFFER.name,
-          price: OFFER.price,
-          priceCurrency: OFFER.currency,
-          description: OFFER.description,
-          availability: 'https://schema.org/InStock',
-          url: SITE.baseUrl,
-          seller: { '@id': ORG_ID },
-        },
-      }
-    : {}),
-  // Stated limits are a trust signal for a human and a routing signal for a model. A page
-  // that admits what it cannot do is the one an assistant can safely recommend.
-  disambiguatingDescription: `${SITE.seo.boundary} Known limits: ${SITE.seo.limits.join(' ')}`,
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: 41.7151,
+    longitude: 44.8271,
+  },
+  priceRange: "$$",
+  areaServed: [
+    { "@type": "Country", name: "Georgia" },
+    { "@type": "Country", name: "Armenia" },
+    { "@type": "Country", name: "Azerbaijan" },
+  ],
+  // `knowsAbout`, not `serviceType`: serviceType's schema.org domain is Service, and this node is a
+  // ProfessionalService (a LocalBusiness), so serviceType here was an invalid-property markup error.
+  knowsAbout: [
+    "AI Development",
+    "Software Development",
+    "Web Development",
+    "Mobile App Development",
+    "AI Consulting",
+    "Chatbot Development",
+    "AI Content Production",
+  ],
 };
 
-const website = {
-  '@type': 'WebSite',
-  '@id': SITE_ID,
-  name: BRAND,
-  url: SITE.baseUrl,
-  inLanguage: LOCALE_TAGS,
-  publisher: { '@id': ORG_ID },
-  author: { '@id': ORG_ID },
-  dateModified: CONTENT_MODIFIED,
-};
+// One @graph instead of three standalone scripts: a single @context, and the nodes are linked by
+// @id (WebSite.publisher -> Organization#organization), which is the form schema validators prefer.
+// The English landing page must not carry Georgian-only legal/display strings in its structured
+// data, because ad crawlers use the whole landing document when checking language consistency.
+function getSiteGraph(locale: string) {
+  const english = locale === "en";
+  const organization = english
+    ? { ...organizationSchema, legalName: "AI NOW LLC" }
+    : organizationSchema;
+  const website = english
+    ? { ...websiteSchema, inLanguage: ["en-US"] }
+    : websiteSchema;
 
-const graph = {
-  '@context': 'https://schema.org',
-  '@graph': [organization, service, website],
-};
+  return {
+    "@context": "https://schema.org",
+    "@graph": [organization, localBusinessSchema, website],
+  };
+}
 
-export function StructuredData() {
+export async function StructuredData(
+  { locale: explicitLocale }: { locale?: string } = {},
+): Promise<React.ReactElement> {
+  const resolvedLocale = explicitLocale ?? (await getLocale());
+  const siteGraph = getSiteGraph(resolvedLocale);
   return (
     <script
       type="application/ld+json"
       suppressHydrationWarning
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(graph) }}
+      dangerouslySetInnerHTML={{
+        __html: JSON.stringify(siteGraph),
+      }}
     />
   );
 }
 
+// Home-only FAQPage, built from the same copy source as the visible accordion.
 export async function HomeFaqSchema({ locale }: { locale: string }) {
-  const t = await getTranslations({ locale, namespace: 'product.faq' });
-
-  /* The visible FAQ and its semantic contract use the same five translated pairs. */
-  const items: object[] = [];
-  for (let n = 1; n <= FAQ_LIMIT && t.has(`q${n}`) && t.has(`a${n}`); n += 1) {
-    items.push({
-      '@type': 'Question',
-      // q1 can contain the <brand></brand> tag. markup() resolves it to plain text so the
-      // schema never leaks a JSX tag into a search result.
-      name: t.markup(`q${n}`, { brand: () => BRAND }),
-      acceptedAnswer: { '@type': 'Answer', text: t(`a${n}`) },
-    });
-  }
-
-  const faq = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    '@id': `${SITE.baseUrl}/#faq`,
-    inLanguage: locale,
-    mainEntity: items,
+  const items = getAiNowHomeCopy(locale).faq.items;
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: Object.values(items).map((item) => {
+      return {
+        "@type": "Question",
+        name: item.question,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: item.answer,
+        },
+      };
+    }),
   };
-
   return (
     <script
       type="application/ld+json"
       suppressHydrationWarning
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(faq) }}
+      dangerouslySetInnerHTML={{
+        __html: JSON.stringify(faqSchema),
+      }}
     />
   );
 }

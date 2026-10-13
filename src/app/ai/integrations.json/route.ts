@@ -1,21 +1,13 @@
-import {
-  PRODUCT_MACHINE_FACTS,
-  machineJsonResponse,
-} from '@/features/product-pages/machine';
+import { integrations } from "@/lib/product-public-facts";
 
-export const dynamic = 'force-static';
+export const revalidate = 86400;
 
-export function GET() {
-  return machineJsonResponse({
-    product: PRODUCT_MACHINE_FACTS.name,
-    provider: PRODUCT_MACHINE_FACTS.provider,
-    integrations: PRODUCT_MACHINE_FACTS.integrations,
-    statusDefinitions: {
-      available: 'Available now.',
-      customSetup: 'Available now after product-specific configuration.',
-      planned: 'Not currently available. No launch date is promised.',
+export function GET(): Response {
+  return Response.json(integrations(),
+    {
+      headers: {
+        "Cache-Control": "public, max-age=86400, stale-while-revalidate=3600",
+      },
     },
-    reviewedOn: PRODUCT_MACHINE_FACTS.reviewedOn,
-  });
+  );
 }
-

@@ -1,15 +1,59 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 @plugin "tailwindcss-animate";
 @plugin "@tailwindcss/typography";
+@import "./ainow-theme.css";
+@import "./ainow-public-pages.css";
 /* @import "tw-animate-css"; */
 /* @import "shadcn/tailwind.css"; */
+
+@font-face {
+  font-family: "iAI Moskovis";
+  src: url("/landing/fonts/typeface/gl-moskovis.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+  unicode-range: U+10A0-10FF, U+2D00-2D2F;
+}
+
+@font-face {
+  font-family: "iAI Pillar";
+  src: url("/landing/fonts/typeface/ms-pillar.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+  unicode-range: U+10A0-10FF, U+1C90-1CBF, U+2D00-2D2F;
+}
+
+@font-face {
+  font-family: "iAI Sabetchdi";
+  src: url("/landing/fonts/typeface/ms-sabetchdi.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+  unicode-range: U+10A0-10FF, U+2D00-2D2F;
+}
+
+@font-face {
+  font-family: "iAI Cormorant";
+  src: url("/landing/fonts/cormorant-garamond.woff2") format("woff2");
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: block;
+  unicode-range: U+0000-024F;
+}
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-iai-ui);
   --font-display: var(--font-iai-ui);
+  --font-heading: var(--font-iai-ui);
   --font-georgian: var(--font-iai-georgian);
+  --font-headline: var(--font-iai-headline);
+  --font-pillar: var(--font-iai-pillar);
+  --font-sabetchdi: var(--font-iai-sabetchdi);
+  --font-mono: var(--font-iai-data);
   --font-logo-ai: var(--font-iai-data);
   --color-ring: var(--ring);
   --color-input: var(--input);
@@ -39,14 +83,21 @@
 }
 
 /* ═══════════════════════════════════════
-   BOLD HUES, Light Theme
+   BOLD HUES — Light Theme
    Electric magenta, purple, crisp blues.
    Creative and tech-forward energy.
    ═══════════════════════════════════════ */
 :root {
-  --font-noto-georgian: var(--font-iai-georgian);
-  /* iAI test typography contract: Geist for Latin/Cyrillic UI and numbers,
-     Noto Sans Georgian for Georgian glyphs, Geist Mono for compact data and ai. */
+  /* The production image is intentionally self-contained: no build-time
+     font fetches from Google. Firago is bundled with this application and
+     covers the Georgian interface; the data face uses the local platform mono
+     stack. */
+  --font-geist-sans: var(--font-firago);
+  --font-geist-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --font-georgian-extended-fallback: var(--font-firago);
+  --font-noto-georgian: var(--font-georgian-extended-fallback);
+  /* Self-contained typography contract: the bundled Firago face covers the
+     Georgian interface and the local mono stack serves compact data and ai. */
   --font-iai-georgian: var(--font-firago), var(--font-georgian-extended-fallback), system-ui, sans-serif;
   --font-iai-ui: var(--font-geist-sans), var(--font-firago), var(--font-georgian-extended-fallback), system-ui, sans-serif;
   --font-iai-data: var(--font-geist-mono), var(--font-geist-sans), var(--font-firago), var(--font-georgian-extended-fallback), ui-monospace, monospace;
@@ -54,6 +105,9 @@
   --font-bricolage: var(--font-iai-ui);
   --font-dm-sans: var(--font-iai-ui);
   --font-space-mono: var(--font-iai-data);
+  --font-iai-headline: "iAI Moskovis", "iAI Cormorant", var(--font-firago), var(--font-georgian-extended-fallback), serif;
+  --font-iai-pillar: "iAI Pillar", "iAI Cormorant", var(--font-firago), var(--font-georgian-extended-fallback), serif;
+  --font-iai-sabetchdi: "iAI Sabetchdi", var(--font-firago), var(--font-georgian-extended-fallback), monospace;
   --radius: 0.625rem;
   --background: oklch(0.97 0.005 80);
   --foreground: oklch(0.13 0.01 260);
@@ -78,7 +132,7 @@
 }
 
 /* ═══════════════════════════════════════
-   BOLD HUES, Dark Theme (Default)
+   BOLD HUES — Dark Theme (Default)
    Deep charcoal with electric neon accents.
    Magenta, indigo, sapphire energy.
    ═══════════════════════════════════════ */
@@ -117,7 +171,7 @@
   body {
     @apply text-foreground antialiased;
     overflow-x: clip;
-    /* Global page canvas, the home page's white dot-grid background, repeated
+    /* Global page canvas — the home page's white dot-grid background, repeated
        on every page (mirrors `.landing-page` in landing-hero.css). Admin pages
        paint their own full-screen `admin-surface-0`, so this never shows there. */
     background-color: #ffffff;
@@ -142,6 +196,14 @@
   }
 }
 
+/* iAI Moskovis has deeper Georgian descenders than its font metrics advertise.
+   Keep the extra line box limited to actual Georgian headline headings so the
+   locale's tight utility leading cannot crop glyphs, while other locales keep
+   their existing typography. */
+html[lang="ka"] :is(h1, h2, h3, h4, h5, h6).font-headline {
+  line-height: 1.34;
+}
+
 /* Soft ambient glow orbs */
 .glow-orb {
   position: absolute;
@@ -159,7 +221,7 @@
   background: oklch(0.56 0.21 269);
 }
 
-/* Animated gradient mesh, hero visual anchor */
+/* Animated gradient mesh — hero visual anchor */
 @keyframes mesh-rotate {
   0% {
     transform: translate(-50%, -50%) rotate(0deg);
@@ -208,20 +270,20 @@
   padding: 1px;
 }
 
-/* Glass card, subtle frosted glass */
+/* Glass card — subtle frosted glass */
 .glass-card {
   background: oklch(0.16 0.006 270 / 60%);
   backdrop-filter: blur(24px) saturate(1.2);
   border: 1px solid oklch(0.24 0.006 270 / 50%);
 }
 
-/* Gradient text, per-product brand shimmer (host product color) */
+/* Gradient text — pink→sapphire→aqua brand trio, animated shimmer */
 .gradient-text {
   background: linear-gradient(90deg,
-      var(--brand),
-      var(--accent),
-      var(--brand-soft),
-      var(--brand));
+      oklch(0.64 0.24 1),
+      oklch(0.56 0.21 269),
+      oklch(0.78 0.12 222),
+      oklch(0.64 0.24 1));
   background-size: 300% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -282,7 +344,7 @@
   z-index: 1;
 }
 
-/* Dot grid pattern, Linear-inspired depth */
+/* Dot grid pattern — Linear-inspired depth */
 .dot-grid {
   background-image: radial-gradient(circle, oklch(0.82 0.004 80) 1px, transparent 1px);
   background-size: 24px 24px;
@@ -292,7 +354,7 @@
   background-image: radial-gradient(circle, oklch(0.25 0.005 270) 1px, transparent 1px);
 }
 
-/* Letter glitch, CSS-only animated text pattern (light theme hero BG) */
+/* Letter glitch — CSS-only animated text pattern (light theme hero BG) */
 .letter-glitch {
   --lg-color-1: oklch(0.82 0.006 80);
   --lg-color-2: oklch(0.78 0.008 80);
@@ -362,7 +424,7 @@
   }
 }
 
-/* Hero floating cards, CSS-only, GPU-composited */
+/* Hero floating cards — CSS-only, GPU-composited */
 @keyframes hero-float-1 {
 
   0%,
@@ -438,12 +500,10 @@
   animation-play-state: paused;
 }
 
-/* Card hover glow, ambient purple→teal glow on hover */
+/* Card hover glow — ambient purple→teal glow on hover */
 .card-glow {
   position: relative;
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-    border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .card-glow::after {
@@ -519,7 +579,7 @@
   background: oklch(0.18 0.005 270);
 }
 
-/* Section divider, gradient fade line between sections */
+/* Section divider — gradient fade line between sections */
 .section-divider {
   height: 1px;
   background: linear-gradient(90deg,
@@ -529,7 +589,7 @@
       transparent);
 }
 
-/* Glass stats bar, frosted glass for hero stats */
+/* Glass stats bar — frosted glass for hero stats */
 .glass-stats {
   backdrop-filter: blur(20px) saturate(1.3);
   border-radius: 16px;
@@ -579,7 +639,7 @@
   background: oklch(0.18 0.006 270);
 }
 
-/* Radial glow, hero headline emphasis */
+/* Radial glow — hero headline emphasis */
 .radial-glow {
   position: absolute;
   inset: 0;
@@ -595,7 +655,7 @@
   color: var(--foreground);
 }
 
-/* Scrollbar hidden, scroll works, bar invisible */
+/* Scrollbar hidden — scroll works, bar invisible */
 * {
   scrollbar-width: none;
 }
@@ -617,27 +677,9 @@ html {
     scroll-behavior: auto;
   }
 
-  *,
-  *::before,
-  *::after {
-    animation: none !important;
-    transition-duration: 0.01ms !important;
-    transition-delay: 0ms !important;
-    scroll-behavior: auto !important;
+  .gradient-mesh {
+    animation: none;
   }
-
-  .gradient-mesh,
-  .tw-caret,
-  .letter-glitch::before,
-  .letter-glitch::after,
-  .letter-glitch > .letter-glitch-layer {
-    animation: none !important;
-  }
-}
-
-:where(a, button, input, select, textarea, summary):focus-visible {
-  outline: 2px solid var(--ring);
-  outline-offset: 3px;
 }
 
 
@@ -648,10 +690,10 @@ html {
 }
 
 /* ═══════════════════════════════════════
-   HERO CARD FX, Shimmer + Glass + Mesh
+   HERO CARD FX — Shimmer + Glass + Mesh
    ═══════════════════════════════════════ */
 
-/* 1. Shimmer border, rotating conic gradient along card edge */
+/* 1. Shimmer border — rotating conic gradient along card edge */
 .hero-card-shimmer {
   position: relative;
   overflow: hidden;
@@ -732,7 +774,7 @@ html {
   padding: 1.5px;
 }
 
-/* 2. Glass morphism enhanced, per-card colored glow */
+/* 2. Glass morphism enhanced — per-card colored glow */
 .hero-card-glass {
   backdrop-filter: blur(20px) saturate(1.4);
   background: oklch(0.95 0.004 80 / 65%);
@@ -744,7 +786,7 @@ html {
   border-color: oklch(0.24 0.008 270 / 30%);
 }
 
-/* Color glow underneath each card, Bold Hues palette */
+/* Color glow underneath each card — Bold Hues palette */
 .hero-card-glow-blue {
   --card-glow-color: oklch(0.56 0.21 269);
 }
@@ -787,7 +829,7 @@ html {
   opacity: 0.2;
 }
 
-/* 3. Internal animated gradient mesh, subtle living background */
+/* 3. Internal animated gradient mesh — subtle living background */
 .hero-card-mesh {
   position: relative;
   overflow: hidden;
@@ -901,7 +943,7 @@ html {
   transform: translateZ(0);
 }
 
-/* React Flow, OBSIDIAN theme overrides */
+/* React Flow — OBSIDIAN theme overrides */
 .react-flow__controls button {
   background-color: var(--card);
   border-color: var(--border);
@@ -923,12 +965,12 @@ html {
 }
 
 /* ═══════════════════════════════════════
-   ADMIN PANEL, Command Post Design System
+   ADMIN PANEL — Command Post Design System
    Clean surfaces, no glass. Typography-forward.
    Pulse dots for life. Urgency via warm amber.
    ═══════════════════════════════════════ */
 
-/* Pulse dot, breathing life indicator */
+/* Pulse dot — breathing life indicator */
 @keyframes admin-pulse {
 
   0%,
@@ -947,7 +989,7 @@ html {
   animation: admin-pulse 2.5s ease-in-out infinite;
 }
 
-/* Admin surface system, solid, no glass */
+/* Admin surface system — solid, no glass */
 .admin-surface-0 {
   background: var(--background);
 }
@@ -964,7 +1006,7 @@ html {
   background: oklch(0.16 0.006 270);
 }
 
-/* Admin card, clean, border-only elevation */
+/* Admin card — clean, border-only elevation */
 .admin-card {
   background: var(--card);
   border: 1px solid var(--border);
@@ -980,13 +1022,13 @@ html {
   border-color: oklch(0.26 0.008 270);
 }
 
-/* Admin sidebar, same background as canvas, border separation */
+/* Admin sidebar — same background as canvas, border separation */
 .admin-sidebar {
   background: var(--background);
   border-right: 1px solid var(--border);
 }
 
-/* Urgency left-accent, warm amber for deadlines */
+/* Urgency left-accent — warm amber for deadlines */
 .admin-urgency-critical {
   border-left: 2px solid oklch(0.70 0.18 55);
 }
@@ -999,7 +1041,7 @@ html {
   border-left: 2px solid var(--destructive);
 }
 
-/* Stat strip, compact horizontal summary */
+/* Stat strip — compact horizontal summary */
 .admin-stat-strip {
   display: flex;
   align-items: stretch;
@@ -1039,7 +1081,7 @@ html {
   min-height: 16px;
 }
 
-/* Admin nav item, clean, no background shift */
+/* Admin nav item — clean, no background shift */
 .admin-nav-item {
   position: relative;
   display: flex;
@@ -1108,10 +1150,10 @@ html {
 }
 
 /* ═══════════════════════════════════════
-   AUTOMATION NODES, n8n-style workflow
+   AUTOMATION NODES — n8n-style workflow
    ═══════════════════════════════════════ */
 
-/* Node card, glassmorphism */
+/* Node card — glassmorphism */
 .automation-node {
   display: flex;
   align-items: center;
@@ -1125,14 +1167,11 @@ html {
   backdrop-filter: blur(16px) saturate(1.3);
   position: relative;
   cursor: default;
-  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-    border-color 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-    background-color 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: border-color 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 2px 12px oklch(0.11 0.005 270 / 40%);
 }
 
-:root .automation-node {
+:root:where(:not(.dark)) .automation-node {
   background: oklch(0.96 0.004 80 / 80%);
   border-color: oklch(0.89 0.006 80 / 50%);
   box-shadow: 0 2px 12px oklch(0.85 0.004 80 / 40%);
@@ -1161,7 +1200,7 @@ html {
   background: oklch(0.16 0.01 304 / 70%);
 }
 
-:root .automation-node-decision {
+:root:where(:not(.dark)) .automation-node-decision {
   background: oklch(0.95 0.01 304 / 40%);
   border-color: oklch(0.45 0.23 304 / 35%);
 }
@@ -1206,7 +1245,7 @@ html {
   color: var(--primary);
 }
 
-:root .automation-node-icon {
+:root:where(:not(.dark)) .automation-node-icon {
   background: oklch(0.92 0.006 80 / 60%);
 }
 
@@ -1237,7 +1276,7 @@ html {
 }
 
 /* ═══════════════════════════════════════
-   CHATBOT DEMO, Chat UI Styles
+   CHATBOT DEMO — Chat UI Styles
    ═══════════════════════════════════════ */
 
 /* Chat container */
@@ -1332,7 +1371,7 @@ html {
       transparent 70%) !important;
 }
 
-/* Pricing tier highlighted, animated gradient border rotation */
+/* Pricing tier highlighted — animated gradient border rotation */
 @keyframes tier-border-rotate {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
@@ -1346,7 +1385,7 @@ html {
   .tier-highlighted { animation: none; }
 }
 
-/* Annual-saver strip, subtle white light-sweep shine (Starter pricing card).
+/* Annual-saver strip — subtle white light-sweep shine (Starter pricing card).
    Neutral-white sweep (not a purple/neon glow) to stay clear of AI-slop tells. */
 @keyframes annual-shine {
   0% { transform: translateX(-120%) skewX(-12deg); }
@@ -1364,7 +1403,7 @@ html {
   .annual-shine { animation: none; display: none; }
 }
 
-/* VIN Calculator custom slider, large touch target on mobile */
+/* VIN Calculator custom slider — large touch target on mobile */
 .vin-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;

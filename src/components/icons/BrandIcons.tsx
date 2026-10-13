@@ -1,10 +1,10 @@
 import type { CSSProperties, ReactElement } from 'react';
 
 /* Unified social brand-icon pack, the real filled brand glyphs (matching the
-   aiSTAFF set), shared by the footers across the aiNOW family. fill is
-   currentColor so the surrounding text color drives the tint. Facebook,
-   Instagram and Telegram are the aiSTAFF PlatformIcons paths verbatim; LinkedIn
-   and GitHub are added in the same filled style so the whole row is one pack. */
+   aiSTAFF set), shared across the aiNOW family sites. fill is currentColor so
+   the surrounding text color drives the tint. Facebook, Instagram and Telegram
+   are the aiSTAFF PlatformIcons paths verbatim; LinkedIn and GitHub are added in
+   the same filled style so the whole row is one pack. */
 
 type IconProps = { className?: string; style?: CSSProperties };
 

@@ -1,0 +1,80 @@
+/* Successful-payment page — full-screen hero-style confirmation.
+   Reuses the hero's grainient palette (#FF9FFC → #B497CF → #5227FF) and white
+   scrim so it matches the home hero. The aiNOW wordmark styles come from
+   landing-nav.css (loaded site-wide via LandingNav). */
+
+.pay-success {
+  position: relative;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 96px 24px 48px;
+  overflow: hidden;
+}
+
+/* Static grainient gradient — mirrors the hero's shader palette. */
+.pay-success-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(120% 110% at 50% 0%, #ff9ffc 0%, #b497cf 45%, #5227ff 100%);
+  opacity: 0.30;
+  filter: saturate(0.9);
+}
+
+/* Soft white scrim — calms the gradient, keeps texture (mirrors #hero::before). */
+.pay-success-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.6) 100%);
+}
+
+.pay-success-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 720px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.pay-success-inner .wordmark-3d { text-shadow: 0 1px 2px rgba(255, 255, 255, 0.55); }
+
+.pay-success-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #7c3aed 0%, #e040fb 100%);
+  color: #fff;
+  font-size: 30px;
+  line-height: 1;
+  box-shadow: 0 10px 24px -6px rgba(124, 58, 237, 0.45);
+}
+
+.pay-success-title {
+  margin: 0;
+  font-family: var(--font-bricolage), 'Bricolage Grotesque', var(--font-noto-georgian), 'Noto Sans Georgian', sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.6rem, 4vw, 2.6rem);
+  letter-spacing: -0.02em;
+  color: #0a0a0a;
+}
+
+.pay-success-text {
+  margin: 0;
+  max-width: 46ch;
+  font-family: var(--font-noto-georgian), 'Noto Sans Georgian', sans-serif;
+  font-weight: 400;
+  font-size: clamp(1rem, 2.2vw, 1.25rem);
+  color: #3f3f46;
+}

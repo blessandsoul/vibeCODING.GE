@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 20" role="img" aria-label="Georgia">
+  <rect width="28" height="20" fill="#fff"/>
+  <path fill="#e8112d" d="M11 0h6v7h11v6H17v7h-6v-7H0V7h11z"/>
+  <path fill="#e8112d" d="M4 2h2v2h2v2H6v2H4V6H2V4h2zm18 0h2v2h2v2h-2v2h-2V6h-2V4h2zM4 12h2v2h2v2H6v2H4v-2H2v-2h2zm18 0h2v2h2v2h-2v2h-2v-2h-2v-2h2z"/>
+</svg>

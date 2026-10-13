@@ -36,7 +36,7 @@ export function SocialLinks({
 }) {
   const iconStyle: CSSProperties = { width: size, height: size };
   return (
-    <div className={cn('flex flex-wrap items-center gap-3', className)}>
+    <div className={cn('flex items-center gap-3', className)}>
       {SOCIALS.map(({ label, href, Icon }) =>
         round ? (
           <a
@@ -45,8 +45,7 @@ export function SocialLinks({
             target="_blank"
             rel="noopener noreferrer"
             aria-label={label}
-            className="flex h-11 w-11 min-w-11 shrink-0 items-center justify-center rounded-full border border-[#e5e5e5] text-[#4B5563] transition-[color,background-color,transform] duration-300 active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 md:hover:bg-neutral-100 md:hover:text-[#111827]"
-            style={{ width: 44, minWidth: 44, flex: '0 0 44px' }}
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-[#e5e5e5] text-neutral-900/70 transition duration-300 active:scale-95 md:hover:bg-neutral-100 md:hover:text-neutral-900"
           >
             <Icon style={iconStyle} />
           </a>
@@ -57,7 +56,7 @@ export function SocialLinks({
             target="_blank"
             rel="noopener noreferrer"
             aria-label={label}
-            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full text-muted-foreground transition-colors duration-200 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+            className="text-muted-foreground transition-colors duration-200 hover:text-primary"
           >
             <Icon style={iconStyle} />
           </a>

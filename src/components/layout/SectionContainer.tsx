@@ -1,16 +1,13 @@
 import { cn } from '@/lib/utils';
 
-interface SectionContainerProps extends React.HTMLAttributes<HTMLElement> {
+interface SectionContainerProps {
   children: React.ReactNode;
+  className?: string;
 }
 
-export const SectionContainer = ({ children, className, ...props }: SectionContainerProps) => {
+export const SectionContainer = ({ children, className }: SectionContainerProps) => {
   return (
-    <section
-      {...props}
-      data-family-shell="true"
-      className={cn('mx-auto w-[calc(100%-48px)] max-w-[1216px]', className)}
-    >
+    <section className={cn("container mx-auto px-4 md:px-6 lg:px-8", className)}>
       {children}
     </section>
   );

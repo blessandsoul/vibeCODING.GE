@@ -1,14 +1,25 @@
 import type { Metadata } from 'next';
-import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { SITE } from '@/config/site';
+import { PRODUCT_OG_IMAGE, PRODUCT_OG_PATH } from "@/lib/product-og";
+import { getAiNowHomeCopy } from '@/features/home/components/ainow/AiNowHomeCopy';
 import { buildAlternates } from '@/i18n/seo-locales';
 import { HomeFaqSchema } from '@/components/seo/StructuredData';
-import { LandingHero } from '@/features/home/components/LandingHero';
-import { MetaTrustStrip } from '@/features/home/components/MetaTrustStrip';
-import { LandingBody } from '@/features/home/components/LandingBody';
-import { LandingFaq } from '@/features/home/components/LandingFaq';
-import { LandingCta } from '@/features/home/components/LandingCta';
-import { LandingWordmark } from '@/features/home/components/LandingWordmark';
+
+// AiNow Design System Components adapted for aiNOW
+import { AiNowTopBanner } from '@/features/home/components/ainow/AiNowTopBanner';
+import { AiNowNav } from '@/features/home/components/ainow/AiNowNav';
+import { AiNowHero } from '@/features/home/components/ainow/AiNowHero';
+import { AiNowModelProof } from '@/features/home/components/ainow/AiNowModelProof';
+import { AiNowDivider } from '@/features/home/components/ainow/AiNowDivider';
+import { AiNowComparison } from '@/features/home/components/ainow/AiNowComparison';
+import { AiNowCategoryMatrix } from '@/features/home/components/ainow/AiNowCategoryMatrix';
+import { AiNowIndustries } from '@/features/home/components/ainow/AiNowIndustries';
+import { AiNowProcessRoadmap } from '@/features/home/components/ainow/AiNowProcessRoadmap';
+import { AiNowArchitectureCare } from '@/features/home/components/ainow/AiNowArchitectureCare';
+import { AiNowTeamLetter } from '@/features/home/components/ainow/AiNowTeamLetter';
+import { AiNowFaq } from '@/features/home/components/ainow/AiNowFaq';
+import { AiNowClientFit } from '@/features/home/components/ainow/AiNowClientFit';
+import { AiNowClosingCta } from '@/features/home/components/ainow/AiNowClosingCta';
+import { AiNowFooter } from '@/features/home/components/ainow/AiNowFooter';
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -16,58 +27,103 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: 'product.seo' });
-
-  const ogImageUrl = `${SITE.baseUrl}/og/landing-20260905.png`;
-  const siteName = SITE.wordmark.prefix + SITE.wordmark.mark;
-  const canonical = buildAlternates('', locale).canonical;
-  const ogLocales: Record<string, string> = { ka: 'ka_GE', en: 'en_US', ru: 'ru_RU' };
-  const ogLocale = ogLocales[locale] ?? ogLocales.ka;
+  const copy = getAiNowHomeCopy(locale);
+  const title = `${copy.hero.titleLine1} ${copy.hero.titleLine2}`;
+  const description = copy.hero.description;
 
   return {
-    title: t('title'),
-    description: t('description'),
-    // The homepage MUST set its own canonical + hreflang. The root layout deliberately
-    // omits `alternates` (it has no path context), so a page that forgets this ships with
-    // neither, which is exactly what happened on aiads.ge and aicontent.ge.
+    title,
+    description,
     alternates: buildAlternates('', locale),
     openGraph: {
-      type: 'website',
-      url: canonical,
-      siteName,
-      locale: ogLocale,
-      alternateLocale: Object.values(ogLocales).filter((value) => value !== ogLocale),
-      title: t('title'),
-      description: t('description'),
-      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: siteName }],
+      title,
+      description,
+      images: [PRODUCT_OG_IMAGE],
     },
     twitter: {
       card: 'summary_large_image',
-      title: t('title'),
-      description: t('description'),
-      images: [ogImageUrl],
+      title,
+      description,
+      images: [PRODUCT_OG_PATH],
     },
   };
 }
 
 export default async function HomePage({ params }: Props) {
   const { locale } = await params;
-  // Keeps the page static (see generateStaticParams in the layout).
-  setRequestLocale(locale);
 
   return (
     <>
-      {/* FAQPage, generated from the same 14 keys the visible accordion renders, so the
-          schema can never contradict the page. A model that reads this gets the whole
-          product argument, objections included, without parsing a single React component. */}
       <HomeFaqSchema locale={locale} />
-      <div className="landing-page">
-        <LandingHero />
-        <MetaTrustStrip />
-        <LandingBody />
-        <LandingFaq />
-        <LandingCta />
-        <LandingWordmark />
+      <div className="vibecoding-product relative w-full overflow-x-clip bg-[#fcfcfb] dark:bg-[#0a0b0e] text-slate-900 dark:text-slate-100 transition-colors duration-200" id="top">
+        {/* Sticky AiNow Navbar at top */}
+        <AiNowNav />
+
+        {/* Top Announcement Banner flanked by blueprint rails */}
+        <AiNowTopBanner />
+
+        {/* Hero Section with 2-Column Value Prop + Ecosystem Hub, 3-feature grid, and MacOS Studio App Window */}
+        <AiNowHero catalogHref="#how-we-work" />
+
+        {/* 45° Hatched Blueprint Divider */}
+        <AiNowDivider />
+
+        {/* How aiNOW selects the AI stack for a business task */}
+        <AiNowModelProof />
+
+        <AiNowDivider />
+
+        {/* Before vs After: Real Operational Impact (Without aiNOW vs With aiNOW) */}
+        <AiNowComparison />
+
+        {/* 45° Hatched Blueprint Divider */}
+        <AiNowDivider />
+
+        {/* What do you want to improve? — 4 Business Category Bento Matrix */}
+        <AiNowCategoryMatrix />
+
+        {/* 45° Hatched Blueprint Divider */}
+        <AiNowDivider />
+
+        {/* Industry Solutions and Turnkey Workflows */}
+        <AiNowIndustries />
+
+        {/* Full-width continuous horizontal hairline divider */}
+        <div className="relative w-full ainow-divider-hairline" />
+
+        {/* How we work — 3-Step Transparent Process */}
+        <AiNowProcessRoadmap />
+
+        {/* 45° Hatched Blueprint Divider */}
+        <AiNowDivider />
+
+        {/* Trust: data, access and implementation control */}
+        <AiNowArchitectureCare />
+
+        <AiNowDivider />
+
+        {/* Editorial Letter from the Founders */}
+        <AiNowTeamLetter />
+
+        <AiNowDivider />
+
+        {/* Comprehensive 15-Question FAQ Accordion matching HomeFaqSchema 1:1 */}
+        <AiNowFaq />
+
+        <AiNowDivider />
+
+        {/* Client self-qualification before the final consultation CTA */}
+        <AiNowClientFit />
+
+        <AiNowDivider />
+
+        {/* Monolithic Closing CTA Block */}
+        <AiNowClosingCta />
+
+        <AiNowDivider />
+
+        {/* Deep Blueprint Cobalt Footer */}
+        <AiNowFooter />
       </div>
     </>
   );

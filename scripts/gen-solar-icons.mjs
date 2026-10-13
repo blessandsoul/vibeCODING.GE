@@ -2,7 +2,7 @@
 // contains ONLY the solar:* icons used by <Ico> across the app. Mirrors the aiSTAFF
 // admin's bundled-subset approach so icons render with zero network calls (CSP-safe).
 //
-// Run from the ai-landings root:  node scripts/gen-solar-icons.mjs
+// Run from the website root:  node scripts/gen-solar-icons.mjs
 // Re-run whenever a new solar:* name is introduced in a component.
 import { createRequire } from 'node:module';
 import { writeFileSync, readdirSync, readFileSync, statSync } from 'node:fs';
@@ -22,7 +22,7 @@ function walkSrc(dir, acc) {
     const p = join(dir, entry);
     if (statSync(p).isDirectory()) {
       walkSrc(p, acc);
-    } else if (/\.(?:[cm]?[jt]sx?)$/.test(entry) && entry !== 'solar-icons.ts') {
+    } else if (/\.(tsx?|jsx?)$/.test(entry) && entry !== 'solar-icons.ts') {
       const matches = readFileSync(p, 'utf8').match(/solar:[a-z0-9-]+/g);
       if (matches) for (const n of matches) acc.add(n.slice('solar:'.length));
     }
@@ -51,10 +51,10 @@ const subset = {
   height: full.height,
 };
 
-const banner = `// AUTO-GENERATED offline Iconify subset (Solar bold, only icons used by <Ico>).
+const banner = `// AUTO-GENERATED offline Iconify subset (Solar bold-duotone, only icons used by <Ico>).
 // Regenerate via:  node scripts/gen-solar-icons.mjs
-// Bundled so landings render icons with zero network calls (no Iconify HTTP API, CSP-safe).
-// To add an icon: use its solar:* name in a component, add it to USED in the script, re-run.
+// Bundled so the site renders icons with zero network calls (no Iconify HTTP API, CSP-safe).
+// To add an icon: use its solar:* name in a component, then re-run the script.
 `;
 
 const body = `export const solarIcons = ${JSON.stringify(subset)} as const;\n`;

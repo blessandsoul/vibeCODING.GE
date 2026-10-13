@@ -1,19 +1,12 @@
-import { SITE } from '@/config/site';
-import {
-  MACHINE_FAQ,
-  MACHINE_REVIEWED_ON,
-  PRODUCT_BRAND,
-  machineJsonResponse,
-} from '@/features/product-pages/machine';
+import { faq, serialise } from "@/lib/product-public-facts";
 
-export const dynamic = 'force-static';
+export const revalidate = 86400;
 
-export function GET() {
-  return machineJsonResponse({
-    name: PRODUCT_BRAND,
-    url: SITE.baseUrl,
-    sourcePage: SITE.baseUrl,
-    faqs: MACHINE_FAQ,
-    reviewedOn: MACHINE_REVIEWED_ON,
+export function GET(): Response {
+  return new Response(serialise(faq()), {
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "Cache-Control": "public, max-age=86400, stale-while-revalidate=3600",
+    },
   });
 }

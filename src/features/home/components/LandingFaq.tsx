@@ -2,8 +2,6 @@
 
 import { useEffect, useRef, type ReactNode, type MouseEvent } from 'react';
 import { useTranslations } from 'next-intl';
-import { Ico } from '@/components/common/Ico';
-import { SITE } from '@/config/site';
 import './landing-faq.css';
 
 /* =========================================================================
@@ -18,7 +16,6 @@ import './landing-faq.css';
 type Faq = { q: ReactNode; a: string };
 
 const DUR = 420;
-const FAQ_LIMIT = 5;
 
 // Whole-card toggle with the source's smooth max-height/opacity animation.
 function toggleFaq(e: MouseEvent<HTMLDetailsElement>) {
@@ -71,24 +68,19 @@ function toggleFaq(e: MouseEvent<HTMLDetailsElement>) {
   }
 }
 
-function renderBrandMark() {
-  return (
-    <span className="brand-mark"><span className="bm-prefix">{SITE.wordmark.prefix}</span><span className="bm-mark">{SITE.wordmark.mark}</span></span>
-  );
-}
+const brandMark = () => (
+  <span className="brand-mark"><span className="bm-prefix">ai</span><span className="bm-mark">NOW</span></span>
+);
 
 export function LandingFaq() {
-  const t = useTranslations('product.faq');
-
-  // Keep the visible list aligned with the five-item semantic FAQ contract.
-  const FAQS: Faq[] = [];
-  // q1 alone: it is the one that can carry the inline brand wordmark.
-  FAQS.push({ q: t.rich('q1', { brand: renderBrandMark }), a: t('a1') });
-  for (let n = 2; n <= FAQ_LIMIT && t.has(`q${n}`) && t.has(`a${n}`); n += 1) {
-    FAQS.push({ q: t(`q${n}`), a: t(`a${n}`) });
-  }
-  const hasReviewMetadata = ['reviewedBy', 'updatedOn', 'updatedDate', 'updatedIso']
-    .every((key) => t.has(key));
+  const t = useTranslations('home.faq');
+  const FAQS: Faq[] = [
+    { q: t.rich('q1', { brand: brandMark }), a: t('a1') },
+    ...Array.from({ length: 14 }, (_, i) => {
+      const n = i + 2;
+      return { q: t(`q${n}`), a: t(`a${n}`) };
+    }),
+  ];
   const rootRef = useRef<HTMLElement>(null);
 
   // Scroll-triggered fade-up (source-exact), scoped to this section.
@@ -120,23 +112,15 @@ export function LandingFaq() {
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-16 md:mb-20">
           <p className="text-xs font-mono uppercase tracking-[0.3em] text-[#525252] mb-4">FAQ</p>
-          <h2 className="fade-up text-balance font-display font-extrabold text-4xl md:text-6xl leading-[1.05] tracking-tight text-neutral-900">{t('headingPre')}<br /><span>{t('headingAccent')}</span></h2>
+          <h2 className="fade-up font-display font-extrabold text-4xl md:text-6xl leading-[1.05] tracking-tight text-neutral-900">{t('headingPre')}<br /><span>{t('headingAccent')}</span></h2>
           <p className="mt-6 text-[#525252]">{t('subtitle')}</p>
-          {hasReviewMetadata ? (
-            <p className="mt-4 text-xs leading-relaxed text-[#667085]">
-              {t('reviewedBy')}
-              <span className="mx-2" aria-hidden="true">·</span>
-              {t('updatedOn')}{' '}
-              <time dateTime={t('updatedIso')}>{t('updatedDate')}</time>
-            </p>
-          ) : null}
         </div>
         <div className="space-y-4">
           {FAQS.map((f, i) => (
             <details key={i} onClick={toggleFaq} className="faq-item group border border-[#e5e5e5] rounded-2xl p-6 bg-white open:bg-[#fafafa]">
               <summary className="flex items-center justify-between cursor-pointer">
                 <h3 className="font-display font-bold text-xl text-neutral-900">{f.q}</h3>
-                <Ico name="solar:add-circle-linear" className="w-5 h-5 text-[#525252] transition-transform" />
+                <svg className="w-5 h-5 text-[#525252] transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4"></path></svg>
               </summary>
               <div className="faq-body"><div><p className="text-[#525252] leading-relaxed">{f.a}</p></div></div>
             </details>

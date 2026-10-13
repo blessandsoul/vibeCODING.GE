@@ -1,0 +1,91 @@
+/* =========================================================================
+   LandingStack — "ჩვენ ვიყენებთ" tool-arsenal section (STACK).
+   Ported verbatim from ainow_handoff/index.html.
+   Token swaps to avoid shadcn collision: text-muted → #525252,
+   bg-accent/[0.04] → bg-[#7c3aed]/[0.04] (in markup). Literal font names
+   ('Space Mono') resolve via the Google Fonts <link> in layout head.
+   ========================================================================= */
+
+.stack-cell {
+  padding: 16px 14px;
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.06);
+  transition: border-color 240ms, box-shadow 240ms, transform 240ms;
+}
+.stack-cell:hover {
+  border-color: rgba(124,58,237,0.25);
+  box-shadow: 0 8px 24px -8px rgba(124,58,237,0.18);
+  transform: translateY(-2px);
+}
+@media (min-width: 1024px) {
+  .stack-cell-wide { grid-column: span 2; }
+}
+.stack-label {
+  font-family: var(--font-iai-data);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin: 0 0 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed rgba(0,0,0,0.08);
+}
+.stack-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.stack-chips .chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px 4px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,0.08);
+  background: rgba(0,0,0,0.025);
+  font-size: 11.5px;
+  color: #0a0a0a;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  transition: background 200ms, border-color 200ms;
+  white-space: nowrap;
+}
+.stack-chips .chip:hover {
+  background: rgba(124,58,237,0.08);
+  border-color: rgba(124,58,237,0.25);
+}
+.chip-logo {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  flex-shrink: 0;
+  filter: saturate(1.05);
+}
+.chip-flag {
+  width: 18px;
+  height: 13px;
+  border-radius: 2px;
+  object-fit: cover;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.1);
+}
+
+/* Meta pills under stack header - bold proof points */
+.meta-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(124,58,237,0.08), rgba(224,64,251,0.08));
+  border: 1px solid rgba(124,58,237,0.22);
+  font-size: 12px;
+  font-weight: 600;
+  color: #0a0a0a;
+  letter-spacing: -0.005em;
+  transition: background 240ms, border-color 240ms, transform 240ms;
+}
+.meta-pill:hover {
+  background: linear-gradient(135deg, rgba(124,58,237,0.16), rgba(224,64,251,0.16));
+  border-color: rgba(124,58,237,0.4);
+  transform: translateY(-1px);
+}

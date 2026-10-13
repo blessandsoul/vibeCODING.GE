@@ -1,0 +1,245 @@
+{
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-09-20T07:51:20.278Z",
+  "source": {
+    "name": "models.dev public model catalog",
+    "url": "https://models.dev/catalog.json",
+    "documentation": "https://models.dev/",
+    "catalogModelCount": 414
+  },
+  "selectionPolicy": {
+    "label": "Latest tracked models",
+    "explanation": "One currently listed, non-preview, non-batch model is selected per tracked AI lab by the catalog release timestamp. This is an availability monitor, not a benchmark or a claim that one model is universally best.",
+    "trackedLabs": [
+      {
+        "id": "openai",
+        "name": "OpenAI",
+        "type": "generation"
+      },
+      {
+        "id": "anthropic",
+        "name": "Anthropic",
+        "type": "generation"
+      },
+      {
+        "id": "google",
+        "name": "Google",
+        "type": "generation"
+      },
+      {
+        "id": "xai",
+        "name": "xAI",
+        "type": "generation"
+      },
+      {
+        "id": "mistral",
+        "name": "Mistral AI",
+        "type": "generation"
+      },
+      {
+        "id": "deepseek",
+        "name": "DeepSeek",
+        "type": "generation"
+      },
+      {
+        "id": "meta",
+        "name": "Meta",
+        "type": "open"
+      },
+      {
+        "id": "alibaba",
+        "name": "Qwen",
+        "type": "open"
+      },
+      {
+        "id": "cohere",
+        "name": "Cohere",
+        "type": "generation"
+      },
+      {
+        "id": "zhipuai",
+        "name": "Z.ai",
+        "type": "generation"
+      },
+      {
+        "id": "moonshotai",
+        "name": "Moonshot AI",
+        "type": "generation"
+      }
+    ]
+  },
+  "models": [
+    {
+      "id": "openai/gpt-6-astra",
+      "name": "GPT-6 Astra",
+      "lab": "OpenAI",
+      "category": "generation",
+      "releasedAt": "2026-09-04",
+      "contextWindow": 1050000,
+      "modalities": [
+        "text",
+        "image",
+        "pdf"
+      ],
+      "source": "models.dev public model catalog",
+      "sourceUrl": "https://models.dev/"
+    },
+    {
+      "id": "anthropic/claude-fable-5-1",
+      "name": "Claude Fable 5.1",
+      "lab": "Anthropic",
+      "category": "generation",
+      "releasedAt": "2026-09-01",
+      "contextWindow": 1000000,
+      "modalities": [
+        "text",
+        "image",
+        "pdf"
+      ],
+      "source": "models.dev public model catalog",
+      "sourceUrl": "https://models.dev/"
+    },
+    {
+      "id": "google/gemini-3.8-flash",
+      "name": "Gemini 3.8 Flash",
+      "lab": "Google",
+      "category": "generation",
+      "releasedAt": "2026-09-02",
+      "contextWindow": 1048576,
+      "modalities": [
+        "text",
+        "image",
+        "video",
+        "audio",
+        "pdf"
+      ],
+      "source": "models.dev public model catalog",
+      "sourceUrl": "https://models.dev/"
+    },
+    {
+      "id": "xai/grok-4.6",
+      "name": "Grok 4.6",
+      "lab": "xAI",
+      "category": "generation",
+      "releasedAt": "2026-08-12",
+      "contextWindow": 500000,
+      "modalities": [
+        "text",
+        "image"
+      ],
+      "source": "models.dev public model catalog",
+      "sourceUrl": "https://models.dev/"
+    },
+    {
+      "id": "mistral/mistral-medium-latest",
+      "name": "Mistral Medium (latest)",
+      "lab": "Mistral AI",
+      "category": "generation",
+      "releasedAt": "2026-04-29",
+      "contextWindow": 262144,
+      "modalities": [
+        "text",
+        "image"
+      ],
+      "source": "models.dev public model catalog",
+      "sourceUrl": "https://models.dev/"
+    },
+    {
+      "id": "deepseek/deepseek-v4.1-flash",
+      "name": "DeepSeek V4.1 Flash",
+      "lab": "DeepSeek",
+      "category": "generation",
+      "releasedAt": "2026-09-10",
+      "contextWindow": 1000000,
+      "modalities": [
+        "text",
+        "image"
+      ],
+      "source": "models.dev public model catalog",
+      "sourceUrl": "https://models.dev/"
+    },
+    {
+      "id": "meta/llama-4-scout-17b-instruct",
+      "name": "Llama 4 Scout 17B Instruct",
+      "lab": "Meta",
+      "category": "open",
+      "releasedAt": "2025-04-05",
+      "contextWindow": 10000000,
+      "modalities": [
+        "text",
+        "image"
+      ],
+      "source": "models.dev public model catalog",
+      "sourceUrl": "https://models.dev/"
+    },
+    {
+      "id": "alibaba/qwen3.8-omni-flash",
+      "name": "Qwen3.8 Omni Flash",
+      "lab": "Qwen",
+      "category": "open",
+      "releasedAt": "2026-09-17",
+      "contextWindow": 1000000,
+      "modalities": [
+        "text",
+        "image",
+        "audio",
+        "video"
+      ],
+      "source": "models.dev public model catalog",
+      "sourceUrl": "https://models.dev/"
+    },
+    {
+      "id": "cohere/command-a-plus-05-2026",
+      "name": "Command A Plus",
+      "lab": "Cohere",
+      "category": "generation",
+      "releasedAt": "2026-05-20",
+      "contextWindow": 128000,
+      "modalities": [
+        "text",
+        "image"
+      ],
+      "source": "models.dev public model catalog",
+      "sourceUrl": "https://models.dev/"
+    },
+    {
+      "id": "zhipuai/glm-5.3-flash",
+      "name": "GLM-5.3-Flash",
+      "lab": "Z.ai",
+      "category": "generation",
+      "releasedAt": "2026-08-26",
+      "contextWindow": 1000000,
+      "modalities": [
+        "text",
+        "image",
+        "video",
+        "pdf"
+      ],
+      "source": "models.dev public model catalog",
+      "sourceUrl": "https://models.dev/"
+    },
+    {
+      "id": "moonshotai/kimi-k3",
+      "name": "Kimi K3",
+      "lab": "Moonshot AI",
+      "category": "generation",
+      "releasedAt": "2026-07-16",
+      "contextWindow": 1048576,
+      "modalities": [
+        "text",
+        "image",
+        "video"
+      ],
+      "source": "models.dev public model catalog",
+      "sourceUrl": "https://models.dev/"
+    }
+  ],
+  "decisionLayer": {
+    "id": "typesafe/jev",
+    "name": "Jev by TypeSafe",
+    "lab": "TypeSafe",
+    "category": "structured-decision",
+    "description": "A decision layer for typed classification, routing and confidence-aware escalation; it is not a text-generation model.",
+    "sourceUrl": "https://typesafe.ai/"
+  }
+}

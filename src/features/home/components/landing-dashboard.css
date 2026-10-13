@@ -1,0 +1,203 @@
+/* =========================================================================
+   LandingDashboard, three-group KPI demo board. Ported from the approved
+   prototype, db- prefixed. Single-hue sparklines (violet only on hero
+   tiles), status colors only on deltas, hairline group structure.
+   ========================================================================= */
+
+.db-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 36px;
+}
+.db-eyebrow {
+  font-family: var(--font-space-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #6f6f7a;
+  margin-bottom: 12px;
+}
+.db-sub {
+  margin: 0;
+  color: #4b4b55;
+  max-width: 32ch;
+  font-size: 15px;
+}
+.db-demo-note {
+  margin: 6px 0 0;
+  font-family: var(--font-space-mono), monospace;
+  font-size: 11px;
+  color: #6f6f7a;
+}
+
+.db-shell {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(10, 10, 10, 0.06),
+    0 1px 2px -1px rgba(10, 10, 10, 0.06),
+    0 2px 4px 0 rgba(10, 10, 10, 0.04);
+}
+.db-glab {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 13px 22px 11px;
+  border-top: 1px solid rgba(10, 10, 10, 0.1);
+  border-bottom: 1px solid rgba(10, 10, 10, 0.1);
+  background: #fbfbfd;
+  font-family: var(--font-iai-ui);
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  color: #0a0a0a;
+}
+.db-group:first-child .db-glab {
+  border-top: 0;
+}
+.db-bead {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex: none;
+}
+.db-glab small {
+  margin-left: auto;
+  font-family: var(--font-space-mono), monospace;
+  font-size: 10px;
+  font-weight: 400;
+  color: #6f6f7a;
+  letter-spacing: 0.06em;
+}
+
+.db-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: rgba(10, 10, 10, 0.08);
+}
+.db-kpi {
+  position: relative;
+  overflow: hidden;
+  padding: 22px 20px 18px;
+  background: #fff;
+  min-width: 0;
+}
+.db-top {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 12px;
+}
+.db-ic {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  color: #6f6f7a;
+  background: #f5f5f6;
+}
+.db-lab {
+  font-size: 12px;
+  color: #4b4b55;
+  line-height: 1.3;
+}
+.db-val {
+  font-family: var(--font-iai-ui);
+  font-weight: 900;
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  letter-spacing: -0.03em;
+  color: #0a0a0a;
+  font-variant-numeric: tabular-nums;
+  transition: transform 150ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.db-val.pop {
+  transform: scale(1.02);
+}
+.db-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-family: var(--font-space-mono), monospace;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #0f9d6e;
+  background: rgba(16, 185, 129, 0.1);
+}
+.db-delta.down {
+  color: #dc3d5d;
+  background: rgba(244, 63, 94, 0.1);
+}
+.db-spark {
+  display: block;
+  width: 100%;
+  height: 40px;
+  margin-top: 12px;
+}
+
+.db-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 15px 22px;
+  border-top: 1px solid rgba(10, 10, 10, 0.1);
+  background: #fbfbfd;
+}
+.db-foot p {
+  margin: 0;
+  font-size: 13.5px;
+  color: #4b4b55;
+}
+.db-cta {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 9px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0a0a0a;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(10, 10, 10, 0.14);
+  transition-property: background-color, transform;
+  transition-duration: 150ms;
+  transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+}
+.db-cta:hover {
+  background: #fafafa;
+}
+.db-cta:active {
+  transform: scale(0.96);
+}
+.db-cta:focus-visible {
+  outline: 2px solid #7c3aed;
+  outline-offset: 2px;
+}
+
+@media (max-width: 900px) {
+  .db-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .db-section .fade-up {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .db-val {
+    transition: none !important;
+  }
+}

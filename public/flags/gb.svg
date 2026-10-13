@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 20" role="img" aria-label="United Kingdom">
+  <rect width="28" height="20" fill="#1f3f95"/>
+  <path stroke="#fff" stroke-width="4" d="M0 0l28 20M28 0L0 20"/>
+  <path stroke="#cf142b" stroke-width="1.8" d="M0 0l28 20M28 0L0 20"/>
+  <path stroke="#fff" stroke-width="6" d="M14 0v20M0 10h28"/>
+  <path stroke="#cf142b" stroke-width="3.2" d="M14 0v20M0 10h28"/>
+</svg>

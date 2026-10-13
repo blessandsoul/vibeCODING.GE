@@ -1,5 +1,6 @@
 import { getRequestConfig } from "next-intl/server";
 import { routing } from "./routing";
+import { isIndexedLocale } from "./seo-locales";
 
 export default getRequestConfig(async ({ requestLocale }) => {
   let locale = await requestLocale;
@@ -8,16 +9,9 @@ export default getRequestConfig(async ({ requestLocale }) => {
     locale = routing.defaultLocale;
   }
 
-  const siteMessages = (await import(`../messages/${locale}.json`)).default;
-  const productPageMessages = (
-    await import(`../features/product-pages/messages/${locale}.json`)
-  ).default;
-
+  const messageLocale = isIndexedLocale(locale) ? locale : "en";
   return {
     locale,
-    messages: {
-      ...siteMessages,
-      productPages: productPageMessages,
-    },
+    messages: (await import(`../messages/${messageLocale}.json`)).default,
   };
 });

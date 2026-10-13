@@ -1,0 +1,219 @@
+.sparkle-button {
+  --sparkle-star-1-opacity: 0.25;
+  --sparkle-star-1-scale: 1;
+  --sparkle-star-2-opacity: 1;
+  --sparkle-star-2-scale: 1;
+  --sparkle-star-3-opacity: 0.5;
+  --sparkle-star-3-scale: 1;
+  --sparkle-dots-opacity: 0;
+
+  appearance: none;
+  outline: none;
+  border: none;
+  padding: 16px 28px 16px 22px;
+  border-radius: 29px;
+  margin: 0;
+  background-color: var(--card);
+  color: var(--muted-foreground);
+  min-width: 192px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  z-index: 1;
+  transform: scale(var(--sparkle-scale, 1)) translateZ(0);
+  box-shadow:
+    0px 0px 120px var(--sparkle-shadow-wide, transparent),
+    0px 4px 12px oklch(0 0 0 / 5%),
+    0px 1px 2px oklch(0 0 0 / 10%),
+    inset 0px 1px 1px var(--sparkle-shadow-inset, oklch(1 0 0 / 4%)),
+    0 0 0 var(--sparkle-shadow-outline, 0px) oklch(0.58 0.22 300 / 40%);
+  transition: transform 0.3s, background-color 0.3s, box-shadow 0.3s, color 0.3s;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 26px;
+  letter-spacing: 0.005em;
+}
+
+/* Bottom glow blur */
+.sparkle-button::before {
+  content: '';
+  display: block;
+  position: absolute;
+  right: 20%;
+  height: 20px;
+  left: 20%;
+  bottom: -10px;
+  background: var(--primary);
+  filter: blur(12.5px);
+  z-index: 2;
+  clip-path: inset(-200% -30% 10px -30% round 29px);
+  opacity: 0;
+  transition: opacity 0.4s;
+  transform: translateZ(0);
+}
+
+/* Button text container */
+.sparkle-button span {
+  position: relative;
+  z-index: 1;
+  display: block;
+}
+
+/* Text gradient overlay (fade effect in default state) */
+.sparkle-button span::before {
+  content: '';
+  background-image: linear-gradient(to right, transparent, var(--card));
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.4;
+  transition: opacity 0.4s;
+}
+
+/* Stroke border container */
+.sparkle-button .sparkle-stroke {
+  mix-blend-mode: hard-light;
+}
+
+.sparkle-button .sparkle-stroke svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke-width: 0.75px;
+  stroke: oklch(0.82 0.10 270);
+  stroke-dasharray: 1.5 14;
+  stroke-dashoffset: 22;
+  opacity: 0;
+}
+
+.sparkle-button .sparkle-stroke svg:nth-child(2) {
+  stroke-width: 1px;
+  stroke-opacity: 0.5;
+  filter: blur(3px);
+}
+
+/* All SVGs in button */
+.sparkle-button svg {
+  display: block;
+  overflow: visible;
+  pointer-events: none;
+}
+
+/* Particle dots */
+.sparkle-button svg.sparkle-dots {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  fill: oklch(0.78 0.12 275);
+  opacity: var(--sparkle-dots-opacity);
+}
+
+/* Sparkle icon */
+.sparkle-button svg.sparkle-icon {
+  width: 24px;
+  height: 26px;
+  margin-right: 12px;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+
+.sparkle-button svg.sparkle-icon path:nth-child(1) {
+  opacity: var(--sparkle-star-1-opacity);
+  transform: scale(var(--sparkle-star-1-scale)) translateZ(0);
+  transform-origin: 25% 14.58%;
+}
+
+.sparkle-button svg.sparkle-icon path:nth-child(2) {
+  opacity: var(--sparkle-star-2-opacity);
+  transform: scale(var(--sparkle-star-2-scale)) translateZ(0);
+  transform-origin: 60.42% 50%;
+}
+
+.sparkle-button svg.sparkle-icon path:nth-child(3) {
+  opacity: var(--sparkle-star-3-opacity);
+  transform: scale(var(--sparkle-star-3-scale)) translateZ(0);
+  transform-origin: 25% 85.42%;
+}
+
+/* Hover states */
+.sparkle-button:hover {
+  --sparkle-scale: 1.1;
+  --sparkle-shadow-wide: oklch(0.58 0.22 300 / 40%);
+  --sparkle-shadow-inset: oklch(1 0 0 / 35%);
+  --sparkle-shadow-outline: 3px;
+  color: var(--primary-foreground);
+  background-color: var(--primary);
+}
+
+.sparkle-button:hover .sparkle-stroke svg {
+  animation: sparkle-stroke 2s linear infinite;
+}
+
+.sparkle-button:hover::before {
+  opacity: 1;
+}
+
+.sparkle-button:hover span::before {
+  opacity: 0;
+}
+
+.sparkle-button:hover:active {
+  --sparkle-scale: 1.05;
+}
+
+/* Focus-visible for keyboard navigation */
+.sparkle-button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+
+@keyframes sparkle-stroke {
+  0% {
+    opacity: 0;
+  }
+  25%,
+  75% {
+    opacity: 1;
+  }
+  95%,
+  100% {
+    stroke-dashoffset: 6;
+    opacity: 0;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .sparkle-button {
+    transition: none;
+  }
+
+  .sparkle-button::before {
+    transition: none;
+  }
+
+  .sparkle-button span::before {
+    transition: none;
+  }
+
+  .sparkle-button:hover {
+    --sparkle-scale: 1;
+  }
+
+  .sparkle-button:hover .sparkle-stroke svg {
+    animation: none;
+  }
+
+  .sparkle-button svg.sparkle-dots {
+    display: none;
+  }
+}

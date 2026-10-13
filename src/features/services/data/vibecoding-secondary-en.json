@@ -1,0 +1,173 @@
+{
+  "integrations": {
+    "seoTitle": "{product} integrations and supported systems",
+    "seoDescription": "See which channels and systems {product} can connect to, what moves between them, and which connections need a custom setup.",
+    "breadcrumb": "Integrations",
+    "eyebrow": "Connections",
+    "title": "Where {product} fits into your current work",
+    "lead": "This list separates available connections, custom setup and planned work. A platform logo is never treated as proof that every account can be connected automatically.",
+    "ledger": {
+      "eyebrow": "Verified connection list",
+      "title": "System, connection and data flow in one row",
+      "intro": "Final access and compatibility are confirmed before setup. Planned items are shown as planned."
+    },
+    "labels": {
+      "platform": "System",
+      "categories": "Categories",
+      "connection": "Connection",
+      "status": "Status",
+      "data": "What moves"
+    },
+    "platforms": {
+      "phone": "Phone",
+      "calendar": "Calendar",
+      "payments": "Payments",
+      "push-notifications": "Push notifications",
+      "camera": "Camera",
+      "email": "Email",
+      "documents": "Cloud documents",
+      "task-system": "Task system",
+      "maps": "Maps",
+      "vehicle-platform": "Vehicle platform",
+      "charging": "Charging and depot",
+      "telemetry": "Vehicle telemetry",
+      "website": "Website",
+      "analytics": "Analytics",
+      "forms": "Forms",
+      "domain": "Domain",
+      "public-app": "Public application",
+      "source-repository": "Source repository",
+      "database": "Database"
+    },
+    "status": {
+      "available": "Available",
+      "customSetup": "Custom setup",
+      "planned": "Planned"
+    },
+    "categories": {
+      "communication": "Communication",
+      "businessSystems": "Business systems",
+      "contentAndAdvertising": "Content and advertising",
+      "development": "Development",
+      "operations": "Operations"
+    },
+    "connections": {
+      "direct": "Direct connection",
+      "api": "API after access check",
+      "file": "Secure file exchange",
+      "custom": "Configured for your account",
+      "planned": "Pilot-dependent connection"
+    },
+    "flows": {
+      "calls": "Call status and approved call outcomes for {platform}.",
+      "callResults": "Completed-call results and cases requiring attention are sent to {platform}.",
+      "appointments": "Available times, confirmations and changes for {platform}.",
+      "customerRecords": "Only the customer fields approved for the workflow in {platform}.",
+      "paymentEvents": "Approved payment status and transaction references are exchanged with {platform}.",
+      "messages": "Incoming messages, approved replies and handoff status in {platform}.",
+      "websiteEvents": "Approved website changes and publication status for {platform}.",
+      "analyticsMetrics": "Selected visits, conversions and measured outcomes are read from {platform}.",
+      "domainSettings": "Only the approved domain and publication settings are changed in {platform}.",
+      "forms": "Form fields and the resulting business task from {platform}.",
+      "taskRecords": "Approved tasks, owners, due dates and completion status are exchanged with {platform}.",
+      "documents": "Selected source files and review status from {platform}.",
+      "accountingDrafts": "Review-ready draft rows prepared for {platform}.",
+      "applicationRelease": "Approved build and release information for {platform}.",
+      "notifications": "Approved notification content and delivery status in {platform}.",
+      "sourceReview": "Agreed source files, findings and verification status for {platform}.",
+      "campaignSignals": "Spend, enquiries and measured outcomes linked to {platform}.",
+      "contentPublishing": "Approved materials, schedule and publication status in {platform}.",
+      "fleetCommands": "Approved dispatch or depot tasks for {platform}.",
+      "routingData": "Pickup, destination and route information required for the trip is exchanged with {platform}.",
+      "depotSchedule": "Approved charging, cleaning and depot schedules are exchanged with {platform}.",
+      "telemetry": "Selected vehicle status and incident signals from {platform}."
+    },
+    "cta": {
+      "eyebrow": "Compatibility check",
+      "title": "Tell us which systems you already use",
+      "description": "aiNOW checks access, limits and the safest connection path before promising an integration.",
+      "label": "Check my systems"
+    }
+  },
+  "security": {
+    "seoTitle": "{product} security, approvals and data handling",
+    "seoDescription": "Understand how {product} access, actions, approvals, retention, deletion and human escalation are defined before launch.",
+    "breadcrumb": "Security",
+    "eyebrow": "Data and control",
+    "title": "You see what {product} may read and change",
+    "lead": "Before launch, aiNOW writes down the source access, allowed actions, approval boundary, retention rule and human handoff. Uncertain work does not become an invisible automatic decision.",
+    "labels": {
+      "control": "Control",
+      "owner": "Owner",
+      "evidence": "What proves it",
+      "incident": "Security contact"
+    },
+    "flow": {
+      "eyebrow": "Data flow",
+      "title": "Four visible stages",
+      "intro": "The exact systems and fields are project-specific; the control sequence stays the same.",
+      "s1Title": "Approved source",
+      "s1Description": "The product receives only the source and fields named in the scope.",
+      "s2Title": "Allowed action",
+      "s2Description": "It performs only the actions written into the operating boundary.",
+      "s3Title": "Approval or handoff",
+      "s3Description": "Important or uncertain cases wait for a person.",
+      "s4Title": "Recorded result",
+      "s4Description": "The business can see what happened and what needs attention."
+    },
+    "controls": {
+      "eyebrow": "Control ledger",
+      "title": "Six questions answered before launch",
+      "intro": "These controls are part of the project scope, not decorative security claims.",
+      "sourceAccess": {
+        "title": "Source access",
+        "description": "{product} receives only approved systems, files and fields.",
+        "owner": "Business and aiNOW",
+        "evidence": "Approved access list"
+      },
+      "actions": {
+        "title": "Allowed actions",
+        "description": "The product cannot silently expand beyond the written workflow.",
+        "owner": "Business",
+        "evidence": "Scope and action list"
+      },
+      "approval": {
+        "title": "Approval boundary",
+        "description": "Important changes and uncertain cases wait for the named person.",
+        "owner": "Business",
+        "evidence": "Approval rule"
+      },
+      "retention": {
+        "title": "Retention",
+        "description": "The project names what is stored and for how long.",
+        "owner": "Business and aiNOW",
+        "evidence": "Retention rule"
+      },
+      "deletion": {
+        "title": "Deletion",
+        "description": "Deletion requests have a named channel and confirmation step.",
+        "owner": "aiNOW",
+        "evidence": "Request record"
+      },
+      "escalation": {
+        "title": "Human escalation",
+        "description": "The workflow names who receives a case the product should not decide.",
+        "owner": "Business",
+        "evidence": "Handoff rule"
+      }
+    },
+    "limitations": {
+      "eyebrow": "Honest boundary",
+      "title": "What is not assumed",
+      "item1": "aiNOW does not expand access to your data or permission to act without prior written agreement.",
+      "item2": "A public landing page does not collect or process your operational business data.",
+      "item3": "Exact providers, retention periods and access rights are confirmed in the written project scope."
+    },
+    "cta": {
+      "eyebrow": "Security review",
+      "title": "Ask about your actual data flow",
+      "description": "aiNOW will map the sources, actions and approval points for your specific process.",
+      "label": "Discuss my data flow"
+    }
+  }
+}

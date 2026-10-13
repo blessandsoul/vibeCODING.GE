@@ -1,0 +1,300 @@
+/* =========================================================================
+   LandingFlagships — "#products" 3-brand showcase (aiCONTENT / aiSTAFF / iAI)
+   + how-it-works flows + metrics + iAI strip.
+   Ported verbatim from ainow_handoff/index.html.
+   Token swaps in markup: text-muted → #525252, text-accent → #7c3aed,
+   text-accent2 → #e040fb, text-glow → #ff6b00, bg-border → #e5e5e5,
+   border-border → #e5e5e5, bg-accent/8 → bg-[#7c3aed]/8.
+   .slogan-* and .wordmark-3d come from landing-hero.css / landing-nav.css.
+   ========================================================================= */
+
+/* === SCROLL FADE-UP === */
+.fade-up {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 900ms cubic-bezier(0.16, 1, 0.3, 1),
+              transform 900ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+.fade-up.in {
+  opacity: 1;
+  transform: translateY(0);
+}
+.fade-up-1 { transition-delay: 80ms; }
+.fade-up-2 { transition-delay: 160ms; }
+.fade-up-3 { transition-delay: 240ms; }
+
+/* === Tilt Card with parallax depth === */
+.tilt-card {
+  transform-style: preserve-3d;
+  transition: transform 380ms cubic-bezier(0.16, 1, 0.3, 1), border-color 260ms ease;
+  will-change: transform;
+}
+.tilt-depth-0 { transform: translateZ(0); transition: transform 380ms ease; }
+.tilt-depth-1 { transform: translateZ(18px); transition: transform 380ms ease; }
+.tilt-depth-2 { transform: translateZ(34px); transition: transform 380ms ease; }
+.tilt-depth-3 { transform: translateZ(50px); transition: transform 380ms ease; }
+
+/* === v7 - Brand Showcase === */
+.brand-card {
+  transition: transform 380ms cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 260ms ease,
+              box-shadow 320ms ease;
+}
+.brand-card.brand-content:hover { border-color: #ec4899; box-shadow: 0 18px 40px rgba(236,72,153,0.12); }
+.brand-card.brand-staff:hover   { border-color: #0077b6; box-shadow: 0 18px 40px rgba(0,119,182,0.12); }
+.brand-card.brand-iai:hover     { border-color: #6366f1; box-shadow: 0 18px 40px rgba(99,102,241,0.16); }
+
+/* Brand wordmarks - same canonical recipe as .wordmark-3d, with per-brand accent colors */
+.brand-wordmark {
+  color: #0a0a0a;
+  line-height: 0.92 !important;
+  display: inline-flex;
+  align-items: baseline;
+  -webkit-font-smoothing: antialiased;
+}
+.brand-wordmark .wm-accent { margin-left: 0.12em; }
+.brand-wordmark .wm-prefix {
+  font-family: var(--font-iai-data);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+.brand-wordmark .wm-mark {
+  font-family: var(--font-iai-ui);
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  color: #0a0a0a;
+  margin-left: 0.04em;
+}
+.brand-wordmark .wm-accent {
+  position: relative;
+  display: inline-block;
+  width: 0.36em;
+  align-self: flex-start;
+  margin-top: 0.22em;
+  margin-left: 0.05em;
+  height: 0.28em;
+}
+.brand-wordmark .wm-accent::before,
+.brand-wordmark .wm-accent::after {
+  content: '';
+  position: absolute;
+  height: 0.08em;
+  width: 100%;
+  left: 0;
+  border-radius: 1px;
+  transform: skewX(-15deg);
+}
+.brand-wordmark .wm-accent::before { top: 0; left: 0.12em; }
+.brand-wordmark .wm-accent::after  { top: 0.14em; left: 0; }
+/* Per-brand color theming */
+.brand-content .brand-wordmark .wm-prefix { color: #ec4899; }
+.brand-content .brand-wordmark .wm-accent::before { background: #f472b6; }
+.brand-content .brand-wordmark .wm-accent::after  { background: #ec4899; }
+.brand-staff .brand-wordmark .wm-prefix { color: #00b4d8; }
+.brand-staff .brand-wordmark .wm-accent::before { background: #0077b6; }
+.brand-staff .brand-wordmark .wm-accent::after  { background: #00b4d8; }
+/* iAI — premium tricolor wordmark (the platform that unifies all three) */
+.brand-iai .brand-wordmark .wm-prefix,
+.brand-iai .brand-wordmark .wm-mark {
+  background: linear-gradient(120deg, #ec4899 0%, #2563eb 50%, #10b981 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+.brand-iai .brand-wordmark .wm-accent::before { background: #ec4899; }
+.brand-iai .brand-wordmark .wm-accent::after  { background: #10b981; }
+
+/* iAI Coming Soon card */
+.cs-stage { gap: 8px; }
+.cs-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 20px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(255,107,0,0.12), rgba(224,64,251,0.12));
+  border: 1.5px dashed rgba(255,107,0,0.4);
+  font-family: var(--font-iai-data);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #ff6b00;
+  margin-top: 4px;
+  animation: cs-pulse 2.8s ease-in-out infinite;
+}
+@keyframes cs-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255,107,0,0.0); }
+  50%      { box-shadow: 0 0 0 10px rgba(255,107,0,0.0), 0 0 24px -4px rgba(255,107,0,0.45); }
+}
+.cs-eta {
+  margin-top: 14px;
+  font-family: var(--font-iai-ui);
+  font-size: 22px;
+  font-weight: 800;
+  color: #0a0a0a;
+  letter-spacing: -0.01em;
+}
+
+/* Feature list inside brand cards - premium icon-row */
+.feature-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.feature-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(0,0,0,0.02);
+  border: 1px solid rgba(0,0,0,0.05);
+  transition: background 240ms, border-color 240ms, transform 240ms;
+}
+.feature-list li:hover { background: rgba(236,72,153,0.05); border-color: rgba(236,72,153,0.2); transform: translateX(3px); }
+.feature-list-staff li:hover { background: rgba(0,119,182,0.05); border-color: rgba(0,119,182,0.2); }
+.fl-icon {
+  flex-shrink: 0;
+  width: 32px; height: 32px;
+  border-radius: 9px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #ec4899, #f472b6);
+  color: #fff;
+}
+.feature-list-staff .fl-icon { background: linear-gradient(135deg, #0077b6, #00b4d8); }
+.fl-icon svg { width: 16px; height: 16px; }
+.fl-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.fl-text b { font-size: 14px; font-weight: 700; color: #0a0a0a; letter-spacing: -0.005em; }
+.fl-text em { font-style: normal; font-size: 12px; color: #525252; line-height: 1.4; }
+
+/* === How-it-works flow + metrics (was inline <style> in source) === */
+.staff-flow {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+  gap: 12px;
+  align-items: stretch;
+  margin-bottom: 32px;
+}
+.sf-step {
+  position: relative;
+  padding: 20px 16px;
+  text-align: center;
+  background: #fafafa;
+  border: 1px solid rgba(0,0,0,0.05);
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  transition: border-color 220ms, transform 220ms;
+}
+.sf-step:hover { border-color: #ec4899; transform: translateY(-3px); }
+.sf-num {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ec4899, #f472b6);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(236,72,153,0.3);
+}
+.sf-icon { color: #ec4899; margin-top: 4px; }
+.sf-title {
+  font-family: var(--font-iai-ui);
+  font-weight: 700;
+  font-size: 14px;
+  color: #0a0a0a;
+  letter-spacing: -0.01em;
+}
+.sf-desc {
+  font-size: 11.5px;
+  color: #525252;
+  line-height: 1.4;
+}
+.sf-arrow {
+  display: flex;
+  align-items: center;
+  color: rgba(0,0,0,0.2);
+}
+@media (max-width: 760px) {
+  .staff-flow {
+    grid-template-columns: 1fr;
+  }
+  .sf-arrow {
+    justify-content: center;
+    transform: rotate(90deg);
+  }
+}
+.staff-metrics {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+  gap: 8px;
+  align-items: center;
+  padding: 20px 0 4px;
+  border-top: 1px solid rgba(0,0,0,0.06);
+}
+.sm-cell { text-align: center; }
+.sm-num {
+  font-family: var(--font-iai-ui);
+  font-weight: 800;
+  font-size: 24px;
+  color: #0a0a0a;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.sm-num-green { color: #16a34a; }
+.sm-num-red { color: #dc2626; }
+.sm-label {
+  font-size: 11px;
+  color: #525252;
+  margin-top: 6px;
+  letter-spacing: 0.02em;
+}
+.sm-divider {
+  width: 1px;
+  height: 32px;
+  background: rgba(0,0,0,0.08);
+}
+@media (max-width: 640px) {
+  .staff-metrics {
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .sm-divider { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-up { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .tilt-card { transition: none !important; }
+}
+
+/* === aiADS (green) + per-flow product scoping (added for the 4th product) === */
+.brand-card.brand-ads:hover { border-color: #10b981; box-shadow: 0 18px 40px rgba(16,185,129,0.12); }
+.brand-ads .brand-wordmark .wm-prefix { color: #10b981; }
+.brand-ads .brand-wordmark .wm-accent::before { background: #06d6a0; }
+.brand-ads .brand-wordmark .wm-accent::after  { background: #10b981; }
+.feature-list-ads li:hover { background: rgba(16,185,129,0.05); border-color: rgba(16,185,129,0.2); }
+.feature-list-ads .fl-icon { background: linear-gradient(135deg, #10b981, #06d6a0); }
+/* iAI premium - tricolor icons + indigo hover (the unifier) */
+.feature-list-iai li:hover { background: rgba(99,102,241,0.05); border-color: rgba(99,102,241,0.2); }
+.feature-list-iai .fl-icon { background: linear-gradient(135deg, #ec4899 0%, #2563eb 50%, #10b981 100%); }
+/* iAI wordmark in the bottom strip (outside .brand-iai) -> same tricolor */
+.brand-wordmark-iai .wm-prefix,
+.brand-wordmark-iai .wm-mark {
+  background: linear-gradient(120deg, #ec4899 0%, #2563eb 50%, #10b981 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+.brand-wordmark-iai .wm-accent::before { background: #ec4899; }
+.brand-wordmark-iai .wm-accent::after  { background: #10b981; }
+/* staff flow block (the one WITHOUT content-flow) -> blue, so content stays pink */
+.staff-flow:not(.content-flow) .sf-step:hover { border-color: #0077b6; }
+.staff-flow:not(.content-flow) .sf-num { background: linear-gradient(135deg, #0077b6, #00b4d8); box-shadow: 0 4px 12px rgba(0,119,182,0.3); }
+.staff-flow:not(.content-flow) .sf-icon { color: #0077b6; }

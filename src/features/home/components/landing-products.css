@@ -1,0 +1,1149 @@
+/* =========================================================================
+   LandingProducts — "რას ვაწარმოებთ?" Instagram-phones section
+   Ported verbatim from ainow_handoff/index.html (#products-viz).
+   Notes:
+   - literal font names ('Bricolage Grotesque','Noto Sans Georgian',
+     'Space Mono','JetBrains Mono') resolve via the Google Fonts <link>
+     copied into layout.tsx <head>.
+   - source custom Tailwind tokens (text-accent/text-muted/bg-accent…) are
+     replaced inline with arbitrary values in the markup to avoid colliding
+     with the site's shadcn palette.
+   ========================================================================= */
+
+/* gradient-text + font-display helpers (source Tailwind config) */
+.gradient-text {
+  background: linear-gradient(120deg, #7c3aed 0%, #e040fb 50%, #ff6b00 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.font-display {
+  font-family: var(--font-bricolage), 'Bricolage Grotesque', 'Noto Sans Georgian', sans-serif;
+}
+
+/* aiSTAFF (phone 1) wordmark accent theming */
+.product-pane[data-product="1"] .wordmark-3d .wm-accent::before { background: #ff6b00; }
+.product-pane[data-product="1"] .wordmark-3d .wm-accent::after  { background: #e040fb; }
+.product-pane[data-product="1"] .wordmark-3d .wm-prefix { color: #e040fb; }
+
+/* SVG icon sizing inside IG mockup */
+.ig-svg-xs { display: inline-flex; }
+.ig-svg-xs svg { width: 11px; height: 11px; }
+.ig-svg-sm { display: inline-flex; }
+.ig-svg-sm svg { width: 14px; height: 14px; }
+.ig-svg-md { display: inline-flex; }
+.ig-svg-md svg { width: 22px; height: 22px; }
+.ig-svg-tab { display: flex; align-items: center; justify-content: center; }
+.ig-svg-tab svg { width: 22px; height: 22px; }
+.ig-nav-back svg, .ig-dm-back svg { width: 28px; height: 28px; }
+.ig-nav-plus svg { width: 26px; height: 26px; }
+.ig-input-camera.ig-svg-sm { padding: 0; }
+.ig-input-camera.ig-svg-sm svg { width: 16px; height: 16px; color: #fff; }
+.ig-hl-icon {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff;
+  border-radius: 50%;
+}
+.ig-hl-icon svg { width: 22px; height: 22px; }
+
+/* Post tile content layout */
+.ig-post {
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  position: relative;
+}
+.ig-post-icon-tr {
+  position: absolute;
+  top: 5px; right: 6px;
+  color: #fff;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+}
+.ig-post-icon-tr svg { width: 13px; height: 13px; }
+.ig-post-play {
+  color: rgba(255,255,255,0.92);
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.4));
+}
+.ig-post-play svg { width: 22px; height: 22px; }
+.ig-post-meta {
+  position: absolute;
+  bottom: 5px; left: 6px;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
+.ig-post-meta svg { width: 10px; height: 10px; }
+.ig-post-static .ig-post-text-block {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  line-height: 1;
+}
+.ig-post-tagline {
+  font-family: var(--font-iai-data);
+  font-size: 7px;
+  letter-spacing: 0.25em;
+  opacity: 0.7;
+  margin-bottom: 3px;
+}
+.ig-post-headline {
+  font-family: var(--font-iai-ui);
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+.ig-post-sub {
+  font-family: var(--font-iai-ui);
+  font-size: 7px;
+  margin-top: 4px;
+  opacity: 0.8;
+}
+.ig-post-quote {
+  flex-direction: column;
+  padding: 6px;
+  text-align: center;
+}
+.ig-post-bigquote {
+  font-family: var(--font-iai-ui);
+  font-size: 28px;
+  line-height: 1;
+  font-weight: 900;
+  background: linear-gradient(120deg, #7c3aed, #e040fb);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: -8px;
+}
+.ig-post-quotetext {
+  font-size: 9px;
+  line-height: 1.2;
+  font-weight: 500;
+  color: #0a0a0a;
+}
+.ig-post-carousel-dots {
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 3px;
+}
+.ig-post-carousel-dots span {
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.5);
+}
+.ig-post-carousel-dots span.active { background: #fff; }
+.ig-post-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 50%;
+}
+.ig-post-bar {
+  width: 4px;
+  background: rgba(255,255,255,0.85);
+  border-radius: 1px;
+}
+.ig-msg-icon {
+  display: inline-flex;
+  vertical-align: middle;
+  margin: 0 2px;
+}
+.ig-msg-icon svg { width: 12px; height: 12px; color: #fff; }
+
+/* ===== @sneas/telephone web component - both phones side-by-side ===== */
+iphone-16-max.ig-tel {
+  display: block;
+  width: 100%;
+  max-width: 340px;
+  margin: 0 auto;
+  filter:
+    drop-shadow(0 20px 40px rgba(0,0,0,0.18))
+    drop-shadow(0 0 60px rgba(124,58,237,0.14));
+}
+.ig-frame-wrap-staff iphone-16-max.ig-tel {
+  filter:
+    drop-shadow(0 20px 40px rgba(0,0,0,0.18))
+    drop-shadow(0 0 60px rgba(224,64,251,0.14));
+}
+.ig-frame-wrap {
+  padding: clamp(8px, 1.5vw, 24px);
+  border-radius: clamp(20px, 4vw, 40px);
+  position: relative;
+}
+.ig-frame-wrap::before {
+  content: '';
+  position: absolute;
+  inset: -40px;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(124,58,237,0.18), transparent 60%),
+    radial-gradient(circle at 70% 70%, rgba(224,64,251,0.14), transparent 60%);
+  filter: blur(30px);
+  pointer-events: none;
+}
+#products-viz { overflow: visible !important; }
+.ig-screen {
+  background: #fff;
+  width: 320px;
+  height: 633px;
+  padding-top: 38px;
+  display: flex;
+  flex-direction: column;
+  transform-origin: top left;
+  will-change: transform;
+  font-family:
+    "Noto Sans Georgian",
+    -apple-system, BlinkMacSystemFont,
+    "Helvetica Neue", "Segoe UI", Roboto,
+    Arial, sans-serif;
+  color: #0a0a0a;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+@media (max-width: 900px) {
+  iphone-16-max.ig-tel { max-width: 240px; }
+  .ig-frame-wrap { padding: 6px; }
+}
+@media (max-width: 640px) {
+  iphone-16-max.ig-tel { max-width: 200px; }
+  .ig-frame-wrap { padding: 4px; border-radius: 16px; }
+}
+@media (max-width: 420px) {
+  iphone-16-max.ig-tel { max-width: 165px; }
+  .ig-frame-wrap { padding: 2px; }
+}
+
+.ig-post-art {
+  position: absolute;
+  inset: 8%;
+  width: 84%;
+  height: 84%;
+  pointer-events: none;
+}
+.ig-post-palette {
+  position: absolute;
+  inset: 18% 14%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6%;
+}
+.ig-post-palette span {
+  border-radius: 999px;
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.15) inset;
+}
+.ig-post-sig {
+  position: absolute;
+  bottom: 8%; right: 10%;
+  font-size: 8px;
+  color: #525252;
+  letter-spacing: 0.05em;
+}
+
+/* ===== Multi-state screen ===== */
+.ig-screen {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+  padding-top: 0 !important;
+}
+.ig-state {
+  grid-column: 1;
+  grid-row: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding-top: 38px;
+  box-sizing: border-box;
+  overflow: hidden;
+  background: #fff;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  /* Incoming state rises into place (translateY 16→0) while fading; the
+     outgoing one (loses .is-active instantly in JS) drifts the other way and
+     fades out *under* the incoming (z-index), so there is no double-exposure
+     "flick" of two white panels. The 3d transform also keeps every state on
+     its own GPU layer, so the move/fade is composited — no per-frame repaint
+     of the heavy scaled .ig-screen. Opacity finishes before the transform so
+     the panel reads as settling in, not popping. */
+  transform: translate3d(0, 16px, 0);
+  transition: opacity 280ms cubic-bezier(0.22, 1, 0.36, 1),
+              transform 460ms cubic-bezier(0.22, 1, 0.36, 1),
+              visibility 0s linear 460ms;
+  z-index: 0;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  contain: paint;
+}
+.ig-state.is-active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translate3d(0, 0, 0);
+  transition: opacity 280ms cubic-bezier(0.22, 1, 0.36, 1),
+              transform 460ms cubic-bezier(0.22, 1, 0.36, 1),
+              visibility 0s;
+  z-index: 2;
+}
+.ig-state:has(.reel-canvas) {
+  padding-top: 0;
+  background: #000;
+}
+
+.product-caption, .product-feature {
+  transition: opacity 360ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity;
+}
+.product-caption { min-height: 4.4em; line-height: 1.5; display: flex; align-items: center; justify-content: center; }
+.product-feature { min-height: 2.6em; line-height: 1.5; display: flex; align-items: center; justify-content: center; }
+@media (max-width: 540px) {
+  .product-caption { min-height: 5.4em; }
+  .product-feature { min-height: 3.2em; }
+}
+
+/* ===== State slider ===== */
+.state-slider {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin: 22px auto 0;
+  padding: 5px;
+  background: rgba(0,0,0,0.05);
+  border-radius: 999px;
+  max-width: 340px;
+  width: fit-content;
+}
+.ss-dot {
+  flex: 1;
+  min-height: 36px;
+  padding: 0 18px;
+  border: 0;
+  background: transparent;
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: var(--font-iai-ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: #525252;
+  letter-spacing: -0.005em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 0;
+  /* Only `color` is animatable here; the gradient pill lives on ::before and
+     fades via opacity so fill + text colour move together (a gradient itself
+     can't be transitioned — it would snap and break the text contrast). */
+  transition: color 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.ss-dot::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(135deg, #7c3aed, #e040fb);
+  box-shadow: 0 4px 14px -4px rgba(124,58,237,0.45);
+  opacity: 0;
+  transition: opacity 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.ss-dot span { display: none; }
+.ss-dot em { font-style: normal; }
+.ss-dot:hover { color: #0a0a0a; }
+.ss-dot.is-active,
+.ss-dot.is-active:hover { color: #fff; }
+.ss-dot.is-active::before { opacity: 1; }
+.state-slider-magenta .ss-dot::before {
+  background: linear-gradient(135deg, #e040fb, #ff6b00);
+  box-shadow: 0 4px 14px -4px rgba(224,64,251,0.45);
+}
+
+/* ===== Reel canvas ===== */
+.reel-canvas {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+}
+.reel-video-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 400ms ease;
+}
+.reel-sub-toggle {
+  position: absolute;
+  top: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: rgba(0,0,0,0.7);
+  border-radius: 999px;
+  backdrop-filter: blur(14px);
+  border: 1.5px solid rgba(255,255,255,0.3);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+  pointer-events: auto;
+}
+.rst-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 0;
+  background: transparent;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.85);
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: color 280ms cubic-bezier(0.22, 1, 0.36, 1);
+  white-space: nowrap;
+  pointer-events: auto;
+  position: relative;
+  z-index: 51;
+}
+.rst-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(135deg, #7c3aed, #e040fb);
+  box-shadow: 0 3px 10px -2px rgba(124,58,237,0.55);
+  opacity: 0;
+  transition: opacity 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.rst-btn * { pointer-events: none; }
+.reel-video-bg { pointer-events: none; }
+.rst-btn.is-active { color: #fff; }
+.rst-btn.is-active::before { opacity: 1; }
+.reel-top-status {
+  position: absolute;
+  top: 12px;
+  left: 0;
+  right: 0;
+  z-index: 6;
+  padding: 0 22px 0 26px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #fff;
+  font-family: -apple-system, "SF Pro Text", sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: -0.01em;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
+.reel-top-icons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+.reel-overlay-bottom {
+  position: absolute; bottom: 0; left: 0; right: 68px;
+  padding: 16px 16px 18px;
+  color: #fff;
+  background: linear-gradient(0deg, rgba(0,0,0,0.7) 0%, transparent 100%);
+  z-index: 3;
+}
+.reel-user-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.reel-avatar {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  border: 1.5px solid #fff;
+}
+.reel-username { font-weight: 700; font-size: 13px; color: #fff; }
+.reel-follow {
+  margin-left: 6px;
+  padding: 4px 10px;
+  border: 1px solid #fff;
+  background: transparent;
+  color: #fff;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+.reel-caption { font-size: 13px; line-height: 1.35; margin-bottom: 6px; }
+.reel-audio { font-size: 11px; opacity: 0.85; display: flex; align-items: center; gap: 4px; }
+.reel-actions {
+  position: absolute; right: 10px; bottom: 24px;
+  display: flex; flex-direction: column; gap: 18px; align-items: center;
+  color: #fff;
+  z-index: 4;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+.reel-action { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; }
+.reel-views { font-size: 10px; opacity: 0.9; }
+
+/* ===== Carousel post (phone 1 state 3) ===== */
+.post-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  flex-shrink: 0;
+}
+.post-meta { display: flex; flex-direction: column; line-height: 1.15; }
+.post-meta b { font-size: 13px; }
+.post-meta span { font-size: 11px; color: #525252; }
+.carousel-slide {
+  position: relative;
+  aspect-ratio: 1;
+  width: 100%;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.slide-content {
+  position: absolute; inset: 0;
+  padding: 20px;
+  display: flex; flex-direction: column;
+  justify-content: space-between;
+  color: #fff;
+}
+.slide-tag {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: rgba(255,255,255,0.85);
+}
+.slide-title { font-size: 28px; font-weight: 800; line-height: 1.05; letter-spacing: -0.02em; }
+.slide-num { font-size: 14px; font-weight: 700; opacity: 0.9; }
+.slide-num span { opacity: 0.7; }
+.carousel-dots-bottom {
+  position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 4px;
+}
+.carousel-dots-bottom span {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(255,255,255,0.4);
+}
+.carousel-dots-bottom span.active { background: #fff; width: 16px; border-radius: 4px; }
+.post-actions {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 12px 4px;
+  flex-shrink: 0;
+}
+.pa-left { display: flex; gap: 14px; }
+.post-actions svg { stroke: #0a0a0a; }
+.post-likes { padding: 0 12px; font-size: 13px; }
+.post-caption { padding: 4px 12px; font-size: 13px; line-height: 1.35; }
+.post-comments { padding: 4px 12px; font-size: 13px; color: #525252; }
+.post-time { padding: 4px 12px 12px; font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: 0.05em; }
+
+/* ===== Comments (phone 2 state 2) ===== */
+.comment-thread {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: #fff;
+}
+.cmnt { display: flex; gap: 10px; }
+.cmnt-pfp {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+}
+.cmnt-body { flex: 1; font-size: 12.5px; line-height: 1.4; }
+.cmnt-body b { font-weight: 700; margin-right: 4px; }
+.cmnt-meta { font-size: 10px; color: #999; margin-top: 4px; display: flex; align-items: center; gap: 6px; }
+.cmnt-bot .cmnt-body { color: #0a0a0a; }
+.cmnt-ai-badge {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 800;
+  background: linear-gradient(135deg,#7c3aed,#e040fb);
+  color: #fff;
+  padding: 1px 6px;
+  border-radius: 4px;
+  margin: 0 4px;
+  letter-spacing: 0.05em;
+}
+.cmnt-meta-bot { color: #7c3aed; font-weight: 600; }
+.cmnt-stats {
+  margin-top: auto;
+  padding: 10px 12px;
+  border-top: 1px solid #f0f0f0;
+  font-size: 11px;
+  color: #525252;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.cmnt-status { color: #16a34a; font-weight: 700; }
+.cmnt { min-width: 0; }
+.cmnt-body { min-width: 0; word-break: break-word; overflow-wrap: anywhere; }
+
+/* ===== Subscription chat (phone 2 state 3) ===== */
+.check-step {
+  display: inline-block;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  color: #7c3aed;
+  text-align: center;
+  line-height: 18px;
+  font-size: 11px;
+  font-weight: 800;
+  margin-right: 4px;
+}
+
+/* ===== Annotation pills with CSS dash-arrows ===== */
+.ig-frame-wrap { position: relative; overflow: visible !important; }
+.anno-pill {
+  position: absolute;
+  z-index: 20;
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  background: #fff;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  letter-spacing: -0.005em;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.03);
+  transform: translateY(-50%);
+}
+.anno-pill.pill-purple  { border: 1.5px solid #7c3aed; color: #4c1d95; }
+.anno-pill.pill-magenta { border: 1.5px solid #e040fb; color: #86198f; }
+.pill-side-left {
+  right: calc(50% + 192px);
+}
+.pill-side-left .anno-arrow {
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  width: 22px;
+  height: 1.5px;
+  background: currentColor;
+  transform: translateY(-50%);
+}
+.pill-side-left .anno-arrow::after {
+  content: '';
+  position: absolute;
+  right: -2px;
+  top: 50%;
+  width: 0; height: 0;
+  border-style: solid;
+  border-width: 4px 0 4px 6px;
+  border-color: transparent transparent transparent currentColor;
+  transform: translateY(-50%);
+}
+.pill-side-right {
+  left: calc(50% + 192px);
+}
+.pill-side-right .anno-arrow {
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  width: 22px;
+  height: 1.5px;
+  background: currentColor;
+  transform: translateY(-50%);
+}
+.pill-side-right .anno-arrow::after {
+  content: '';
+  position: absolute;
+  left: -2px;
+  top: 50%;
+  width: 0; height: 0;
+  border-style: solid;
+  border-width: 4px 6px 4px 0;
+  border-color: transparent currentColor transparent transparent;
+  transform: translateY(-50%);
+}
+@media (max-width: 1100px) { .anno-pill { display: none; } }
+
+/* ===== KPI row (below phone on mobile) ===== */
+.kpi-row {
+  display: none;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin: 24px auto 0;
+  max-width: 360px;
+  padding: 16px 8px;
+  border-top: 1px solid rgba(0,0,0,0.06);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+@media (max-width: 1100px) { .kpi-row { display: grid; } }
+.kpi-item { text-align: center; }
+.kpi-val {
+  font-family: var(--font-iai-ui);
+  font-weight: 800;
+  font-size: 22px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+.kpi-purple  .kpi-val { background-image: linear-gradient(135deg, #7c3aed, #e040fb); }
+.kpi-magenta .kpi-val { background-image: linear-gradient(135deg, #e040fb, #ff6b00); }
+.kpi-label {
+  font-size: 10.5px;
+  color: #525252;
+  margin-top: 6px;
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+}
+
+/* ===== Mobile product toggle (aiCONTENT / aiSTAFF) ===== */
+.product-toggle { display: none; }
+/* Desktop: the track is transparent to layout so the two panes remain direct
+   grid items (side-by-side). It only becomes a sliding flex track on mobile. */
+.product-track { display: contents; }
+@media (max-width: 900px) {
+  .product-toggle {
+    display: flex;
+    gap: 6px;
+    padding: 6px;
+    background: rgba(0,0,0,0.04);
+    border-radius: 999px;
+    margin: 0 auto 28px;
+    width: fit-content;
+  }
+  .pt-btn {
+    position: relative;
+    z-index: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px 10px 14px;
+    border: 0;
+    background: transparent;
+    border-radius: 999px;
+    font-family: var(--font-iai-ui);
+    font-weight: 700;
+    font-size: 13px;
+    color: #525252;
+    cursor: pointer;
+    transition: color 300ms cubic-bezier(0.22, 1, 0.36, 1);
+    letter-spacing: -0.005em;
+    overflow: hidden;
+  }
+  .pt-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: linear-gradient(135deg, #7c3aed, #e040fb);
+    box-shadow: 0 4px 14px -4px rgba(124,58,237,0.45);
+    opacity: 0;
+    transition: opacity 300ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .pt-btn.is-active { color: #fff; }
+  .pt-btn.is-active::before { opacity: 1; }
+  .pt-ring {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    transform: rotate(-90deg);
+  }
+  .pt-ring-bg { fill: none; stroke: rgba(255,255,255,0.25); stroke-width: 3; }
+  .pt-ring-fg {
+    fill: none; stroke: #fff; stroke-width: 3;
+    stroke-dasharray: 100.53;
+    stroke-dashoffset: 100.53;
+    stroke-linecap: round;
+    transition: stroke-dashoffset linear;
+  }
+  .pt-btn:not(.is-counting) .pt-ring {
+    opacity: 0;
+    width: 0;
+    margin-right: -8px;
+    transition: opacity 240ms, width 240ms, margin 240ms;
+  }
+  .pt-btn.is-counting .pt-ring-fg {
+    animation: pt-countdown 5000ms linear forwards;
+  }
+  @keyframes pt-countdown {
+    from { stroke-dashoffset: 100.53; }
+    to   { stroke-dashoffset: 0; }
+  }
+  .product-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+    position: relative;
+  }
+  /* aiCONTENT/aiSTAFF = crossfade (fade-out / fade-in). The panes stack in one
+     grid cell (the .product-track stays display:contents, so the panes are the
+     grid items). Crucially the inactive pane is kept RENDERED (opacity:0, NOT
+     visibility:hidden) so its GPU texture stays warm — visibility:hidden /
+     display:none drop the raster and force a costly full re-paint of the heavy
+     aiCONTENT Instagram grid every time it returns. That re-paint was the lag. */
+  .product-pane {
+    grid-column: 1;
+    grid-row: 1;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 360ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .product-pane:not(.is-active),
+  .product-pane:not(.is-active) * { pointer-events: none !important; }
+  .product-pane.is-active {
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 1;
+  }
+  /* The blurred per-phone glow is a large, expensive filter layer; drop it on
+     mobile where GPU memory is tight (keeps the phone textures warm). */
+  .ig-frame-wrap::before { display: none; }
+  iphone-16-max.ig-tel { max-width: 320px !important; }
+}
+@media (max-width: 540px) {
+  iphone-16-max.ig-tel { max-width: 280px !important; }
+}
+@media (max-width: 400px) {
+  iphone-16-max.ig-tel { max-width: 240px !important; }
+}
+
+/* =========================================================
+   iPhone Instagram UI
+   ========================================================= */
+.ig-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 14px;
+  border-bottom: 0.5px solid #dbdbdb;
+  flex-shrink: 0;
+}
+.ig-nav-back { font-size: 24px; line-height: 1; font-weight: 300; }
+.ig-nav-title { display: flex; align-items: center; gap: 4px; }
+.ig-username { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; }
+.ig-nav-actions { display: flex; gap: 16px; font-size: 22px; line-height: 1; }
+.ig-nav-actions span:first-child { border: 1.5px solid #0a0a0a; border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 16px; }
+
+.ig-profile-row {
+  display: flex; align-items: center; gap: 24px;
+  padding: 14px;
+  flex-shrink: 0;
+}
+.ig-avatar-ring {
+  width: 76px; height: 76px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #f9ce34, #ee2a7b, #6228d7);
+  padding: 2.5px;
+}
+.ig-avatar-inner {
+  width: 100%; height: 100%;
+  background: #fff;
+  border-radius: 50%;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: radial-gradient(circle at 30% 30%, rgba(124,58,237,0.15), transparent 70%);
+}
+.ig-stats {
+  display: flex;
+  gap: 22px;
+  flex: 1;
+}
+.ig-stats > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  font-size: 12px;
+}
+.ig-stats b { font-size: 16px; font-weight: 700; line-height: 1.2; }
+.ig-stats span { color: #0a0a0a; font-size: 13px; }
+
+.ig-bio {
+  padding: 0 14px 10px;
+  font-size: 12.5px;
+  line-height: 1.4;
+  text-align: left;
+  flex-shrink: 0;
+}
+.ig-display-name { font-weight: 700; font-size: 13px; margin-bottom: 1px; }
+.ig-bio-text { color: #0a0a0a; }
+.ig-bio-link { color: #00376b; font-weight: 500; margin-top: 1px; }
+
+.ig-buttons {
+  display: flex; gap: 4px;
+  padding: 0 14px 12px;
+  flex-shrink: 0;
+}
+.ig-btn {
+  flex: 1;
+  padding: 7px 8px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  background: #efefef;
+  color: #0a0a0a;
+  border: none;
+  cursor: pointer;
+}
+.ig-btn-icon {
+  flex: 0 0 auto;
+  width: 32px;
+  padding: 7px 0;
+}
+
+.ig-highlights {
+  display: flex;
+  gap: 14px;
+  padding: 6px 14px 12px;
+  overflow-x: auto;
+  flex-shrink: 0;
+}
+.ig-highlight {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  font-size: 11px;
+  gap: 4px;
+}
+.ig-highlight-ring {
+  width: 60px; height: 60px;
+  border-radius: 50%;
+  border: 1.5px solid #dbdbdb;
+  padding: 2.5px;
+}
+.ig-highlight-inner {
+  width: 100%; height: 100%;
+  border-radius: 50%;
+}
+
+.ig-tabs {
+  display: flex;
+  border-top: 0.5px solid #dbdbdb;
+  flex-shrink: 0;
+}
+.ig-tab {
+  flex: 1;
+  text-align: center;
+  padding: 8px;
+  font-size: 20px;
+  color: #c7c7c7;
+}
+.ig-tab-active {
+  color: #0a0a0a;
+  border-bottom: 1px solid #0a0a0a;
+}
+
+.ig-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.ig-post {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+}
+.ig-post-icon {
+  position: absolute;
+  top: 4px; right: 6px;
+  color: #fff;
+  font-size: 14px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+.ig-bottom-nav {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px 14px 18px;
+  border-top: 0.5px solid #dbdbdb;
+  font-size: 22px;
+  color: #0a0a0a;
+  flex-shrink: 0;
+}
+.ig-bottom-plus { font-size: 18px; font-weight: 300; }
+.ig-bottom-pfp {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7c3aed, #e040fb);
+}
+
+/* DM header */
+.ig-dm-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  border-bottom: 0.5px solid #dbdbdb;
+  flex-shrink: 0;
+}
+.ig-dm-back { font-size: 26px; line-height: 1; font-weight: 300; }
+.ig-dm-pfp {
+  position: relative;
+  width: 36px; height: 36px;
+}
+.ig-dm-pfp-inner {
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ig-dm-active-dot {
+  position: absolute;
+  bottom: 0; right: 0;
+  width: 10px; height: 10px;
+  background: #4caf50;
+  border: 2px solid #fff;
+  border-radius: 50%;
+}
+.ig-dm-info { flex: 1; text-align: left; }
+.ig-dm-name { font-size: 14px; font-weight: 700; }
+.ig-dm-status { font-size: 11px; color: #737373; }
+.ig-dm-actions { display: flex; gap: 14px; font-size: 18px; }
+
+.ig-chat {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: #fff;
+}
+.ig-chat-date {
+  text-align: center;
+  font-size: 11px;
+  color: #737373;
+  font-weight: 600;
+  margin: 4px 0 8px;
+}
+.ig-msg-row {
+  display: flex;
+  margin: 1px 0;
+}
+.ig-msg-in { justify-content: flex-start; }
+.ig-msg-out { justify-content: flex-end; }
+.ig-msg-bubble {
+  max-width: 75%;
+  padding: 9px 13px;
+  border-radius: 22px;
+  font-size: 13.5px;
+  line-height: 1.35;
+  text-align: left;
+  word-wrap: break-word;
+}
+.ig-msg-bubble-in {
+  background: #efefef;
+  color: #0a0a0a;
+  border-bottom-left-radius: 5px;
+}
+.ig-msg-bubble-out {
+  background: linear-gradient(135deg, #7c3aed, #e040fb);
+  color: #fff;
+  border-bottom-right-radius: 5px;
+}
+.ig-msg-link {
+  color: #fff;
+  text-decoration: underline;
+  font-size: 12px;
+}
+.ig-seen {
+  text-align: right;
+  font-size: 10px;
+  color: #737373;
+  padding: 2px 8px;
+  margin-top: -2px;
+}
+.ig-typing {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 16px;
+  background: #efefef !important;
+  color: #0a0a0a !important;
+}
+.ig-typing span {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #737373;
+  animation: ig-typing 1.4s ease-in-out infinite;
+}
+.ig-typing span:nth-child(2) { animation-delay: 0.15s; }
+.ig-typing span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes ig-typing {
+  0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(-3px); }
+}
+
+.ig-input-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px 12px;
+  border-top: 0.5px solid #dbdbdb;
+  flex-shrink: 0;
+}
+.ig-input-camera {
+  width: 30px; height: 30px;
+  background: linear-gradient(135deg, #7c3aed, #e040fb);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.ig-input-field {
+  flex: 1;
+  padding: 8px 14px;
+  border-radius: 22px;
+  background: #efefef;
+  color: #737373;
+  font-size: 13px;
+  text-align: left;
+}
+.ig-input-icons {
+  display: flex;
+  gap: 10px;
+  font-size: 18px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ig-typing span { animation: none !important; opacity: 0.6 !important; }
+  .ig-state,
+  .ig-state.is-active {
+    transform: none !important;
+    transition: opacity 180ms linear !important;
+  }
+  .product-pane,
+  .product-pane.is-active { transition: opacity 150ms linear !important; }
+}

@@ -1,53 +1,80 @@
-import { SITE } from "@/config/site";
+// Supported site languages are distinct from the translations authored for a
+// particular page. Sitemap and page metadata share the route-level availability
+// below; blog articles derive it from their released locale files.
+import { APP_DOMAIN } from "@/lib/constants/app.constants";
 
-// Single source of truth for which locales we INDEX and advertise in hreflang.
-// hreflang, sitemap and canonical all read from this list, so adding a locale here
-// (via SITE.locales, which routing.ts also reads) lights it up everywhere at once.
-export const INDEXED_LOCALES = SITE.locales;
+export const INDEXED_LOCALES = ["ka", "en", "ru"] as const;
 
-const BASE_URL = SITE.baseUrl;
+const BASE_URL = `https://${APP_DOMAIN}`;
+const PUBLIC_FALLBACK_LOCALE = "ka" as const;
+function filterIndexedLocales(locales: readonly string[]): string[] {
+  return locales.filter((locale) => (INDEXED_LOCALES as readonly string[]).includes(locale));
+}
+function safeIndexedLocales(locales: readonly string[]): readonly string[] {
+  const filtered = filterIndexedLocales(locales);
+  return filtered.length ? filtered : [PUBLIC_FALLBACK_LOCALE];
+}
+const FOUR_LANGUAGE_PAGES = new Set<string>();
+const THREE_LANGUAGE_PAGES = new Set([
+  "/about", "/privacy", "/terms", "/refund", "/personalized-birthday-video",
+]);
+
+/** Advertise translations that have actual page content, not routing fallbacks. */
+export function getPageLocales(path: string): readonly string[] {
+  if (FOUR_LANGUAGE_PAGES.has(path)) return INDEXED_LOCALES;
+  if (THREE_LANGUAGE_PAGES.has(path)) return ["ka", "en", "ru"];
+  return INDEXED_LOCALES;
+}
+
+export function getPageContentLocale(path: string, locale: string, availableLocales = getPageLocales(path)): string {
+  const normalizedLocales = safeIndexedLocales(availableLocales);
+  return normalizedLocales.includes(locale) ? locale : path === "/about" || path.startsWith("/projects/") ? "en" : "ka";
+}
+
+export function pageRobots(path: string, locale: string, availableLocales = getPageLocales(path)) {
+  const index = filterIndexedLocales(availableLocales).includes(locale);
+  return { index, follow: true, googleBot: { index, follow: true } };
+}
+
+export function getProjectLocales(project: { slogan: object; description: object }): readonly string[] {
+  return INDEXED_LOCALES.filter(locale =>
+    Boolean((project.slogan as Record<string, unknown>)[locale]) &&
+    Boolean((project.description as Record<string, unknown>)[locale]),
+  );
+}
 
 export function isIndexedLocale(locale: string): boolean {
   return (INDEXED_LOCALES as readonly string[]).includes(locale);
 }
 
-// Absolute URL for a locale + path.
-//
-// This asks "is this the UNPREFIXED default locale", NOT "is this Georgian". next-intl runs
-// localePrefix "as-needed", so the default locale lives at the bare path and every other locale
-// is prefixed. On the Georgian landings the default is "ka"; on the export landings (aiapp,
-// vibecoding) it is "en". Routing the question through SITE.defaultLocale keeps both correct.
+// Absolute URL for a locale + path. Georgian (default locale) is unprefixed to match
+// next-intl localePrefix "as-needed".
 export function localeUrl(locale: string, path = ""): string {
-  return locale === SITE.defaultLocale ? `${BASE_URL}${path}` : `${BASE_URL}/${locale}${path}`;
+  return locale === "ka" ? `${BASE_URL}${path}` : `${BASE_URL}/${locale}${path}`;
 }
 
-// Relative route for locale switchers. The default locale uses the bare path;
-// non-default locales carry their prefix, avoiding redundant /ka redirects.
+
+// Relative route for locale switchers. The default locale is unprefixed.
 export function localePath(locale: string, path = ""): string {
   const normalizedPath = path === "/" ? "" : path;
-  if (locale === SITE.defaultLocale) return normalizedPath || "/";
+  if (locale === "ka") return normalizedPath || "/";
   return "/" + locale + normalizedPath;
 }
-
-// hreflang + canonical block for a page at `path` (no locale prefix, e.g. "/contact").
-// languages = every indexed locale + x-default (the default locale). canonical = the page's own
-// URL for an indexed locale, or the default-locale equivalent for a non-indexed one, so a fallback
-// render consolidates onto the original instead of self-canonicalizing a noindex page.
-//
-// EVERY page must call this. The root layout deliberately omits `alternates` (it has no path
-// context), so a page that forgets it ships with no canonical and no hreflang at all. That is
-// exactly how aiads.ge and aicontent.ge shipped their homepages.
-export function buildAlternates(path: string, locale: string) {
+// hreflang + canonical block for a static page at `path` (no locale prefix, e.g. "/services/seo").
+// languages = indexed locales + x-default (ka). canonical = the page's own URL for an indexed
+// locale, or the Georgian equivalent for a non-indexed locale (consolidates the fallback render
+// onto the original instead of self-canonicalizing a noindex page).
+export function buildAlternates(path: string, locale: string, availableLocales = getPageLocales(path)) {
+  const normalizedLocales = safeIndexedLocales(availableLocales);
   const languages: Record<string, string> = {};
-  for (const loc of INDEXED_LOCALES) {
+  for (const loc of normalizedLocales) {
     languages[loc] = localeUrl(loc, path);
   }
-  languages["x-default"] = localeUrl(SITE.defaultLocale, path);
+  languages["x-default"] = localeUrl("ka", path);
 
   return {
-    canonical: isIndexedLocale(locale)
-      ? localeUrl(locale, path)
-      : localeUrl(SITE.defaultLocale, path),
+    canonical: localeUrl(getPageContentLocale(path, locale, normalizedLocales), path),
     languages,
   };
 }
+

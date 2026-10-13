@@ -1,0 +1,446 @@
+/*
+ * Product-specific copy for vibeCODING. The home DOM, layout and motion stay
+ * in the aiNOW source; this module supplies only product voice and facts.
+ * KA/RU extend the reviewed EN shape so new source leaves remain visible.
+ */
+const en = {
+  productLabels: { vibecoding: "Security and production-readiness review" },
+  nav: { productDescriptions: { vibecoding: "Review an AI-built app before publication" } },
+  banner: {
+    vibecoding: "Review an AI-built app before publication",
+    publicSurface: "Start with the URL, page and scripts a normal visitor can see.",
+    accessBoundary: "Private access is scoped only with permission and a safe test boundary.",
+    evidence: "Record what was observed; separate facts from unknowns.",
+    triage: "Prioritize critical, urgent and later work before the release decision.",
+    repair: "Turn agreed findings into a repair or developer worklist.",
+    rescan: "Verify the agreed change and record what remains open.",
+    release: "Support a release decision without calling the app secure.",
+    handover: "Pass evidence, ownership and next steps to the repair owner.",
+  },
+  hero: {
+    titleLine1: "AI-built app?", titleLine2: "Check it before release.",
+    description: "vibeCODING reviews applications built with AI coding tools. We start with what a normal visitor can see; deeper checks of private systems require permission and a written boundary.",
+    primaryCta: "Check an app", catalogCta: "See the review flow",
+    hint: "Public scan first. Repair work and private access are scoped separately.",
+  },
+  ecosystemHub: {
+    satellites: {
+      chats: { title: "Public scan", subtitle: "URL, page and scripts", alt: "Public application scan" },
+      calls: { title: "Access surface", subtitle: "Login, files and API paths", alt: "Application access surface review" },
+      content: { title: "Triage", subtitle: "Critical, urgent and later", alt: "Security finding triage" },
+      apps: { title: "Handover", subtitle: "Evidence, repair and rescan", alt: "Developer repair handover" },
+    },
+    centerSubtitle: "AI-built app review",
+    badge: "From public evidence to a scoped release checklist ⤴",
+  },
+  comparison: {
+    title: "What makes an AI-built app risky before release?",
+    description: "Choose the review question closest to your situation.",
+    action: "Describe the app",
+    labels: { inspect: "What we clarify", firstStep: "First step", ask: "What we need from you" },
+    problems: {
+      chats: {
+        question: "Can a normal visitor see more than intended?",
+        description: "Public files, scripts and browser responses can reveal endpoints, secret-like values or data paths.",
+        detailHeading: "Start with the public surface",
+        firstStep: "We inspect the URL, page and scripts a normal visitor can download.",
+        solution: "The public scan records evidence without pretending to test private systems.",
+        builds: ["Which URL and environment are in scope.", "Which public files and scripts are visible.", "Which values look secret-like and need redaction.", "What must stay outside the scan."],
+        materials: "A public app URL and the release boundary.",
+      },
+      calls: {
+        question: "Does login or data access need deeper review?",
+        description: "Authentication, database rules and private APIs cannot be confirmed from public evidence alone.",
+        detailHeading: "Separate public evidence from authorized checks",
+        firstStep: "We record the private surface that may need permission and a clear safe-test boundary.",
+        solution: "A deeper review starts only after access, ownership and safe testing are agreed.",
+        builds: ["Which accounts and roles exist.", "Which private systems may be tested.", "Who authorizes the review.", "Which actions are prohibited."],
+        materials: "Access boundary, owner approval and safe test conditions.",
+      },
+      content: {
+        question: "Do findings need a release order?",
+        description: "An app may have several weaknesses, but the owner needs to know what blocks release first.",
+        detailHeading: "Turn findings into a decision list",
+        firstStep: "Group evidence by critical, urgent and later work with business impact.",
+        solution: "The report explains risk, repair and verification instead of inventing a score.",
+        builds: ["The evidence behind each finding.", "Who could be affected.", "What blocks release.", "How an agreed repair will be rescanned."],
+        materials: "The app context, owner priorities and release date if known.",
+      },
+      website: {
+        question: "Need a review but the first scope is unclear?",
+        description: "The app exists, but the owner does not yet know whether to scan the public URL, repository or database.",
+        detailHeading: "Write a bounded review",
+        firstStep: "Name the public URL, optional private access and the person responsible for repair.",
+        solution: "A written boundary keeps a review separate from an unauthorized test.",
+        builds: ["The initial public scan.", "Optional authorized systems.", "The repair owner.", "The rescan and handover criteria."],
+        materials: "App URL, scope notes and permission boundary.",
+      },
+    },
+  },
+  categories: {
+    title: "Choose the review surface",
+    description: "vibeCODING reviews an existing AI-built application. It does not sell a new coding tool and does not promise a vulnerability-free result.",
+    items: {
+      communication: {
+        title: "Public application scan",
+        subtitle: "Inspect the URL, page and scripts visible to a normal visitor.",
+        products: { scan: "Record the public URL, page and browser-visible files.", surface: "Separate the visible access surface from private systems." },
+      },
+      marketing: {
+        title: "Auth and data surface",
+        subtitle: "Scope authorized checks of login, APIs, databases, payments and uploads.",
+        products: { triage: "Sort findings by critical, urgent and later work.", findings: "Connect each finding to visible evidence and business impact.", severity: "Make release blockers and unknowns clear." },
+      },
+      internal: {
+        title: "Finding triage",
+        subtitle: "Prioritize critical, urgent and later issues with evidence and business impact.",
+        products: { repair: "Prepare an agreed repair or developer worklist.", handover: "Hand evidence and ownership decisions to the repair owner.", scope: "Keep private checks inside the approved test boundary.", rescan: "Verify the agreed repair and record what remains open." },
+      },
+      products: {
+        title: "Repair and rescan",
+        subtitle: "Prepare a developer worklist and verify the agreed repair.",
+        products: { public: "Start from browser-visible evidence on the public application.", private: "Review private systems only with permission and a safe boundary.", release: "Support a release decision without certifying the whole application." },
+      },
+    },
+  },
+  industries: {
+    eyebrow: "The app context changes the review",
+    title: "Review the product you actually shipped",
+    description: "A customer app, internal tool and payment flow expose different risks. Evidence and the permission boundary decide the scope.",
+    items: {
+      healthcare: { title: "Customer-facing apps", tag: "Public surface", description: "Check what a normal visitor can see before the app reaches more users.", action: "Describe a public scan", points: ["Start from the real URL.", "Redact secret-looking values.", "Explain business impact.", "No security guarantee is implied."] },
+      horeca: { title: "Internal tools", tag: "Access rules", description: "Scope roles, files and private systems only with owner permission.", action: "Describe an access review", points: ["Name the roles.", "Approve the safe-test boundary.", "Keep private credentials out of chat.", "Hand repair to an owner."] },
+      "real-estate": { title: "SaaS and dashboards", tag: "API surface", description: "Review public scripts and optionally authorized API or database paths.", action: "Describe a SaaS review", points: ["Separate public and private checks.", "Record evidence, not guesses.", "Prioritize release blockers.", "Rescan agreed repairs."] },
+      ecommerce: { title: "Checkout and payments", tag: "Payment flow", description: "Review the public checkout surface and scope provider-dependent checks separately.", action: "Describe a payment review", points: ["Name the payment boundary.", "Do not test live payments without approval.", "Check exposure and error paths.", "State unknowns plainly."] },
+      auto: { title: "AI prototypes", tag: "Before publication", description: "Turn an AI-generated prototype into a written release checklist.", action: "Describe a prototype review", points: ["Start with the public build.", "Separate code from runtime evidence.", "Do not imply a measured speed claim.", "Make repair ownership explicit."] },
+      legal: { title: "Technical review", tag: "Owner review", description: "Give an owner a scoped evidence report, not a certification.", action: "Describe a technical review", points: ["Record the review boundary.", "Redact sensitive values.", "Explain impact and repair.", "Do not claim compliance certification."] },
+    },
+  },
+  process: {
+    title: "From public evidence to a repair checklist",
+    description: "We define the application, evidence boundary, review access and handover before deeper work.",
+    steps: [
+      { title: "Scan the public surface", description: "Review the URL, page and scripts visible to a normal visitor." },
+      { title: "Scope authorized checks", description: "If needed, agree access to private systems, repositories, APIs or databases." },
+      { title: "Prioritize and rescan", description: "Explain risk, assign repair ownership and verify the agreed change." },
+    ],
+  },
+  architecture: {
+    eyebrow: "Security review with a boundary",
+    title: "Evidence first. Permission always.",
+    description: "vibeCODING reports what was observed and separates public evidence from private checks. It does not call an app secure without evidence.",
+    action: "Describe an app review", principle: "Boundary", rule: "Authorized scope",
+    specs: [
+      { title: "Start with a public URL", description: "The initial scan uses what a normal browser can see and download." },
+      { title: "Redact secret-looking values", description: "Evidence is useful without repeating keys or private data." },
+      { title: "Keep private checks authorized", description: "Login, database, repository, API and payment checks require permission and a safe boundary." },
+      { title: "Explain business impact", description: "Findings connect technical evidence to release and user risk." },
+      { title: "Repair belongs to an owner", description: "The report can provide a repair or worklist where that scope is agreed." },
+      { title: "Rescan what changed", description: "Verification checks the agreed repair; it does not certify the application as a whole." },
+    ],
+  },
+  team: {
+    eyebrow: "Our role", title: "A review layer for software built quickly",
+    paragraphs: [
+      "We are aiNOW, a Tbilisi team helping owners turn AI-built software into a clearer release decision.",
+      "For vibeCODING, we begin with public evidence, separate what needs permission and write the risk, repair and verification path.",
+      "We do not claim hack-proof applications, compliance certification or a guaranteed security outcome.",
+    ],
+    names: { andro: "Andro Kasparov", nika: "Nika Skhirtladze", giorgi: "Giorgi Darbaiseli" },
+    roles: { founder: "Founder", commercial: "Commercial director", businessDevelopment: "Business Development Director" },
+    location: "Tbilisi, Georgia", year: "2026",
+  },
+  faq: {
+    eyebrow: "[Security review answers]", title: "Questions about vibeCODING",
+    description: "Direct answers about public scans, authorized scope, pricing and repair.",
+    filters: { all: "All", pricing: "Scope and price", tech: "Review and output", safety: "Access and limits" },
+    searchLabel: "Search review questions", searchPlaceholder: "Search review questions...", questionPrefix: "Question",
+    calloutTitle: "Still have a review question?", calloutAction: "Describe your app",
+    items: {
+      q1: { question: "What is vibeCODING?", answer: "A security and production-readiness review for applications built with AI coding tools, starting with public browser-visible evidence." },
+      q2: { question: "Does it build a new app?", answer: "No. vibeCODING reviews what already exists. Building a new application belongs to a different product scope." },
+      q3: { question: "What does the public scan inspect?", answer: "The URL, page, scripts and other files visible to a normal visitor, with secret-looking values redacted in the report." },
+      q4: { question: "Can you check a private database or repository?", answer: "Only with owner permission, agreed access and a clear safe-test boundary." },
+      q5: { question: "Do you need my password?", answer: "Do not paste credentials into chat. Any private access method is agreed separately and should follow the owner's security rules." },
+      q6: { question: "What does the report contain?", answer: "Visible evidence, business impact, prioritized critical, urgent and later work, plus a repair or developer worklist where agreed." },
+      q7: { question: "Do you provide a security score?", answer: "No universal score is promised. The report states what was checked, what was found and what remains unknown." },
+      q8: { question: "Do you guarantee an app is secure?", answer: "No. No application is described as hack-proof, and the review is limited to the agreed surfaces and evidence." },
+      q9: { question: "Can you fix the findings?", answer: "A repair or worklist can be scoped after the evidence and ownership are understood; remediation is not automatic." },
+      q10: { question: "Do you test payments or uploads?", answer: "Only within an authorized, explicitly agreed test boundary. Live payments and destructive tests are not assumed." },
+      q11: { question: "What is the price?", answer: "Pricing is individually scoped in a written proposal. No public numeric amount, currency or cadence is confirmed." },
+      q12: { question: "Which AI coding tools are supported?", answer: "The review starts from the application you provide and the evidence it exposes. No tool affiliation or endorsement is implied." },
+      q13: { question: "How do I start?", answer: "Provide the public application URL and explain the release decision you need to make." },
+      q14: { question: "Can the report support a technical review?", answer: "It can support a scoped technical review conversation, but it is not a compliance certificate or a security guarantee." },
+      q15: { question: "What happens after a repair?", answer: "The agreed surface is rescanned and the remaining open items and ownership decisions are recorded." },
+    },
+  },
+  clientFit: {
+    title: "Who vibeCODING is for", description: "Founders and teams who shipped an AI-built app and need a scoped release or technical review.",
+    ariaLabel: "Who vibeCODING is for",
+    signals: ["You have a public application URL.", "You can define the release decision or review question.", "You can approve private access if deeper checks are needed.", "Someone owns repair and rescan."],
+    notForTitle: "vibeCODING may not be right if...", notForDescription: "You want a hack-proof guarantee, an automatic fix without review, a compliance certificate or an unauthorized private-system test.",
+    uncertain: "Not sure where to start? Begin with the public URL and one release question.",
+  },
+  closingCta: {
+    title: "Check an AI-built app",
+    description: "Share the public URL, the release decision and whether private access may be considered later. We will confirm scope and written terms before deeper work.",
+    successPrefix: "Thank you. Your review request is recorded in this preview flow.",
+    checks: ["The public scan starts with browser-visible evidence.", "Private systems require permission and a clear boundary.", "Pricing and repair ownership are written before deeper work."],
+  },
+  footer: {
+    tagline: "vibeCODING by aiNOW · Evidence. Repair. Rescan.",
+    description: "vibeCODING reviews AI-built applications before publication and separates public evidence from authorized deeper work.",
+    action: "Check an app", products: "vibeCODING", industries: "Review contexts", resources: "Resources", language: "Language",
+    legal: "Legal and security", blog: "Review notes", howWeStart: "How we start", faq: "Questions and answers", sendTask: "Describe an app",
+    email: "Email vibeCODING", privacy: "Privacy", terms: "Terms of service", location: "Tbilisi, Georgia", rights: "All rights reserved.", backToTop: "Back to top ↑",
+    industryLinks: ["Public scan", "AI-built prototypes", "SaaS review", "Payment surface", "Technical review", "Repair and rescan"],
+  },
+} as const;
+
+const ka = {
+  ...en,
+  productLabels: { vibecoding: "AI-ით შექმნილი აპების უსაფრთხოებისა და გამოშვებისთვის მზადყოფნის შემოწმება" },
+  nav: { productDescriptions: { vibecoding: "AI-ით შექმნილი აპის შემოწმება გამოქვეყნებამდე" } },
+  banner: {
+    vibecoding: "AI-ით შექმნილი აპის შემოწმება გამოქვეყნებამდე",
+    publicSurface: "დაიწყეთ URL-ით, გვერდითა და სკრიპტებით, რომლებსაც ჩვეულებრივი ვიზიტორი ხედავს.",
+    accessBoundary: "პირადი წვდომა მხოლოდ ნებართვითა და უსაფრთხო ტესტის საზღვრით განისაზღვრება.",
+    evidence: "ჩაწერეთ დაკვირვებული და უცნობი ერთმანეთისგან გააცალკევეთ.",
+    triage: "გამოშვების გადაწყვეტილებამდე დაალაგეთ კრიტიკული, სასწრაფო და მოგვიანო სამუშაო.",
+    repair: "შეთანხმებული მიგნებები ხარვეზების გამოსწორებად ან დეველოპერის სამუშაო სიად აქციეთ.",
+    rescan: "შეთანხმებული ცვლილება გადაამოწმეთ და დარჩენილი საკითხები ჩაწერეთ.",
+    release: "მხარი დაუჭირეთ გამოშვების გადაწყვეტილებას და აპი დაცულად არ გამოაცხადოთ.",
+    handover: "მტკიცებულება, პასუხისმგებლობა და შემდეგი ნაბიჯები ხარვეზების გამოსწორების მფლობელს გადაეცით.",
+  },
+  hero: {
+    titleLine1: "AI-ით შექმნილი აპი გაქვთ?", titleLine2: "გამოშვებამდე შეამოწმეთ.",
+    description: "vibeCODING ამოწმებს AI კოდირების ხელსაწყოებით შექმნილ აპლიკაციებს. ვიწყებთ იმით, რასაც ჩვეულებრივი ვიზიტორი ხედავს; პირადი სისტემების ღრმა შემოწმება მხოლოდ ნებართვით და წერილობით განსაზღვრულ ფარგლებში ტარდება.",
+    primaryCta: "აპის შემოწმება", catalogCta: "ნახეთ შემოწმების პროცესი", hint: "ჯერ საჯარო სკანირება. ხარვეზების გამოსწორების სამუშაო და პირადი წვდომა ცალკე განისაზღვრება.",
+  },
+  ecosystemHub: {
+    satellites: {
+      chats: { title: "საჯარო სკანი", subtitle: "URL, გვერდი და სკრიპტები", alt: "აპლიკაციის საჯარო სკანი" },
+      calls: { title: "წვდომის ზედაპირი", subtitle: "შესვლა, ფაილები და API-ის გზები", alt: "აპლიკაციის წვდომის ზედაპირის შემოწმება" },
+      content: { title: "ტრიაჟი", subtitle: "კრიტიკული, სასწრაფო და მოგვიანო", alt: "უსაფრთხოების მიგნებების დალაგება" },
+      apps: { title: "გადაცემა", subtitle: "მტკიცებულება, ხარვეზების გამოსწორება და ხელახალი სკანი", alt: "ხარვეზების გამოსწორების დეველოპერისთვის გადაცემა" },
+    },
+    centerSubtitle: "AI აპლიკაციის შემოწმება", badge: "საჯარო მტკიცებულებიდან გამოშვების შეთანხმებულ სიამდე ⤴",
+  },
+  comparison: {
+    title: "რა ქმნის AI-ით შექმნილ აპში რისკს გამოშვებამდე?", description: "აირჩიეთ თქვენს მდგომარეობასთან ყველაზე ახლოს მდგომი შემოწმების კითხვა.", action: "აღწერეთ აპი",
+    labels: { inspect: "რას ვარკვევთ", firstStep: "პირველი ნაბიჯი", ask: "რა გვჭირდება თქვენგან" },
+    problems: {
+      chats: { question: "შეიძლება ჩვეულებრივმა ვიზიტორმა იმაზე მეტი დაინახოს, ვიდრე საჭიროა?", description: "საჯარო ფაილებმა, სკრიპტებმა და ბრაუზერის პასუხებმა შეიძლება გამოაჩინოს endpoint-ები, საიდუმლოს მსგავსი მნიშვნელობები ან მონაცემთა გზები.", detailHeading: "დაიწყეთ საჯარო ზედაპირით", firstStep: "ვამოწმებთ URL-ს, გვერდსა და სკრიპტებს, რომელთა ჩამოტვირთვაც ჩვეულებრივ ვიზიტორს შეუძლია.", solution: "საჯარო სკანი აფიქსირებს მტკიცებულებას და პირადი სისტემების შემოწმებას ნებართვის გარეშე არ აცხადებს.", builds: ["რომელი URL და გარემოა შემოწმების ფარგლებში.", "რომელი საჯარო ფაილები და სკრიპტები ჩანს.", "რომელი მნიშვნელობები ჰგავს საიდუმლო მონაცემებს და საჭიროებს დაფარვას.", "რა უნდა დარჩეს სკანის მიღმა."], materials: "საჯარო აპის URL და გამოშვების საზღვარი." },
+      calls: { question: "სჭირდება თუ არა შესვლასა და მონაცემებზე წვდომას ღრმა შემოწმება?", description: "ავტორიზაციას, მონაცემთა ბაზის წესებსა და პირად API-ებს მხოლოდ საჯარო მტკიცებულებით ვერ დავადასტურებთ.", detailHeading: "გაყავით საჯარო მტკიცებულება და ნებართვითი შემოწმება", firstStep: "ვაფიქსირებთ პირად ზედაპირს, რომელსაც შეიძლება ნებართვა და მკაფიო უსაფრთხო ტესტის ზღვარი დასჭირდეს.", solution: "ღრმა შემოწმება მხოლოდ წვდომის, პასუხისმგებლობისა და უსაფრთხო ტესტის შეთანხმების შემდეგ იწყება.", builds: ["რომელი ანგარიშები და როლები არსებობს.", "რომელი პირადი სისტემების შემოწმებაა ნებადართული.", "ვინ გასცემს შემოწმების ნებართვას.", "რომელი მოქმედებებია აკრძალული."], materials: "წვდომის საზღვარი, მფლობელის თანხმობა და უსაფრთხო ტესტის პირობები." },
+      content: { question: "სჭირდება თუ არა მიგნებებს გამოშვების პრიორიტეტი?", description: "აპს შეიძლება რამდენიმე სისუსტე ჰქონდეს, მაგრამ მფლობელმა პირველ რიგში უნდა იცოდეს, რა აფერხებს გამოშვებას.", detailHeading: "მიგნებები გადაწყვეტილების სიად აქციეთ", firstStep: "მტკიცებულებას კრიტიკულ, სასწრაფო და მოგვიანო სამუშაოდ ვყოფთ ბიზნესზე გავლენის მიხედვით.", solution: "ანგარიში ხსნის რისკს, ხარვეზების გამოსწორებასა და გადამოწმებას და ხელოვნურ ქულას არ იგონებს.", builds: ["თითოეული მიგნების უკან არსებული მტკიცებულება.", "ვისზე შეიძლება იმოქმედოს საკითხმა.", "რა აფერხებს გამოშვებას.", "როგორ გადავამოწმებთ შეთანხმებულ გამოსწორებას."], materials: "აპის კონტექსტი, მფლობელის პრიორიტეტები და, თუ ცნობილია, გამოშვების თარიღი." },
+      website: { question: "შემოწმება გჭირდებათ, მაგრამ საწყისი ფარგლები ჯერ გაურკვეველია?", description: "აპი უკვე არსებობს, თუმცა ჯერ არ იცით, უნდა შემოწმდეს საჯარო URL, რეპოზიტორია თუ მონაცემთა ბაზა.", detailHeading: "დაწერეთ შემოწმების მკაფიო საზღვარი", firstStep: "დაასახელეთ საჯარო URL, შესაძლო პირადი წვდომა და ხარვეზების გამოსწორებაზე პასუხისმგებელი პირი.", solution: "წერილობითი საზღვარი შემოწმებას უნებართვო ტესტისგან აცალკევებს.", builds: ["საწყისი საჯარო სკანი.", "საჭიროების შემთხვევაში ავტორიზებული სისტემები.", "ხარვეზების გამოსწორებაზე პასუხისმგებელი პირი.", "ხელახალი სკანისა და გადაცემის კრიტერიუმები."], materials: "აპის URL, ფარგლების ჩანაწერი და ნებართვის ზღვარი." },
+    },
+  },
+  categories: {
+    title: "რომელი ზედაპირი შეამოწმოთ?", description: "vibeCODING უკვე არსებულ AI-ით შექმნილ აპლიკაციას ამოწმებს. ის ახალ კოდირების ხელსაწყოს არ ყიდის და სისუსტეების არარსებობის გარანტიას არ იძლევა.",
+    items: {
+      communication: { title: "აპლიკაციის საჯარო სკანირება", subtitle: "ვამოწმებთ URL-ს, გვერდსა და სკრიპტებს, რომლებსაც ჩვეულებრივი ვიზიტორი ხედავს.", products: { scan: "ვაფიქსირებთ საჯარო URL-ს, გვერდსა და ბრაუზერში ხილულ ფაილებს.", surface: "ხილულ წვდომის ზედაპირს პირადი სისტემებისგან ვაცალკევებთ." } },
+      marketing: { title: "ავტორიზაციისა და მონაცემების შემოწმება", subtitle: "ვათანხმებთ შესვლის, API-ის, მონაცემთა ბაზის, გადახდებისა და ატვირთვების ნებართვით შემოწმებას.", products: { triage: "მიგნებებს კრიტიკულ, სასწრაფო და მოგვიანო სამუშაოდ ვალაგებთ.", findings: "თითოეულ მიგნებას ხილულ მტკიცებულებასა და ბიზნესზე გავლენას ვუკავშირებთ.", severity: "გამოყოფილი გვაქვს გამოშვების ბლოკერები და უცნობი საკითხები." } },
+      internal: { title: "მიგნებების დალაგება", subtitle: "კრიტიკულ, სასწრაფო და მოგვიანო საკითხებს მტკიცებულებისა და ბიზნესზე გავლენის მიხედვით ვანიჭებთ პრიორიტეტს.", products: { repair: "ვადგენთ შეთანხმებულ გამოსწორებას ან დეველოპერის სამუშაო სიას.", handover: "მტკიცებულებასა და პასუხისმგებლობის გადაწყვეტილებებს ხარვეზების გამოსწორების მფლობელს გადავცემთ.", scope: "პირად შემოწმებას დამტკიცებულ ტესტის საზღვრებში ვტოვებთ.", rescan: "შეთანხმებულ გამოსწორებას ვამოწმებთ და დარჩენილ საკითხებს ვაფიქსირებთ." } },
+      products: { title: "ხარვეზების გამოსწორება და ხელახალი სკანირება", subtitle: "ვამზადებთ დეველოპერის სამუშაო სიას და შეთანხმებულ გამოსწორებას ვამოწმებთ.", products: { public: "ვიწყებთ საჯარო აპში ბრაუზერისთვის ხილული მტკიცებულებით.", private: "პირად სისტემებს მხოლოდ ნებართვითა და უსაფრთხო საზღვრით ვამოწმებთ.", release: "ვუჭერთ მხარს გამოშვების გადაწყვეტილებას და მთელ აპს სერტიფიცირებულად არ ვაცხადებთ." } },
+    },
+  },
+  industries: {
+    eyebrow: "აპის კონტექსტი ცვლის შემოწმებას", title: "შეამოწმეთ ის პროდუქტი, რომელიც რეალურად გამოუშვით", description: "კლიენტებისთვის განკუთვნილი აპი, შიდა ხელსაწყო და გადახდის პროცესი განსხვავებულ რისკებს ქმნის. ფარგლებს მტკიცებულება და ნებართვის საზღვარი განსაზღვრავს.",
+    items: {
+      healthcare: { title: "კლიენტებისთვის განკუთვნილი აპები", tag: "საჯარო ზედაპირი", description: "შეამოწმეთ, რას ხედავს ჩვეულებრივი ვიზიტორი, სანამ აპი მეტ მომხმარებლამდე მივა.", action: "აღწერეთ საჯარო სკანი", points: ["დაიწყეთ ნამდვილი URL-ით.", "დაფარეთ საიდუმლოს მსგავსი მნიშვნელობები.", "ახსენით ბიზნესზე გავლენა.", "უსაფრთხოების გარანტია არ იგულისხმება."] },
+      horeca: { title: "შიდა ხელსაწყოები", tag: "წვდომის წესები", description: "როლები, ფაილები და პირადი სისტემები მხოლოდ მფლობელის ნებართვით განვსაზღვროთ.", action: "აღწერეთ წვდომის შემოწმება", points: ["დაასახელეთ როლები.", "დაამტკიცეთ უსაფრთხო ტესტის საზღვარი.", "პირადი მონაცემები ჩატში არ ჩასვათ.", "ხარვეზების გამოსწორება პასუხისმგებელ მფლობელს გადაეცით."] },
+      "real-estate": { title: "SaaS და დაფები", tag: "API-ის ზედაპირი", description: "ვამოწმებთ საჯარო სკრიპტებს და, საჭიროებისას, ავტორიზებულ API-სა თუ მონაცემთა გზებს.", action: "აღწერეთ SaaS-ის შემოწმება", points: ["გაყავით საჯარო და პირადი შემოწმება.", "ჩაწერეთ მტკიცებულება და არა ვარაუდი.", "პრიორიტეტი მიანიჭეთ გამოშვების ბლოკერებს.", "შეთანხმებული გამოსწორება ხელახლა შეამოწმეთ."] },
+      ecommerce: { title: "გადახდა და შეკვეთა", tag: "გადახდის პროცესი", description: "ვამოწმებთ საჯარო გადახდის ზედაპირს, ხოლო პროვაიდერზე დამოკიდებულ შემოწმებას ცალკე ვათანხმებთ.", action: "აღწერეთ გადახდის შემოწმება", points: ["დაასახელეთ გადახდის საზღვარი.", "ცოცხალი გადახდა ნებართვის გარეშე არ შეამოწმოთ.", "შეამოწმეთ ხილვადობა და შეცდომის გზა.", "უცნობი საკითხები მკაფიოდ აღწერეთ."] },
+      auto: { title: "AI პროტოტიპები", tag: "გამოქვეყნებამდე", description: "AI-ით შექმნილი პროტოტიპი წერილობით გამოშვების სიად აქციეთ.", action: "აღწერეთ პროტოტიპის შემოწმება", points: ["დაიწყეთ საჯარო ვერსიით.", "კოდი გაშვების მტკიცებულებისგან გააცალკევეთ.", "გაზომილი სიჩქარის დაპირება არ გასცეთ.", "ხარვეზების გამოსწორებაზე პასუხისმგებელი პირი მკაფიოდ განსაზღვრეთ."] },
+      legal: { title: "ტექნიკური შემოწმება", tag: "მფლობელის მიმოხილვა", description: "მფლობელს მიეცით ფარგლებით განსაზღვრული მტკიცებულების ანგარიში და არა სერტიფიკატი.", action: "აღწერეთ ტექნიკური შემოწმება", points: ["ჩაწერეთ შემოწმების საზღვარი.", "დაფარეთ მგრძნობიარე მნიშვნელობები.", "ახსენით გავლენა და ხარვეზების გამოსწორება.", "შესაბამისობის სერტიფიკატი არ განაცხადოთ."] },
+    },
+  },
+  process: {
+    title: "საჯარო მტკიცებულებიდან ხარვეზების გამოსწორების სიამდე", description: "ღრმა სამუშაომდე ვადგენთ აპს, მტკიცებულების საზღვარს, შემოწმების წვდომასა და გადაცემის წესს.",
+    steps: [
+      { title: "შეამოწმეთ საჯარო ზედაპირი", description: "გადავხედავთ URL-ს, გვერდსა და სკრიპტებს, რომლებსაც ჩვეულებრივი ვიზიტორი ხედავს." },
+      { title: "განსაზღვრეთ ნებართვითი შემოწმება", description: "საჭიროებისას შევათანხმებთ პირად სისტემებზე, რეპოზიტორიაზე, API-სა ან მონაცემთა ბაზაზე წვდომას." },
+      { title: "დაალაგეთ და ხელახლა შეამოწმეთ", description: "ავხსნით რისკს, დავწერთ ხარვეზების გამოსწორებაზე პასუხისმგებელ პირს და შეთანხმებულ ცვლილებას გადავამოწმებთ." },
+    ],
+  },
+  architecture: {
+    eyebrow: "უსაფრთხოების შემოწმება მკაფიო საზღვრით", title: "ჯერ მტკიცებულება. ნებართვა ყოველთვის.", description: "vibeCODING აღწერს დაკვირვებულს და საჯარო მტკიცებულებას პირადი შემოწმებისგან აცალკევებს. მტკიცებულების გარეშე აპს დაცულად არ აცხადებს.",
+    action: "აღწერეთ აპის შემოწმება", principle: "საზღვარი", rule: "ავტორიზებული ფარგლები",
+    specs: [
+      { title: "დაიწყეთ საჯარო URL-ით", description: "საწყისი სკანი ეყრდნობა იმას, რასაც ჩვეულებრივი ბრაუზერი ხედავს და იტვირთავს." },
+      { title: "დაფარეთ საიდუმლოს მსგავსი მნიშვნელობები", description: "მტკიცებულება სასარგებლოა გასაღებებისა და პირადი მონაცემების გამეორების გარეშე." },
+      { title: "პირადი შემოწმება ნებართვით ჩაატარეთ", description: "შესვლა, მონაცემთა ბაზა, რეპოზიტორია, API და გადახდა ნებართვასა და უსაფრთხო საზღვარს მოითხოვს." },
+      { title: "ახსენით ბიზნესზე გავლენა", description: "მიგნებები ტექნიკურ მტკიცებულებას გამოშვებისა და მომხმარებლის რისკს უკავშირებს." },
+      { title: "გამოსწორებას მფლობელი ჰყავს", description: "შეთანხმებული ფარგლების მიხედვით ანგარიში ხარვეზების გამოსწორებას ან სამუშაო სიას შეიძლება შეიცავდეს." },
+      { title: "შეცვლილი ხელახლა შეამოწმეთ", description: "ხელახალი შემოწმება აფასებს შეთანხმებულ გამოსწორებას; აპლიკაციის სრულ უსაფრთხოებას არ ადასტურებს." },
+    ],
+  },
+  team: {
+    eyebrow: "ჩვენი როლი", title: "სწრაფად შექმნილი პროგრამის შემოწმების ფენა",
+    paragraphs: ["ჩვენ ვართ aiNOW — თბილისში მომუშავე გუნდი, რომელიც მფლობელებს AI-ით შექმნილი პროგრამის გამოშვების გადაწყვეტილების გამარტივებაში ეხმარება.", "vibeCODING-ისთვის ვიწყებთ საჯარო მტკიცებულებით, ცალკე ვყოფთ ნებართვის საჭირო ნაწილს და ვწერთ რისკის, ხარვეზების გამოსწორებისა და გადამოწმების გზას.", "არ ვაცხადებთ აპის სრულ დაცულობას, შესაბამისობის სერტიფიკაციას ან უსაფრთხოების გარანტირებულ შედეგს."],
+    names: { andro: "Andro Kasparov", nika: "Nika Skhirtladze", giorgi: "Giorgi Darbaiseli" },
+    roles: { founder: "დამფუძნებელი", commercial: "კომერციული დირექტორი", businessDevelopment: "ბიზნესის განვითარების დირექტორი" },
+    location: "თბილისი, საქართველო", year: "2026",
+  },
+  faq: {
+    eyebrow: "[პასუხები უსაფრთხოების შემოწმებაზე]", title: "კითხვები vibeCODING-ის შესახებ", description: "პირდაპირი პასუხები საჯარო სკანზე, ნებართვით ფარგლებზე, ფასსა და ხარვეზების გამოსწორებაზე.",
+    filters: { all: "ყველა", pricing: "ფარგლები და ფასი", tech: "შემოწმება და შედეგი", safety: "წვდომა და საზღვრები" },
+    searchLabel: "შემოწმების კითხვების ძიება", searchPlaceholder: "მოძებნეთ შემოწმების კითხვა...", questionPrefix: "კითხვა",
+    calloutTitle: "კიდევ გაქვთ კითხვა შემოწმებაზე?", calloutAction: "აღწერეთ თქვენი აპი",
+    items: {
+      q1: { question: "რა არის vibeCODING?", answer: "AI კოდირების ხელსაწყოებით შექმნილი აპლიკაციების უსაფრთხოებისა და გამოშვებისთვის მზადყოფნის შემოწმება, რომელიც საჯარო, ბრაუზერში ხილული მტკიცებულებით იწყება." },
+      q2: { question: "ახალ აპს ქმნით?", answer: "არა. vibeCODING ამოწმებს იმას, რაც უკვე არსებობს. ახალი აპლიკაციის შექმნა სხვა პროდუქტის ფარგლებია." },
+      q3: { question: "რას ამოწმებს საჯარო სკანი?", answer: "URL-ს, გვერდს, სკრიპტებსა და სხვა ფაილებს, რომლებსაც ჩვეულებრივი ვიზიტორი ხედავს; ანგარიშში საიდუმლოს მსგავსი მნიშვნელობები დაფარულია." },
+      q4: { question: "შეგიძლიათ პირადი მონაცემთა ბაზა ან რეპოზიტორია შეამოწმოთ?", answer: "მხოლოდ მფლობელის ნებართვით, შეთანხმებული წვდომითა და მკაფიო უსაფრთხო ტესტის საზღვრით." },
+      q5: { question: "ჩემი პაროლი გჭირდებათ?", answer: "პაროლი ჩატში არ ჩასვათ. პირადი წვდომის ნებისმიერი გზა ცალკე თანხმდება და მფლობელის უსაფრთხოების წესებს უნდა დაემორჩილოს." },
+      q6: { question: "რას შეიცავს ანგარიში?", answer: "ხილულ მტკიცებულებას, ბიზნესზე გავლენას, კრიტიკულ, სასწრაფო და მოგვიანო სამუშაოს პრიორიტეტებს და, შეთანხმების შემთხვევაში, ხარვეზების გამოსწორების ან დეველოპერის სამუშაო სიას." },
+      q7: { question: "უსაფრთხოების ქულას გასცემთ?", answer: "უნივერსალური ქულა არ არის დაპირებული. ანგარიში წერს, რა შემოწმდა, რა აღმოჩნდა და რა რჩება უცნობი." },
+      q8: { question: "გარანტიას იძლევით, რომ აპი დაცულია?", answer: "არა. არცერთი აპი არ არის აღწერილი როგორც ყველა შეტევისგან დაცული; შემოწმება მხოლოდ შეთანხმებულ ზედაპირებსა და მტკიცებულებას მოიცავს." },
+      q9: { question: "მიგნებების გამოსწორებაც შეგიძლიათ?", answer: "მტკიცებულებისა და პასუხისმგებლობის გარკვევის შემდეგ შესაძლებელია ხარვეზების გამოსწორების ან სამუშაო სიის ცალკე განსაზღვრა; ხარვეზების გამოსწორება ავტომატური არ არის." },
+      q10: { question: "გადახდებს ან ატვირთვებს ამოწმებთ?", answer: "მხოლოდ ავტორიზებულ და წინასწარ შეთანხმებულ ტესტის საზღვრებში. ცოცხალი გადახდა და დამაზიანებელი ტესტი თავისთავად არ იგულისხმება." },
+      q11: { question: "რა ღირს?", answer: "ფასი ინდივიდუალურად განისაზღვრება წერილობით წინადადებაში. საჯარო რიცხვითი თანხა, ვალუტა ან პერიოდულობა დადასტურებული არ არის." },
+      q12: { question: "AI კოდირების რომელ ხელსაწყოებს უჭერთ მხარს?", answer: "შემოწმება იწყება თქვენ მიერ მოწოდებული აპითა და მის მიერ გამჟღავნებული მტკიცებულებით. არცერთ ხელსაწყოსთან კავშირი ან რეკომენდაცია არ იგულისხმება." },
+      q13: { question: "როგორ დავიწყო?", answer: "მოგვაწოდეთ აპლიკაციის საჯარო URL და აგვიხსენით, რა გადაწყვეტილება უნდა მიიღოთ გამოშვებამდე." },
+      q14: { question: "შეიძლება ანგარიში ტექნიკურ შემოწმებას დაეხმაროს?", answer: "მას შეუძლია ხელი შეუწყოს ფარგლებით განსაზღვრულ ტექნიკურ განხილვას, თუმცა შესაბამისობის სერტიფიკატი ან უსაფრთხოების გარანტია არ არის." },
+      q15: { question: "რა ხდება ხარვეზების გამოსწორების შემდეგ?", answer: "შეთანხმებულ ზედაპირს ხელახლა ვამოწმებთ და დარჩენილ ღია საკითხებსა და პასუხისმგებლობის გადაწყვეტილებებს ვაფიქსირებთ." },
+    },
+  },
+  clientFit: {
+    title: "ვისთვის არის vibeCODING", description: "დამფუძნებლებისა და გუნდებისთვის, რომლებმაც AI-ით შექმნილი აპი გამოუშვეს და ახლა გამოშვების ან ტექნიკური შემოწმება სჭირდებათ.", ariaLabel: "ვისთვის არის vibeCODING",
+    signals: ["გაქვთ აპლიკაციის საჯარო URL.", "შეგიძლიათ განსაზღვროთ გამოშვების გადაწყვეტილება ან შემოწმების კითხვა.", "ღრმა შემოწმების საჭიროებისას შეგიძლიათ პირად წვდომაზე თანხმობა განაცხადოთ.", "ვიღაცას ხარვეზების გამოსწორებასა და ხელახალ სკანზე პასუხისმგებლობა აქვს."],
+    notForTitle: "vibeCODING შეიძლება არ გამოგადგეთ, თუ...", notForDescription: "გსურთ ყველა შეტევისგან დაცულობის გარანტია, შემოწმების გარეშე ავტომატური გამოსწორება, შესაბამისობის სერტიფიკატი ან პირადი სისტემის უნებართვო ტესტი.", uncertain: "არ იცით, საიდან დაიწყოთ? დაიწყეთ საჯარო URL-ით და ერთი კითხვით გამოშვების შესახებ.",
+  },
+  closingCta: {
+    title: "შეამოწმეთ AI-ით შექმნილი აპი", description: "გამოგვიგზავნეთ საჯარო URL, გამოშვების გადაწყვეტილება და მიუთითეთ, შეიძლება თუ არა პირადი წვდომის განხილვა. დეტალური სამუშაოს დაწყებამდე წერილობით დაგიდასტურებთ ფარგლებსა და პირობებს.", successPrefix: "გმადლობთ. თქვენი შემოწმების მოთხოვნა ამ წინასწარ ვერსიაში ჩაიწერა.", checks: ["საჯარო სკანირება იწყება იმ მტკიცებულებით, რომელსაც ბრაუზერში ხედავთ.", "პირადი სისტემების შემოწმებას ნებართვა და მკაფიო ფარგლები სჭირდება.", "ფასი და ხარვეზების გამოსწორებაზე პასუხისმგებლობა დეტალური სამუშაოს დაწყებამდე წერილობით განისაზღვრება."],
+  },
+  footer: {
+    tagline: "vibeCODING by aiNOW · მტკიცებულება. ხარვეზების გამოსწორება. ხელახალი სკანი.", description: "vibeCODING AI-ით შექმნილ აპლიკაციებს გამოქვეყნებამდე ამოწმებს და საჯარო მტკიცებულებას ნებართვით ღრმა სამუშაოსგან აცალკევებს.", action: "აპის შემოწმება", products: "vibeCODING", industries: "შემოწმების კონტექსტები", resources: "რესურსები", language: "ენა", legal: "სამართალი და უსაფრთხოება", blog: "შემოწმების ჩანაწერები", howWeStart: "როგორ ვიწყებთ", faq: "კითხვები და პასუხები", sendTask: "აღწერეთ აპი", email: "მისწერეთ vibeCODING-ს", privacy: "კონფიდენციალურობა", terms: "მომსახურების პირობები", location: "თბილისი, საქართველო", rights: "ყველა უფლება დაცულია.", backToTop: "თავში დაბრუნება ↑", industryLinks: ["საჯარო სკანი", "AI-ით შექმნილი პროტოტიპები", "SaaS-ის შემოწმება", "გადახდის ზედაპირი", "ტექნიკური შემოწმება", "ხარვეზების გამოსწორება და ხელახალი სკანი"],
+  },
+} as const;
+
+const ru = {
+  ...en,
+  productLabels: { vibecoding: "Проверка безопасности и готовности AI-приложения к релизу" },
+  nav: { productDescriptions: { vibecoding: "Проверка AI-приложения до публикации" } },
+  banner: {
+    vibecoding: "Проверка AI-приложения до публикации",
+    publicSurface: "Начните с URL, страницы и скриптов, видимых обычному посетителю.",
+    accessBoundary: "Приватный доступ согласуется только с разрешением и безопасной границей теста.",
+    evidence: "Фиксируйте наблюдаемое и отделяйте факты от неизвестного.",
+    triage: "Расставьте критическую, срочную и позднюю работу до решения о релизе.",
+    repair: "Превратите согласованные находки в исправление или список работ разработчика.",
+    rescan: "Проверьте согласованное изменение и зафиксируйте открытые вопросы.",
+    release: "Поддержите решение о релизе, не называя приложение защищённым.",
+    handover: "Передайте результаты проверки и план работ тому, кто будет исправлять приложение.",
+  },
+  hero: {
+    titleLine1: "Приложение собрано с AI?", titleLine2: "Проверьте его до релиза.",
+    description: "vibeCODING проверяет приложения, созданные AI-инструментами для кода. Начинаем с того, что видит обычный посетитель; глубокая проверка приватных систем возможна только с разрешением и письменной границей.",
+    primaryCta: "Проверить приложение", catalogCta: "Посмотреть процесс проверки", hint: "Сначала публичное сканирование. Исправление и приватный доступ согласуются отдельно.",
+  },
+  ecosystemHub: {
+    satellites: {
+      chats: { title: "Публичное сканирование", subtitle: "URL, страница и скрипты", alt: "Публичное сканирование приложения" },
+      calls: { title: "Поверхность доступа", subtitle: "Вход, файлы и пути API", alt: "Проверка поверхности доступа приложения" },
+      content: { title: "Триаж", subtitle: "Критическое, срочное и позднее", alt: "Приоритизация находок безопасности" },
+      apps: { title: "Передача", subtitle: "Проверка, исправление и повторный скан", alt: "Передача исправления разработчику" },
+    },
+    centerSubtitle: "Проверка AI-приложения", badge: "От публичной проверки к списку исправлений перед релизом ⤴",
+  },
+  comparison: {
+    title: "Что создаёт риск в AI-приложении до релиза?", description: "Выберите вопрос проверки, который ближе всего к вашей ситуации.", action: "Описать приложение",
+    labels: { inspect: "Что уточняем", firstStep: "Первый шаг", ask: "Что нужно от вас" },
+    problems: {
+      chats: { question: "Может ли обычный посетитель увидеть больше, чем должен?", description: "Публичные файлы, скрипты и ответы браузера могут раскрыть конечные точки, значения, похожие на секреты, или пути к данным.", detailHeading: "Начать с публичной поверхности", firstStep: "Проверяем URL, страницу и скрипты, которые обычный посетитель может скачать.", solution: "Публичный скан показывает доступные снаружи проблемы. Он не означает, что приватные системы тоже проверены.", builds: ["Какой URL и окружение входят в согласованные границы.", "Какие публичные файлы и скрипты видны.", "Какие значения похожи на секреты и требуют сокрытия.", "Что должно остаться за пределами проверки."], materials: "Публичный URL приложения и граница релиза." },
+      calls: { question: "Нужна ли более глубокая проверка входа или доступа к данным?", description: "По публичной странице нельзя полностью проверить аутентификацию, правила базы данных и приватные API.", detailHeading: "Понять, что можно проверить снаружи, а где нужен доступ", firstStep: "Фиксируем приватную поверхность, которой могут потребоваться разрешение и ясная граница безопасного теста.", solution: "Глубокая проверка начинается только после согласования доступа, ответственности и безопасного тестирования.", builds: ["Какие аккаунты и роли существуют.", "Какие приватные системы можно проверять.", "Кто разрешает проверку.", "Какие действия запрещены."], materials: "Граница доступа, разрешение владельца и условия безопасного теста." },
+      content: { question: "Нужен ли находкам порядок для релиза?", description: "У приложения может быть несколько слабых мест, но владельцу нужно сначала увидеть то, что блокирует релиз.", detailHeading: "Превратить находки в список решений", firstStep: "Для каждой подтверждённой проблемы определяем влияние на бизнес и порядок исправления.", solution: "Отчёт объясняет риск, исправление и проверку, не придумывая универсальную оценку.", builds: ["Подтверждение каждой найденной проблемы.", "Кого может затронуть проблема.", "Что блокирует релиз.", "Как будет проверено согласованное исправление."], materials: "Контекст приложения, приоритеты владельца и дата релиза, если она известна." },
+      website: { question: "Нужна проверка, но начальные границы пока неясны?", description: "Приложение уже есть, но владелец ещё не решил, проверять ли публичный URL, репозиторий или базу данных.", detailHeading: "Зафиксировать границу проверки", firstStep: "Назовите публичный URL, возможный приватный доступ и ответственного за исправление.", solution: "Письменная граница отделяет проверку от несанкционированного теста.", builds: ["Начальное публичное сканирование.", "Опциональные авторизованные системы.", "Ответственный за исправление.", "Критерии перескана и передачи."], materials: "URL приложения, заметки о границах и граница разрешения." },
+    },
+  },
+  categories: {
+    title: "Какую поверхность проверить?", description: "vibeCODING проверяет существующее AI-приложение. Это не новый инструмент для создания кода и не обещание отсутствия уязвимостей.",
+    items: {
+      communication: { title: "Публичное сканирование приложения", subtitle: "Проверяем URL, страницу и скрипты, видимые обычному посетителю.", products: { scan: "Фиксируем публичный URL, страницу и файлы, видимые браузеру.", surface: "Отделяем видимую поверхность доступа от приватных систем." } },
+      marketing: { title: "Доступ и данные", subtitle: "Согласуем авторизованные проверки входа, API, баз данных, платежей и загрузок.", products: { triage: "Распределяем находки по критической, срочной и поздней работе.", findings: "Показываем, чем подтверждается проблема и на что она влияет.", severity: "Отдельно показываем блокеры релиза и неизвестные вопросы." } },
+      internal: { title: "Приоритизация находок", subtitle: "Определяем, что исправить до релиза, что сделать следующим и что можно отложить.", products: { repair: "Готовим согласованное исправление или список работ для разработчика.", handover: "Передаём результаты проверки и согласованный план ответственному за исправления.", scope: "Держим приватные проверки внутри утверждённой границы теста.", rescan: "Проверяем согласованное исправление и фиксируем открытые вопросы." } },
+      products: { title: "Исправление и перескан", subtitle: "Готовим список работ разработчика и проверяем согласованное исправление.", products: { public: "Начинаем с той части приложения, которая доступна в браузере без приватного доступа.", private: "Проверяем приватные системы только с разрешением и безопасной границей.", release: "Помогаем принять решение о релизе, не сертифицируя всё приложение." } },
+    },
+  },
+  industries: {
+    eyebrow: "Контекст приложения меняет проверку", title: "Проверьте продукт, который вы действительно выпустили", description: "У клиентского приложения, внутреннего инструмента и платёжного процесса разные риски. Объём проверки зависит от доступных данных и согласованных разрешений.",
+    items: {
+      healthcare: { title: "Клиентские приложения", tag: "Публичная поверхность", description: "Проверьте, что видит обычный посетитель, до того как приложение получит больше пользователей.", action: "Описать публичную проверку", points: ["Начните с реального URL.", "Скройте значения, похожие на секреты.", "Объясните влияние на бизнес.", "Гарантия безопасности не подразумевается."] },
+      horeca: { title: "Внутренние инструменты", tag: "Правила доступа", description: "Определяйте роли, файлы и приватные системы только с разрешением владельца.", action: "Описать проверку доступа", points: ["Назовите роли.", "Утвердите безопасную границу теста.", "Не передавайте приватные данные в чат.", "Передайте исправление владельцу."] },
+      "real-estate": { title: "SaaS и панели", tag: "Поверхность API", description: "Проверяем публичные скрипты и при необходимости авторизованные пути API или базы данных.", action: "Описать проверку SaaS", points: ["Разделите публичные и приватные проверки.", "Фиксируйте подтверждённые проблемы отдельно от предположений.", "Приоритизируйте блокеры релиза.", "Пересканируйте согласованные исправления."] },
+      ecommerce: { title: "Оплата и заказы", tag: "Платёжный поток", description: "Проверяем публичную поверхность оплаты, а проверки, зависящие от провайдера, согласуем отдельно.", action: "Описать проверку платежа", points: ["Назовите границу платежа.", "Не тестируйте живые платежи без разрешения.", "Проверьте раскрытие данных и путь ошибки.", "Прямо укажите неизвестное."] },
+      auto: { title: "AI-прототипы", tag: "До публикации", description: "Превратите AI-прототип в письменный список перед релизом.", action: "Описать проверку прототипа", points: ["Начните с публичной сборки.", "Проверяйте отдельно код и работу среды, в которой он запущен.", "Не обещайте измеренную скорость.", "Назначьте владельца исправления."] },
+      legal: { title: "Техническая проверка", tag: "Проверка владельцем", description: "Дайте владельцу отчёт по согласованным границам, а не сертификат.", action: "Описать техническую проверку", points: ["Зафиксируйте границу проверки.", "Скройте чувствительные значения.", "Объясните влияние и исправление.", "Не заявляйте сертификацию соответствия."] },
+    },
+  },
+  process: {
+    title: "От публичной проверки к списку исправлений", description: "До углублённой проверки согласуем приложение, доступные данные, разрешения и формат результата.",
+    steps: [
+      { title: "Проверить публичную поверхность", description: "Проверяем URL, страницу и скрипты, доступные обычному посетителю." },
+      { title: "Согласовать авторизованные проверки", description: "При необходимости определяем доступ к приватным системам, репозиториям, API или базам данных." },
+      { title: "Приоритизировать и пересканировать", description: "Объясняем риск, назначаем владельца исправления и проверяем согласованное изменение." },
+    ],
+  },
+  architecture: {
+    eyebrow: "Проверка безопасности с границей", title: "Подтверждаем проблемы. Согласуем доступ.", description: "vibeCODING описывает обнаруженные проблемы и отдельно указывает, что требует приватного доступа. Публичный скан не даёт оснований считать всё приложение защищённым.",
+    action: "Описать проверку приложения", principle: "Граница", rule: "Согласованные границы",
+    specs: [
+      { title: "Начните с публичного URL", description: "Начальное сканирование использует то, что обычный браузер видит и загружает." },
+      { title: "Скройте значения, похожие на секреты", description: "Проблему можно описать и подтвердить, не публикуя ключи и приватные данные." },
+      { title: "Приватные проверки — только с разрешением", description: "Вход, база данных, репозиторий, API и платежи требуют разрешения и безопасной границы." },
+      { title: "Объясните влияние на бизнес", description: "Для каждой технической проблемы объясняем риск для пользователей и релиза." },
+      { title: "За исправление отвечает владелец", description: "В согласованных границах отчёт может содержать исправление или список работ." },
+      { title: "Пересканируйте изменённое", description: "Проверка оценивает согласованное исправление, а не сертифицирует приложение целиком." },
+    ],
+  },
+  team: {
+    eyebrow: "Наша роль", title: "Слой проверки для быстро созданного ПО",
+    paragraphs: ["Мы — aiNOW, команда из Тбилиси, которая помогает владельцам принять понятное решение о релизе AI-приложения.", "В vibeCODING начинаем с публичной проверки, отмечаем, где нужен дополнительный доступ, и описываем риски, исправления и способ их проверки.", "Мы не заявляем защиту от любых атак, сертификацию соответствия или гарантированный результат безопасности."],
+    names: { andro: "Andro Kasparov", nika: "Nika Skhirtladze", giorgi: "Giorgi Darbaiseli" },
+    roles: { founder: "Основатель", commercial: "Коммерческий директор", businessDevelopment: "Директор по развитию бизнеса" }, location: "Тбилиси, Грузия", year: "2026",
+  },
+  faq: {
+    eyebrow: "[Ответы о проверке безопасности]", title: "Вопросы о vibeCODING", description: "Прямые ответы о публичном сканировании, согласованных границах, цене и исправлении.",
+    filters: { all: "Все", pricing: "Границы и цена", tech: "Проверка и результат", safety: "Доступ и границы" },
+    searchLabel: "Поиск вопросов о проверке", searchPlaceholder: "Найти вопрос о проверке...", questionPrefix: "Вопрос", calloutTitle: "Остался вопрос о проверке?", calloutAction: "Описать приложение",
+    items: {
+      q1: { question: "Что такое vibeCODING?", answer: "Это проверка безопасности и готовности к релизу приложений, созданных с помощью AI-инструментов для кода. Начинаем с того, что доступно в браузере." },
+      q2: { question: "Вы создаёте новое приложение?", answer: "Нет. vibeCODING проверяет то, что уже существует. Создание нового приложения относится к другим границам продукта." },
+      q3: { question: "Что проверяет публичное сканирование?", answer: "URL, страницу, скрипты и другие файлы, видимые обычному посетителю; значения, похожие на секреты, скрываются в отчёте." },
+      q4: { question: "Можно проверить приватную базу данных или репозиторий?", answer: "Только с разрешением владельца, согласованным доступом и ясной границей безопасного теста." },
+      q5: { question: "Вам нужен мой пароль?", answer: "Не вставляйте учётные данные в чат. Любой способ приватного доступа согласуется отдельно и должен соответствовать правилам безопасности владельца." },
+      q6: { question: "Что входит в отчёт?", answer: "Подтверждённые проблемы, их влияние на бизнес и приоритет исправления. По согласованию подготовим список работ для разработчика или отдельного этапа исправлений." },
+      q7: { question: "Вы выдаёте оценку безопасности?", answer: "Универсальная оценка не обещается. В отчёте указано, что проверено, что найдено и что остаётся неизвестным." },
+      q8: { question: "Вы гарантируете безопасность приложения?", answer: "Нет. Проверка ограничена согласованными частями приложения и доступными данными; она не гарантирует защиту от любых атак." },
+      q9: { question: "Вы исправляете найденные проблемы?", answer: "После разбора результатов и определения ответственного можно отдельно согласовать исправления или подготовку списка работ. Автоматическое исправление не обещается." },
+      q10: { question: "Вы тестируете платежи или загрузки?", answer: "Только в авторизованной и явно согласованной границе теста. Живые платежи и разрушающие тесты не предполагаются." },
+      q11: { question: "Сколько это стоит?", answer: "Цена определяется индивидуально в письменном предложении. Публичная сумма, валюта или периодичность не подтверждены." },
+      q12: { question: "Какие AI-инструменты для кода поддерживаются?", answer: "Проверяем само приложение и предоставленные вами материалы. Это не означает партнёрства с инструментом, на котором оно создано, или рекомендации этого инструмента." },
+      q13: { question: "Как начать?", answer: "Предоставьте публичный URL приложения и объясните, какое решение о релизе вам нужно принять." },
+      q14: { question: "Может ли отчёт поддержать техническую проверку?", answer: "Он может поддержать разговор о технической проверке в согласованных границах, но не является сертификатом соответствия или гарантией безопасности." },
+      q15: { question: "Что происходит после исправления?", answer: "Согласованная поверхность пересканируется, а оставшиеся открытые вопросы и решения об ответственности фиксируются." },
+    },
+  },
+  clientFit: {
+    title: "Для кого подходит vibeCODING", description: "Для основателей и команд, которые выпустили AI-приложение и нуждаются в проверке релиза или технической проверке.", ariaLabel: "Для кого подходит vibeCODING",
+    signals: ["У вас есть публичный URL приложения.", "Вы можете определить решение о релизе или вопрос проверки.", "При необходимости глубокой проверки вы можете согласовать приватный доступ.", "Кто-то отвечает за исправление и перескан."],
+    notForTitle: "vibeCODING может не подойти, если...", notForDescription: "Нужна гарантия защиты от любых атак, автоматическое исправление без проверки, сертификат соответствия или несанкционированный тест приватной системы.", uncertain: "Не знаете, с чего начать? Начните с публичного URL и одного вопроса о релизе.",
+  },
+  closingCta: {
+    title: "Проверить AI-приложение", description: "Пришлите публичный URL, решение о релизе и укажите, можно ли позже обсуждать приватный доступ. До глубокой работы письменно подтвердим границы и условия.", successPrefix: "Спасибо. В этом потоке предпросмотра ваш запрос на проверку записан.", checks: ["Начинаем с публичной части приложения, доступной в браузере.", "Приватные системы требуют разрешения и ясной границы.", "Цена и ответственность за исправление фиксируются письменно до глубокой работы."],
+  },
+  footer: {
+    tagline: "vibeCODING by aiNOW · Проверка. Исправление. Повторный скан.", description: "vibeCODING проверяет AI-приложения перед публикацией. Для углублённой работы с приватными системами отдельно согласуем доступ.", action: "Проверить приложение", products: "vibeCODING", industries: "Контексты проверки", resources: "Ресурсы", language: "Язык", legal: "Право и безопасность", blog: "Заметки о проверке", howWeStart: "Как начинаем", faq: "Вопросы и ответы", sendTask: "Описать приложение", email: "Написать vibeCODING", privacy: "Конфиденциальность", terms: "Условия обслуживания", location: "Тбилиси, Грузия", rights: "Все права защищены.", backToTop: "Наверх ↑", industryLinks: ["Публичное сканирование", "AI-прототипы", "Проверка SaaS", "Платёжная поверхность", "Техническая проверка", "Исправление и перескан"],
+  },
+} as const;
+
+export const VIBECODING_COPY_OVERRIDES = { ka, en, ru } as const;
+
+
+
+

@@ -1,16 +1,12 @@
 'use client';
 
-import { ContactChallenge } from "@/components/common/ContactChallenge";
-
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
-import { Reveal } from '@/components/common/Reveal';
-import { MagneticButton } from '@/components/common/MagneticButton';
 import { contactFormSchema, type ContactFormData } from '@/features/contact/schemas/contact.schema';
-import { createLeadEventId, trackLead } from "@/lib/analytics";
+import { trackLead } from '@/lib/facebook-pixel';
 import './landing-cta.css';
 
 /* =========================================================================
@@ -26,10 +22,8 @@ import './landing-cta.css';
 export function LandingCta() {
   const rootRef = useRef<HTMLElement>(null);
   const t = useTranslations('contact');
-  const tc = useTranslations('product.cta');
+  const tc = useTranslations('home.cta');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [turnstileToken, setTurnstileToken] = useState("");
-  const [challengeAttempt, setChallengeAttempt] = useState(0);
 
   const {
     register,
@@ -43,17 +37,15 @@ export function LandingCta() {
   // Submit to the same endpoint the old contact form used (/api/contact →
   // Telegram notification). Phone-only lead, we call back within 24h.
   const onSubmit = async (data: ContactFormData) => {
-    if (!turnstileToken) return;
     setIsSubmitting(true);
-    const leadEventId = createLeadEventId();
     try {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ turnstileToken, phone: data.phone }),
+        body: JSON.stringify({ phone: data.phone }),
       });
       if (res.ok) {
-        trackLead("homepage_cta", leadEventId);
+        trackLead({ content_name: 'cta-phone' });
         toast.success(t('successTitle'), { description: t('successMessage') });
         reset();
       } else {
@@ -62,8 +54,6 @@ export function LandingCta() {
     } catch {
       toast.error(t('errorMessage'));
     } finally {
-      setTurnstileToken("");
-      setChallengeAttempt((value) => value + 1);
       setIsSubmitting(false);
     }
   };
@@ -137,18 +127,16 @@ export function LandingCta() {
   }, []);
 
   return (
-    <section ref={rootRef} id="cta" className="scroll-mt-24 px-4 py-16 md:px-6 md:py-32">
-      <div data-family-shell="true" className="max-w-[1216px] mx-auto relative overflow-hidden rounded-3xl [clip-path:inset(0_round_1.5rem)] border border-[#e5e5e5] bg-gradient-to-br from-white via-neutral-50 to-white p-5 sm:p-8 md:p-20">
-        <div className="absolute -top-32 -right-32 w-[500px] h-[500px] bg-(--brand)/30 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-32 -left-32 w-[500px] h-[500px] bg-(--brand-soft)/25 rounded-full blur-3xl"></div>
+    <section ref={rootRef} id="cta" className="py-20 md:py-32 px-6">
+      <div className="max-w-[1280px] mx-auto relative overflow-hidden rounded-3xl [clip-path:inset(0_round_1.5rem)] border border-[#e5e5e5] bg-gradient-to-br from-white via-neutral-50 to-white p-8 md:p-20">
+        <div className="absolute -top-32 -right-32 w-[500px] h-[500px] bg-[#e040fb]/30 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-32 -left-32 w-[500px] h-[500px] bg-[#ff6b00]/25 rounded-full blur-3xl"></div>
         <div className="relative text-center">
-          <Reveal>
-            <h2 className="text-balance font-display font-extrabold text-[1.875rem] sm:text-4xl md:text-6xl leading-[1.08] tracking-tight max-w-3xl mx-auto text-neutral-900">
-              <span className="gradient-text">{tc('heading')}</span>
-            </h2>
-            <p className="mt-5 text-base leading-relaxed text-[#525252] max-w-xl mx-auto sm:text-lg">{tc('subtitle')}</p>
-          </Reveal>
-          <form onSubmit={handleSubmit(onSubmit)} className="mt-8 max-w-md mx-auto text-left rounded-2xl border border-[#e5e5e5] bg-white p-4 sm:p-6 md:p-8 space-y-4">
+          <h2 className="fade-up font-display font-extrabold text-4xl md:text-6xl leading-[1.05] tracking-tight max-w-3xl mx-auto text-neutral-900">
+            <span className="gradient-text">{tc('heading')}</span>
+          </h2>
+          <p className="mt-6 text-lg text-[#525252] max-w-xl mx-auto">{tc('subtitle')}</p>
+          <form onSubmit={handleSubmit(onSubmit)} className="mt-10 max-w-md mx-auto text-left rounded-2xl border border-[#e5e5e5] bg-white p-6 md:p-8 space-y-4">
             <div>
               <label htmlFor="cta-phone" className="block text-xs font-mono uppercase tracking-[0.2em] text-[#525252] mb-2">{tc('phoneLabel')}</label>
               <input
@@ -164,18 +152,13 @@ export function LandingCta() {
                 className="w-full px-4 py-3 rounded-xl border border-[#e5e5e5] bg-white text-neutral-900 focus:border-neutral-900 focus:outline-none transition disabled:opacity-60"
               />
               {errors.phone && (
-                <p id="cta-phone-error" role="alert" aria-live="polite" className="mt-2 text-sm text-red-600">
-                  {t.has('phoneInvalid') ? t('phoneInvalid') : errors.phone.message}
-                </p>
+                <p id="cta-phone-error" role="alert" aria-live="polite" className="mt-2 text-sm text-red-600">{errors.phone.message}</p>
               )}
             </div>
-            <ContactChallenge key={challengeAttempt} onToken={setTurnstileToken} errorText={t("errorMessage")} />
-            <MagneticButton className="block w-full">
-              <button type="submit" disabled={isSubmitting || !turnstileToken} className="click-spark min-h-11 w-full px-4 py-3.5 rounded-xl bg-neutral-900 text-white font-medium [transition:background-color_.18s_ease,transform_.18s_cubic-bezier(.2,.8,.2,1)] will-change-transform hover:bg-neutral-800 active:scale-[0.97] disabled:opacity-60 disabled:cursor-not-allowed motion-reduce:transition-none motion-reduce:active:scale-100">{isSubmitting ? t('submitting') : tc('phoneSubmit')}</button>
-            </MagneticButton>
+            <button type="submit" disabled={isSubmitting} className="magnet magnet-strong click-spark w-full px-6 py-4 rounded-xl bg-neutral-900 text-white font-medium hover:bg-neutral-800 transition disabled:opacity-60 disabled:cursor-not-allowed">{isSubmitting ? t('submitting') : tc('phoneSubmit')}</button>
             <p className="text-center text-xs text-[#525252]">{tc('phoneNote')}</p>
           </form>
-          <p className="mt-8 text-sm text-[#525252]">{tc('orWrite')} <a href="mailto:CONTACT@aiNOW.GE" className="inline-flex min-h-11 min-w-11 max-w-full items-center justify-center break-all rounded-lg px-2 text-center underline transition-colors hover:text-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-ink)] focus-visible:ring-offset-2">CONTACT@aiNOW.GE</a></p>
+          <p className="mt-8 text-sm text-[#525252]">{tc('orWrite')} <a href="mailto:CONTACT@aiNOW.GE" className="underline hover:text-neutral-900">CONTACT@aiNOW.GE</a></p>
         </div>
       </div>
     </section>

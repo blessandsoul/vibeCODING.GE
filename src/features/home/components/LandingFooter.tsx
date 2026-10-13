@@ -1,244 +1,180 @@
-'use client';
-
 import type React from 'react';
 
+import { Ico } from '@/components/common/Ico';
 import { useLocale, useTranslations } from 'next-intl';
 
-import { SITE } from '@/config/site';
-import { FAMILY } from '@/config/family';
-import { MagneticButton } from '@/components/common/MagneticButton';
 import { SocialLinks } from '@/components/layout/SocialLinks';
-import { Link, usePathname } from '@/i18n/navigation';
-import {
-  PUBLIC_ROUTES,
-  publishedRoute,
-} from '@/features/product-pages/routes';
+import { Link } from '@/i18n/navigation';
+import { NICHE_LINKS, nicheLabel } from '@/features/niches/labels';
+import { AGENT_PRODUCTS, PUBLIC_FACTS } from '@/lib/public-facts';
 import { FooterLanguageSwitcher } from './FooterLanguageSwitcher';
-import { LandingThemeToggle } from './LandingThemeToggle';
 import './landing-footer.css';
 
 /* =========================================================================
-   LandingFooter, the global corporate footer.
-
-   Left column: the product wordmark, then the in-page Company anchors and the
-   Social + language block. Right column (lg+): the aiNOW family directory, which
-   is generated from landings/family.json and never hand-edited. On mobile the
-   directory stacks under the wordmark.
-
-   The right column used to be a decorative 16:9 box with a play button and no
-   video behind it: a click target that did nothing, and the "div-rectangle
-   standing in for a real screenshot" tell that VISUAL_TASTE bans. The family
-   directory is a real thing that belongs there and the family is now 12 domains,
-   which no longer fits in a single link column.
-
-   Brand colour travels via the --brand / --accent tokens (brand.css), so this
-   same component renders pink on aiCONTENT and cyan on aiWEB with no edits.
+   LandingFooter, the global aiNOW footer, ported to the aiSTAFF layout while
+   preserving aiNOW's real navigation. Left column carries the big aiNOW
+   wordmark plus the live sitemap columns (Services, Company, Resources, Legal,
+   Social, Language); right column (lg+) is a decorative 16:9 brand-tinted demo
+   box with a play button, stacked on mobile. The signature is the giant
+   rounded-full brand-gradient CTA scrolling to /contact. Colors travel via the
+   oklch --primary / --accent tokens (globals.css), no hardcoded brand hex.
    ========================================================================= */
 
-const FOOTER_ROUTE_LABELS = {
-  ka: {
-    pricing: 'ფასები',
-    blog: 'ბლოგი',
-    integrations: 'ინტეგრაციები',
-    security: 'უსაფრთხოება',
-    solutions: 'გადაწყვეტილებები',
-    privacy: 'კონფიდენციალურობა',
-    terms: 'პირობები',
-    cookies: 'Cookie-ფაილები',
-  },
-  en: {
-    pricing: 'Pricing',
-    blog: 'Blog',
-    integrations: 'Integrations',
-    security: 'Security',
-    solutions: 'Solutions',
-    privacy: 'Privacy',
-    terms: 'Terms',
-    cookies: 'Cookies',
-  },
-  ru: {
-    pricing: 'Цены',
-    blog: 'Блог',
-    integrations: 'Интеграции',
-    security: 'Безопасность',
-    solutions: 'Решения',
-    privacy: 'Конфиденциальность',
-    terms: 'Условия',
-    cookies: 'Cookie-файлы',
-  },
-} as const;
+const FAMILY = AGENT_PRODUCTS.map((product) => ({
+  href: product.url,
+  label: product.name,
+}));
+
+// Footer "AI chatbot by industry" column: the featured few + a link to the full
+// grid on /ai-chatboti#industries. Heading/all-label localized inline.
+const IND_HEADING: Record<string, string> = { ka: 'დარგები', en: 'By industry', ru: 'По отраслям', de: 'Nach Branche' };
+const IND_ALL: Record<string, string> = { ka: 'ყველა დარგი', en: 'All industries', ru: 'Все отрасли', de: 'Alle Branchen' };
+
+// "AI for business" pillar landing (/ai-biznesistvis): a sitewide footer link so the
+// hub page has inbound links from every page (fixes the 2026-07-04 audit orphan flag).
+const AI_BIZ_LABEL: Record<string, string> = { ka: 'AI ბიზნესისთვის', en: 'AI for business', ru: 'AI для бизнеса', de: 'KI für Unternehmen' };
 
 export function LandingFooter(): React.ReactElement {
   const t = useTranslations('landingFooter');
+  const tNav = useTranslations('nav');
+  const tPartners = useTranslations('partners');
   const locale = useLocale();
-  const pathname = usePathname();
-  const isHome = pathname === '/';
   const year = new Date().getFullYear();
-  const labels =
-    FOOTER_ROUTE_LABELS[locale as keyof typeof FOOTER_ROUTE_LABELS] ??
-    FOOTER_ROUTE_LABELS.en;
-  const sectionHref = (id: string) => (isHome ? `#${id}` : `/#${id}`);
-  const contactRoute = publishedRoute('contact');
-  const blogRoute = publishedRoute('blog');
-  const companyRoutes = [
-    ...(
-      [
-        'pricing',
-        'integrations',
-        'security',
-        'solutions',
-        'privacy',
-        'terms',
-        'cookies',
-      ] as const
-    ).flatMap((key) => {
-      const route = publishedRoute(key);
-      return route ? [{ key, path: route.path, label: labels[key] }] : [];
-    }),
-    ...(blogRoute
-      ? [{ key: 'blog' as const, path: blogRoute.path, label: labels.blog }]
-      : []),
-  ];
-  const registryRoutePaths = new Set(PUBLIC_ROUTES.map((route) => route.path));
-  const publishedCompanyRoutes = companyRoutes.filter((route) =>
-    registryRoutePaths.has(route.path),
-  );
-
-  // A site never links to itself, and a landing that has not shipped yet stays out.
-  const family = FAMILY.filter((m) => m.live && m.domain !== SITE.domain);
 
   const copyright = (
-    <span className="block whitespace-normal text-[12px] uppercase tracking-wide text-[#667085] lg:whitespace-nowrap">
-      {t('copyright', { year })}
+    <span className="block whitespace-nowrap text-[12px] uppercase tracking-wide text-neutral-900/40">
+      {PUBLIC_FACTS.brand.legalName} · © {year}
     </span>
   );
 
   return (
-    <footer data-parent-brand="aiNOW" className="landing-footer border-t border-[#e5e5e5]/60 bg-white px-0 pb-8 pt-12 text-neutral-900 md:py-16">
-      <div data-family-shell="true" className="mx-auto w-[calc(100%-32px)] max-w-[1216px] md:w-[calc(100%-48px)]">
-        <div className="grid lg:grid-cols-[minmax(460px,600px)_1fr] lg:gap-16">
-          {/* LEFT, wordmark + link columns.
-
-              THE PARENT SIGNS THE PAGE. This slot used to render the PRODUCT's wordmark while
-              its aria-label said "aiNOW", so the mark and the label disagreed and the footer
-              repeated a logo the reader had already seen twice on the way down.
-
-              The product owns the page and it owns the oversized band above this (LandingWordmark).
-              The footer is where a page says who is behind it, and that is aiNOW. Its wordmark
-              keeps the original local home route so locale-aware navigation stays on this site. */}
+    <footer className="landing-footer border-t border-[#e5e5e5]/60 bg-white px-6 pb-8 pt-12 text-neutral-900 md:px-10 md:py-16">
+      <div className="mx-auto w-full max-w-[1280px]">
+        <div className="grid lg:grid-cols-[minmax(520px,640px)_1fr] lg:gap-16">
+          {/* LEFT, wordmark + sitemap columns */}
           <div>
-            <Link
-              href="/"
-              aria-label="aiNOW"
-              className="footer-logo-link -m-3 inline-flex min-h-11 min-w-11 items-center rounded-sm p-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-ink)]"
-            >
-              <span className="wordmark-3d ainow-parent footer-wordmark text-[40px] leading-none md:text-[52px]">
+            <Link href="/" aria-label="aiNOW" className="inline-flex">
+              <span className="wordmark-3d footer-wordmark text-[40px] leading-none md:text-[52px]">
                 <span className="wm-prefix">ai</span>
                 <span className="wm-mark">NOW</span>
                 <span className="wm-accent" aria-hidden="true" />
               </span>
             </Link>
 
-            {/* Family directory stacks under the wordmark below the 2-col breakpoint */}
-            <div className="mt-10 lg:hidden">
-              <FamilyDirectory heading={t('familyHeading')} members={family} />
-              <span className="mt-8 block">{copyright}</span>
+            {/* Stacked demo box + copyright below the desktop 2-col breakpoint */}
+            <div className="mt-10 flex flex-col lg:hidden">
+              <DemoBox />
+              <span className="mt-3">{copyright}</span>
             </div>
 
-            {/* Link columns */}
-            <div className="mt-10 grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 lg:mt-16">
-              <FooterColumn title={t('companyHeading')}>
-                {contactRoute ? (
-                  <FooterRouteLink href={contactRoute.path}>
-                    {t('contact')}
-                  </FooterRouteLink>
-                ) : null}
-                {publishedCompanyRoutes.map((route) => (
-                  <FooterRouteLink key={route.key} href={route.path}>
-                    {route.label}
-                  </FooterRouteLink>
+            {/* Sitemap columns, up to 4 across at md+ */}
+            <div className="mt-10 grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 md:grid-cols-4 lg:mt-16">
+              <FooterColumn title={t('productsHeading')}>
+                {FAMILY.map((link) => (
+                  <FooterExternalLink key={link.href} href={link.href}>
+                    {link.label}
+                  </FooterExternalLink>
                 ))}
-                <FooterAnchorLink href={sectionHref('dashboard')}>
-                  {t('sectionShowcase')}
-                </FooterAnchorLink>
-                <FooterAnchorLink href={sectionHref('cases')}>
-                  {t('sectionWork')}
-                </FooterAnchorLink>
-                <FooterAnchorLink href={sectionHref('faq')}>
-                  {t('sectionFaq')}
-                </FooterAnchorLink>
+                <FooterRouteLink href="/ai-agenti">{tNav('servicesItems.aiAgents')}</FooterRouteLink>
+                <FooterRouteLink href="/ai-chatboti">{tNav('servicesItems.aiChatbots')}</FooterRouteLink>
+                <FooterRouteLink href="/ai-konteni">{tNav('servicesItems.aiContent')}</FooterRouteLink>
+                <FooterRouteLink href="/ai-biznesistvis">{AI_BIZ_LABEL[locale] ?? AI_BIZ_LABEL.en}</FooterRouteLink>
+                <FooterRouteLink href="/services">{tNav('services')}</FooterRouteLink>
+              </FooterColumn>
+
+              <FooterColumn title={t('companyHeading')}>
+                <FooterRouteLink href="/about">{t('about')}</FooterRouteLink>
+                <FooterRouteLink href="/contact">{t('contact')}</FooterRouteLink>
+                <FooterRouteLink href="/reviews">{tNav('reviews')}</FooterRouteLink>
+                <FooterRouteLink href="/partners">{tPartners('navLabel')}</FooterRouteLink>
+                <FooterRouteLink href="/pricing">{tNav('pricing')}</FooterRouteLink>
+              </FooterColumn>
+
+              <FooterColumn title={t('resourcesHeading')}>
+                <FooterRouteLink href="/projects">{t('cases')}</FooterRouteLink>
+                <FooterRouteLink href="/blog">{t('blog')}</FooterRouteLink>
               </FooterColumn>
 
               <div>
-                <span className="whitespace-normal text-[12px] uppercase tracking-wide text-[#667085]">
-                  {t('socialHeading')}
+                <span className="whitespace-nowrap text-[12px] uppercase tracking-wide text-neutral-900/40">
+                  {t('legalHeading')}
                 </span>
-                <SocialLinks className="mt-5 gap-3 sm:mt-4" size={18} round />
+                <ul className="mt-5 flex flex-col items-start gap-3 sm:mt-4">
+                  <FooterRouteLink href="/privacy">{tNav('privacy')}</FooterRouteLink>
+                  <FooterRouteLink href="/terms">{tNav('terms')}</FooterRouteLink>
+                </ul>
+
                 <div className="mt-8">
-                  <span className="whitespace-normal text-[12px] uppercase tracking-wide text-[#667085]">
-                    {t('languageHeading')}
+                  <span className="whitespace-nowrap text-[12px] uppercase tracking-wide text-neutral-900/40">
+                    {t('socialHeading')}
                   </span>
-                  <div className="mt-4 text-sm">
-                    <FooterLanguageSwitcher />
-                  </div>
+                  <SocialLinks className="mt-5 flex-wrap gap-3 sm:mt-4" size={18} round />
                 </div>
-                <div className="mt-5"><LandingThemeToggle /></div>
               </div>
+
+              <FooterColumn title={IND_HEADING[locale] ?? IND_HEADING.en}>
+                {NICHE_LINKS.filter((n) => n.featured).map((n) => (
+                  <FooterRouteLink key={n.slug} href={`/${n.slug}`}>
+                    {nicheLabel(n, locale)}
+                  </FooterRouteLink>
+                ))}
+                <FooterRouteLink href="/ai-chatboti#industries">
+                  {IND_ALL[locale] ?? IND_ALL.en}
+                </FooterRouteLink>
+              </FooterColumn>
+            </div>
+
+            {/* Language row */}
+            <div className="mt-10">
+              <span className="whitespace-nowrap text-[12px] uppercase tracking-wide text-neutral-900/40">
+                {t('languageHeading')}
+              </span>
+              <div className="mt-4 text-sm">
+                <FooterLanguageSwitcher />
+              </div>
+
+              <SaitebiBadge />
             </div>
           </div>
 
-          {/* RIGHT, the family directory + copyright */}
+          {/* RIGHT, desktop demo box + copyright */}
           <div className="hidden w-full flex-col lg:flex">
-            <FamilyDirectory heading={t('familyHeading')} members={family} />
-            <span className="mt-auto pt-8 self-end">{copyright}</span>
+            <DemoBox />
+            <span className="mt-3 self-end">{copyright}</span>
           </div>
         </div>
 
-        {/* GIANT BRAND CTA, scrolls to the #cta lead form */}
+        {/* GIANT BRAND CTA, scrolls to the contact conversion route */}
         <div className="mt-12 sm:mt-20 md:mt-24">
-          <MagneticButton className="block w-full">
-            <Link
-              href={sectionHref('cta')}
-              className="flex min-h-[100px] w-full items-center justify-center whitespace-normal rounded-full px-6 py-5 text-center text-sm font-semibold uppercase leading-5 tracking-[0.02em] text-[var(--primary-foreground)] [transition:transform_.15s_cubic-bezier(.23,1,.32,1)] active:scale-[0.96] md:min-h-[120px] md:text-base 2xl:min-h-[140px] lg:whitespace-nowrap"
-              style={{ background: 'linear-gradient(135deg, var(--brand), var(--accent))' }}
-            >
-              {t('ctaHuge')}
-            </Link>
-          </MagneticButton>
+          <Link
+            href="/contact"
+            className="flex h-[100px] w-full items-center justify-center whitespace-nowrap rounded-full px-5 text-center text-sm font-semibold uppercase leading-5 tracking-[0.02em] text-white [transition:transform_.18s_cubic-bezier(.2,.8,.2,1)] will-change-transform active:scale-[0.99] md:h-[120px] md:text-base 2xl:h-[140px]"
+            style={{ background: 'linear-gradient(135deg, var(--primary), var(--accent))' }}
+          >
+            {t('ctaHuge')}
+          </Link>
         </div>
       </div>
     </footer>
   );
 }
 
-/* The aiNOW family directory. Generated list, self filtered out, two columns so
-   twelve domains do not become a twelve-row tower. */
-function FamilyDirectory({
-  heading,
-  members,
-}: {
-  heading: string;
-  members: readonly { key: string; domain: string; label: string }[];
-}): React.ReactElement {
+/* Decorative 16:9 brand-tinted box with a centered play button. No real video
+   source, purely a visual block matching the aiSTAFF footer placement. */
+function DemoBox(): React.ReactElement {
   return (
-    <div>
-      <span className="whitespace-normal text-[12px] uppercase tracking-wide text-[#667085]">
-        {heading}
+    <div
+      className="group relative w-full overflow-hidden rounded-2xl pb-[56.25%]"
+      style={{ background: 'color-mix(in srgb, var(--primary) 12%, transparent)' }}
+    >
+      <span className="pointer-events-none absolute inset-0 flex items-center justify-center">
+        <span
+          className="flex h-14 w-14 items-center justify-center rounded-full pl-[3px] shadow-lg [transition:transform_.3s_ease] md:h-20 md:w-20 md:group-hover:scale-110"
+          style={{ background: 'var(--primary)' }}
+        >
+          <Ico name="solar:play-bold-duotone" className="h-5 w-5 fill-white text-white md:h-7 md:w-7" />
+        </span>
       </span>
-      <ul className="mt-5 grid grid-cols-2 gap-x-6 gap-y-3 sm:mt-4">
-        {members.map((m) => (
-          <li key={m.key}>
-            <a
-              href={`https://${m.domain}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`${LINK_CLASS} font-medium`}
-            >
-              {m.label}
-            </a>
-          </li>
-        ))}
-      </ul>
     </div>
   );
 }
@@ -251,7 +187,7 @@ interface FooterColumnProps {
 function FooterColumn({ title, children }: FooterColumnProps): React.ReactElement {
   return (
     <div>
-      <span className="whitespace-normal text-[12px] uppercase tracking-wide text-[#667085]">
+      <span className="whitespace-nowrap text-[12px] uppercase tracking-wide text-neutral-900/40">
         {title}
       </span>
       <ul className="mt-5 flex flex-col items-start gap-3 sm:mt-4">{children}</ul>
@@ -260,7 +196,17 @@ function FooterColumn({ title, children }: FooterColumnProps): React.ReactElemen
 }
 
 const LINK_CLASS =
-  'inline-flex min-h-11 min-w-11 items-center break-words text-sm text-[#4B5563] transition-[color,transform] duration-150 active:scale-[0.96] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-ink)] md:hover:text-[#111827]';
+  'text-sm text-neutral-900/70 transition-colors duration-150 active:opacity-70 md:hover:text-neutral-900';
+
+function FooterExternalLink({ href, children }: { href: string; children: React.ReactNode }): React.ReactElement {
+  return (
+    <li>
+      <a href={href} target="_blank" rel="noopener noreferrer" className={`${LINK_CLASS} font-medium`}>
+        {children}
+      </a>
+    </li>
+  );
+}
 
 function FooterRouteLink({ href, children }: { href: string; children: React.ReactNode }): React.ReactElement {
   return (
@@ -272,14 +218,23 @@ function FooterRouteLink({ href, children }: { href: string; children: React.Rea
   );
 }
 
-/* Locale-aware home anchor. On a secondary page it routes through `/#...`;
-   on home it remains a local hash and keeps the current scroll behavior. */
-function FooterAnchorLink({ href, children }: { href: string; children: React.ReactNode }): React.ReactElement {
+function SaitebiBadge(): React.ReactElement {
   return (
-    <li>
-      <Link href={href} className={LINK_CLASS}>
-        {children}
-      </Link>
-    </li>
+    <a
+      href="https://www.saitebi.me/"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Saitebi.me"
+      className="group mt-8 inline-flex w-fit items-center rounded-xl border border-neutral-900/10 bg-white/75 p-2 shadow-[0_8px_24px_rgba(15,23,42,0.06)] backdrop-blur-sm transition-[transform,border-color,box-shadow] duration-200 hover:-translate-y-0.5 hover:border-neutral-900/20 hover:shadow-[0_12px_30px_rgba(15,23,42,0.1)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary)]"
+    >
+      <img
+        src="https://www.saitebi.me/baneri.png"
+        width={88}
+        height={31}
+        alt="Saitebi.me"
+        loading="lazy"
+        className="block h-[31px] w-[88px] opacity-85 transition-opacity duration-200 group-hover:opacity-100"
+      />
+    </a>
   );
 }

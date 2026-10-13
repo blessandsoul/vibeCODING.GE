@@ -1,10 +1,11 @@
-import { SITE } from "@/config/site";
+export const APP_NAME = "vibeCODING";
+export const APP_DOMAIN = "vibecoding.ge";
 
-export const APP_NAME = SITE.wordmark.prefix + SITE.wordmark.mark;
-export const APP_DOMAIN = SITE.domain;
-
-// Real reachable channels of the parent company (aiNOW / AI NOW LLC). Every product landing
-// funnels into the same inbox and the same Telegram until a product gets its own.
+// Last date the site's OWN copy (home, services, landings, about, legal) was revised.
+// Bump this when that copy changes, not on every deploy: a dateModified that moves while the
+// content stands still is a false freshness signal and gets discounted. Blog posts do not use
+// this, they carry their own `date` in frontmatter.
+export const SITE_CONTENT_UPDATED = "2026-10-12";
 export const CONTACT_EMAIL = "CONTACT@aiNOW.GE";
 export const CONTACT_EMAIL_SECONDARY = "ainowgeorgia@gmail.com";
 

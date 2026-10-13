@@ -1,30 +1,12 @@
-import { SITE } from '@/config/site';
-import { PUBLIC_ROUTES } from '@/features/product-pages/routes';
-import {
-  PRODUCT_MACHINE_FACTS,
-  machineJsonResponse,
-} from '@/features/product-pages/machine';
+import { serialise, service } from "@/lib/product-public-facts";
 
-export const dynamic = 'force-static';
+export const revalidate = 86400;
 
-export function GET() {
-  return machineJsonResponse({
-    '@context': 'https://schema.org',
-    '@type': 'Service',
-    name: PRODUCT_MACHINE_FACTS.name,
-    url: SITE.baseUrl,
-    provider: PRODUCT_MACHINE_FACTS.provider,
-    serviceType: SITE.seo.serviceType,
-    audience: SITE.seo.audienceName,
-    areaServed: SITE.seo.areaServed,
-    capabilities: PRODUCT_MACHINE_FACTS.capabilities,
-    boundary: PRODUCT_MACHINE_FACTS.boundary,
-    limits: PRODUCT_MACHINE_FACTS.limits,
-    commitment: PRODUCT_MACHINE_FACTS.commitment,
-    integrations: PRODUCT_MACHINE_FACTS.integrations,
-    publicPages: PUBLIC_ROUTES.map((route) =>
-      PRODUCT_MACHINE_FACTS.publicPages.find((page) => page.path === route.path),
-    ).filter(Boolean),
-    reviewedOn: PRODUCT_MACHINE_FACTS.reviewedOn,
+export function GET(): Response {
+  return new Response(serialise(service()), {
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "Cache-Control": "public, max-age=86400, stale-while-revalidate=3600",
+    },
   });
 }

@@ -1,24 +1,21 @@
-import { Geist, Geist_Mono, Noto_Sans_Georgian } from "next/font/google";
 import localFont from "next/font/local";
+import { Noto_Sans_Georgian } from "next/font/google";
 import type { Metadata, Viewport } from "next";
+import { PRODUCT_OG_IMAGE, PRODUCT_OG_PATH } from "@/lib/product-og";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { isIndexedLocale } from "@/i18n/seo-locales";
 import { Providers } from "@/app/providers";
 import { LayoutShell } from "@/components/layout/LayoutShell";
-import { AistaffWidget } from "@/components/layout/AistaffWidget";
+import { PublicIntegrations } from "@/components/layout/PublicIntegrations";
 import { Toaster } from "sonner";
-import { ScrollToTop } from "@/components/common/ScrollToTop";
 import { StructuredData } from "@/components/seo/StructuredData";
-import { FamilyAnalytics } from "@/components/analytics/FamilyAnalytics";
-import { SITE } from "@/config/site";
+import { ScrollToTop } from "@/components/common/ScrollToTop";
 import "@/app/globals.css";
 import "@/app/site-new.css";
-import "@/app/family-premium.css";
-// brand.css must stay LAST: its :root wins over the base tokens by source order.
-import "@/app/brand.css";
+import "@/app/vibecoding-theme-overrides.css";
 
 export const viewport: Viewport = {
   themeColor: [
@@ -27,15 +24,17 @@ export const viewport: Viewport = {
   ],
 };
 
-const BASE_URL = SITE.baseUrl;
+const BASE_URL = "https://vibecoding.ge";
 
 const OG_LOCALE_MAP: Record<string, string> = {
   ka: "ka_GE",
   en: "en_US",
   ru: "ru_RU",
+  de: "de_DE",
+  tr: "tr_TR",
+  fa: "fa_IR",
+  zh: "zh_CN",
 };
-
-const OG_LOCALE_DEFAULT = OG_LOCALE_MAP[SITE.defaultLocale];
 
 export async function generateMetadata({
   params,
@@ -43,55 +42,42 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: 'product.seo' });
-  const siteName = SITE.wordmark.prefix + SITE.wordmark.mark;
-
-  const ogImageUrl = `${BASE_URL}/og/landing-20260905.png`;
+  const t = await getTranslations({ locale, namespace: "seo.home" });
 
   return {
     metadataBase: new URL(BASE_URL),
-    icons: {
-      icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
-      shortcut: "/icon.svg",
-      apple: "/icon.svg",
-    },
     title: {
       default: t("title"),
-      template: `%s | ${siteName}`,
+      template: "%s | vibeCODING",
     },
     description: t("description"),
     openGraph: {
+      images: [PRODUCT_OG_IMAGE],
       type: "website",
-      locale: OG_LOCALE_MAP[locale] ?? OG_LOCALE_DEFAULT,
-      alternateLocale: Object.values(OG_LOCALE_MAP).filter(
-        (l) => l !== (OG_LOCALE_MAP[locale] ?? OG_LOCALE_DEFAULT),
-      ),
-      // URL shape, so this asks "is this the unprefixed default locale", NOT "is this Georgian".
-      url: locale === SITE.defaultLocale ? BASE_URL : `${BASE_URL}/${locale}`,
-      siteName: siteName,
+      locale: OG_LOCALE_MAP[locale] ?? "ka_GE",
+      alternateLocale: Object.entries(OG_LOCALE_MAP)
+        .filter(([code]) => isIndexedLocale(code))
+        .map(([, value]) => value)
+        .filter((l) => l !== (OG_LOCALE_MAP[locale] ?? "ka_GE")),
+      url: locale === "ka" ? BASE_URL : `${BASE_URL}/${locale}`,
+      siteName: "vibeCODING",
       title: t("title"),
       description: t("description"),
-      images: [
-        {
-          url: ogImageUrl,
-          width: 1200,
-          height: 630,
-          alt: siteName,
-        },
-      ],
+      // og:image comes from the co-located opengraph-image.tsx (dynamic,
+      // current positioning), inherited by every page without its own.
     },
     twitter: {
+      images: [PRODUCT_OG_PATH],
       card: "summary_large_image",
       title: t("title"),
       description: t("description"),
-      images: [ogImageUrl],
     },
     // No `alternates` here: this layout has no path context, so a hardcoded map injected the
     // HOMEPAGE hreflang/canonical into every page that lacks its own (the source of the audit's
     // hreflang conflicts + duplicate canonicals). Each page sets its own via buildAlternates().
     robots: {
-      // Only ka/en/ru are indexed. de/tr/fa/zh are machine-translated drafts kept out of the index
-      // until QA + blog translation, which also removes their cross-locale hreflang conflicts.
+      // Site languages are eligible by default; each page overrides this for
+      // locale fallbacks using its actual authored translation set.
       index: isIndexedLocale(locale),
       follow: true,
       googleBot: {
@@ -102,50 +88,37 @@ export async function generateMetadata({
         "max-snippet": -1,
       },
     },
+    verification: {
+      other: {
+        "facebook-domain-verification": [
+          "chhsnbf9artdhoxh5yjaubor2cz1nl",
+          "x0ypn20rm2yn0p942snwrg0ka0ld9d",
+        ],
+      },
+    },
   };
 }
 
-const geist = Geist({
-  subsets: ["latin", "cyrillic"],
-  weight: "variable",
-  variable: "--font-geist-sans",
-  display: "swap",
-});
-
-const geistMono = Geist_Mono({
-  subsets: ["latin", "cyrillic"],
-  weight: "variable",
-  variable: "--font-geist-mono",
-  display: "swap",
-});
-
 const firago = localFont({
   src: [
-    { path: "../../../node_modules/@fontsource/firago/files/firago-latin-400-normal.woff2", weight: "400", style: "normal" },
-    { path: "../../../node_modules/@fontsource/firago/files/firago-latin-500-normal.woff2", weight: "500", style: "normal" },
-    { path: "../../../node_modules/@fontsource/firago/files/firago-latin-600-normal.woff2", weight: "600", style: "normal" },
-    { path: "../../../node_modules/@fontsource/firago/files/firago-latin-700-normal.woff2", weight: "700", style: "normal" },
-    { path: "../../../node_modules/@fontsource/firago/files/firago-latin-800-normal.woff2", weight: "800", style: "normal" },
+    { path: "../../../public/landing/fonts/typeface/firago-site-400.woff2", weight: "400", style: "normal" },
+    { path: "../../../public/landing/fonts/typeface/firago-site-500.woff2", weight: "500", style: "normal" },
+    { path: "../../../public/landing/fonts/typeface/firago-site-600.woff2", weight: "600", style: "normal" },
+    { path: "../../../public/landing/fonts/typeface/firago-site-700.woff2", weight: "700", style: "normal" },
+    { path: "../../../public/landing/fonts/typeface/firago-site-800.woff2", weight: "800", style: "normal" },
   ],
   variable: "--font-firago",
   display: "swap",
   fallback: ["system-ui", "sans-serif"],
 });
 
-const notoGeorgian = Noto_Sans_Georgian({
+const georgianExtendedFallback = Noto_Sans_Georgian({
   subsets: ["georgian"],
+  weight: "variable",
   variable: "--font-georgian-extended-fallback",
   display: "swap",
   preload: false,
 });
-
-// Prerender every locale at build time. Without this (and the setRequestLocale call below) every
-// page of every landing is server-rendered on EVERY request: all three shipped landings do that
-// today. A marketing page that is a pure function of its message file has no reason to touch the
-// server per visit, and TTFB is the one number aiWEB itself sells.
-export function generateStaticParams() {
-  return routing.locales.map((locale) => ({ locale }));
-}
 
 export default async function LocaleLayout({
   children,
@@ -160,49 +133,45 @@ export default async function LocaleLayout({
     notFound();
   }
 
-  // Opts this subtree into static rendering. Must run before anything reads a translation.
-  setRequestLocale(locale);
-
-  const siteMessages = (await import(`@/messages/${locale}.json`)).default;
-  const productPageMessages = (
-    await import(`@/features/product-pages/messages/${locale}.json`)
-  ).default;
-  const messages = {
-    ...siteMessages,
-    productPages: productPageMessages,
-  };
+  const messageLocale = isIndexedLocale(locale) ? locale : "en";
+  const messages = (await import(`@/messages/${messageLocale}.json`)).default;
+  const publicMessages = Object.fromEntries(
+    Object.entries(messages).filter(([namespace]) => namespace !== "admin"),
+  );
 
   return (
     <html
       lang={locale}
-      data-product={SITE.key}
-      className={`${firago.variable} ${geist.variable} ${geistMono.variable} ${notoGeorgian.variable} bg-background`}
+      dir={locale === "fa" ? "rtl" : "ltr"}
+      className={`${firago.variable} ${georgianExtendedFallback.variable} bg-background`}
       suppressHydrationWarning
     >
       <head>
-        <meta name="ainow-ga4-destination" content="G-LHWNXVZ9B9" />
-        {/* Exact font block copied verbatim from ainow_handoff/index.html <head>
-            so the aiNOW wordmark renders with the source's variable Bricolage
-            Grotesque (opsz,wght axis) + Space Mono, not next/font's static cuts. */}
+        {locale === "ka" ? (
+          <link rel="preload" href="/landing/fonts/typeface/gl-moskovis.woff2" as="font" type="font/woff2" crossOrigin="anonymous" fetchPriority="high" />
+        ) : null}
+        <link rel="preload" href="/landing/fonts/cormorant-garamond.woff2" as="font" type="font/woff2" crossOrigin="anonymous" fetchPriority="high" />
+        <link rel="alternate" type="application/rss+xml" title="vibeCODING Blog RSS" href={`${BASE_URL}/rss.xml`} />
         <link rel="ai-summary" type="application/json" href={`${BASE_URL}/ai/summary.json`} />
-        <link rel="ai-service" type="application/json" href={`${BASE_URL}/ai/service.json`} />
         <link rel="ai-faq" type="application/json" href={`${BASE_URL}/ai/faq.json`} />
+        <link rel="ai-service" type="application/json" href={`${BASE_URL}/ai/service.json`} />
+        <link rel="ai-catalog" type="application/json" href={`${BASE_URL}/ai/catalog.json`} />
+        <link rel="ai-cases" type="application/json" href={`${BASE_URL}/ai/cases.json`} />
         <link rel="llms" type="text/plain" href={`${BASE_URL}/llms.txt`} />
         <link rel="llms-full" type="text/plain" href={`${BASE_URL}/llms-full.txt`} />
-        {/* The entity graph. Without it every one of these domains is an orphan brand and an
-            assistant has to guess what it is, which means it will not recommend it. */}
-        <StructuredData />
+        <link rel="api-catalog" type="application/linkset+json" href={`${BASE_URL}/.well-known/api-catalog`} />
+        <link rel="agent-skills" type="application/json" href={`${BASE_URL}/.well-known/agent-skills/index.json`} />
+        <StructuredData locale={locale} />
       </head>
       <body
-          className="font-sans"
+        className="font-sans"
       >
         <Providers>
-          <NextIntlClientProvider locale={locale} messages={messages}>
+          <NextIntlClientProvider locale={locale} messages={publicMessages}>
             <LayoutShell>{children}</LayoutShell>
+            <PublicIntegrations />
             <ScrollToTop />
             <Toaster position="top-right" richColors theme="dark" />
-            <AistaffWidget />
-            <FamilyAnalytics />
           </NextIntlClientProvider>
         </Providers>
       </body>

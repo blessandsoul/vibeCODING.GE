@@ -77,7 +77,7 @@ export const MagneticButton = ({
       onMouseLeave={() => setIsHovered(false)}
       className={cn(
         'magnetic-btn group relative inline-flex items-center overflow-hidden rounded-2xl text-sm font-semibold sm:text-base',
-        'transition-all duration-500 ease-out',
+        'transition duration-500 ease-out',
         'hover:shadow-xl hover:shadow-black/5 dark:hover:shadow-black/20',
         'active:scale-[0.97]',
         className
@@ -114,7 +114,7 @@ export const MagneticButton = ({
       <span
         className={cn(
           'relative z-10 flex items-center gap-0 px-6 py-2.5 sm:px-8 sm:py-3',
-          'transition-all duration-300',
+          'transition duration-300',
           styles.text
         )}
       >

@@ -1,0 +1,398 @@
+/* =========================================================================
+   LandingReviews / ReviewsMarquee — "#reviews" full-bleed ticker strip
+   below the hero (Manychat-style). Matches the landing vocabulary: literal
+   font names (Bricolage Grotesque / Noto Sans Georgian / JetBrains Mono /
+   Space Mono) resolve via the Google Fonts <link> in layout.tsx; hairline
+   borders rgba(0,0,0,.06) like the pm-* cards; stars keep Google's review
+   yellow (#fbbc04). The track loops via translateX(-50%) over two
+   identical groups; hover/focus pauses; reduced motion falls back to a
+   plain horizontal scroll.
+   ========================================================================= */
+
+.grm-section {
+  background: #ffffff;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  /* tilted cards pop past the strip — paint them above the neighbors */
+  position: relative;
+  z-index: 2;
+}
+
+.grm-wrap {
+  display: flex;
+  align-items: stretch;
+}
+@media (max-width: 767px) {
+  .grm-wrap {
+    flex-direction: column;
+  }
+}
+
+/* ===== left label block (G + rating + stars + count → Google profile) ===== */
+.grm-label {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 7px;
+  padding: 22px 32px;
+  background: #ffffff;
+  border-right: 1px solid rgba(0, 0, 0, 0.06);
+  position: relative;
+  z-index: 2;
+  transition: background 200ms;
+}
+a.grm-label:hover {
+  background: #fafafa;
+}
+@media (max-width: 767px) {
+  .grm-label {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 14px 20px;
+    border-right: 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  }
+}
+
+.grm-label-top {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.grm-label-g {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+.grm-label-rating {
+  font-family: var(--font-iai-ui);
+  font-weight: 900;
+  font-size: 1.45rem;
+  line-height: 1;
+  color: #0a0a0a;
+}
+.grm-label-stars .grm-star {
+  width: 15px;
+  height: 15px;
+}
+.grm-label-sub {
+  font-family: var(--font-iai-data);
+  font-size: 0.72rem;
+  color: #525252;
+  white-space: nowrap;
+}
+a.grm-label:hover .grm-label-sub {
+  color: #7c3aed;
+}
+
+/* ===== stars ===== */
+.grm-stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+.grm-star {
+  width: 14px;
+  height: 14px;
+  color: #e5e5e5;
+}
+.grm-star-on {
+  color: #fbbc04;
+}
+
+/* ===== marquee ===== */
+.grm-marquee {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  /* horizontal mask only: clip exactly at the left/right container edges,
+     but give the tilt/shadow 90px of visible breathing room above/below
+     (a plain overflow:hidden would clip the bend the flagship cards have) */
+  overflow: visible;
+  clip-path: inset(-90px 0);
+  /* we own horizontal pans (drag-to-scroll); vertical swipes still scroll the page */
+  touch-action: pan-y;
+  cursor: grab;
+  /* dragging must never select text or lift a ghost image out of the cards */
+  user-select: none;
+  -webkit-user-select: none;
+}
+.grm-marquee img {
+  -webkit-user-drag: none;
+}
+.grm-marquee.grm-dragging,
+.grm-marquee.grm-dragging .grm-item {
+  cursor: grabbing;
+}
+.grm-marquee::before,
+.grm-marquee::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 56px;
+  z-index: 1;
+  pointer-events: none;
+}
+.grm-marquee::before {
+  left: 0;
+  background: linear-gradient(to right, #ffffff, rgba(255, 255, 255, 0));
+}
+.grm-marquee::after {
+  right: 0;
+  background: linear-gradient(to left, #ffffff, rgba(255, 255, 255, 0));
+}
+
+/* the track is driven by JS (rAF in ReviewsMarquee): auto-advance + drag
+   share one offset, applied as translate3d. Hover/focus/drag pauses and the
+   prefers-reduced-motion opt-out (no auto-scroll, drag still works) are
+   handled there too. */
+.grm-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+.grm-group {
+  display: flex;
+  align-items: stretch;
+}
+
+/* ===== ticker item — full-height flush cell, flagship-card hover recipe ===== */
+.grm-item {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  text-align: left;
+  width: 480px;
+  flex-shrink: 0;
+  padding: 18px 26px;
+  background: #ffffff;
+  border: 1px solid transparent;
+  border-right-color: rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  will-change: transform;
+  z-index: 1;
+  /* z-index drops back only after the tilt settles (380ms), so the lifted
+     edge never slides under the neighboring card mid-animation */
+  transition: transform 380ms cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 260ms ease,
+              box-shadow 320ms ease,
+              z-index 0s linear 380ms;
+}
+/* hero grainient wash (static-fallback recipe from landing-hero.css),
+   faded in under the content on hover */
+.grm-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 110% at 50% 0%, #ff9ffc 0%, #b497cf 45%, #5227ff 100%);
+  opacity: 0;
+  transition: opacity 260ms ease;
+  pointer-events: none;
+}
+.grm-item > * {
+  position: relative;
+  z-index: 1;
+}
+.grm-item:hover {
+  border-color: #7c3aed;
+  box-shadow: 0 18px 40px rgba(124, 58, 237, 0.12);
+  /* paint above the sibling cards so the lifted edge isn't overlapped */
+  z-index: 10;
+  transition-delay: 0s;
+}
+.grm-item:hover::before {
+  opacity: 0.13;
+}
+@media (max-width: 640px) {
+  .grm-item {
+    width: 340px;
+    padding: 14px 18px;
+    gap: 12px;
+  }
+}
+
+.grm-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.grm-avatar-fallback {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #7c3aed;
+  color: #ffffff;
+  font-family: var(--font-iai-ui);
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+@media (max-width: 640px) {
+  .grm-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+  }
+}
+
+.grm-body {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+.grm-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.grm-name {
+  font-family: var(--font-iai-data);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #0a0a0a;
+  background: #f1f1f1;
+  border-radius: 4px;
+  padding: 3px 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.grm-item-stars {
+  flex-shrink: 0;
+}
+.grm-item-stars .grm-star {
+  width: 12px;
+  height: 12px;
+}
+
+.grm-quote {
+  font-family: var(--font-iai-data);
+  font-size: 0.8rem;
+  letter-spacing: 0.01em;
+  color: #404040;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.grm-more {
+  font-family: var(--font-iai-data);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #a3a3a3;
+  transition: color 200ms;
+}
+.grm-item:hover .grm-more {
+  color: #7c3aed;
+}
+
+/* ===== modal (shadcn Dialog content) — light, brand-gradient framed ===== */
+.grm-modal {
+  border-radius: 24px;
+  padding: 32px 32px 26px;
+  gap: 14px;
+  border: 1px solid rgba(124, 58, 237, 0.16);
+  box-shadow:
+    0 24px 80px rgba(124, 58, 237, 0.16),
+    0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.grm-modal-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+/* gradient ring around the avatar */
+.grm-modal-ring {
+  display: inline-flex;
+  padding: 2.5px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7c3aed 0%, #e040fb 55%, #ff6b00 100%);
+  flex-shrink: 0;
+}
+.grm-modal-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.grm-modal-who {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  flex: 1;
+}
+.grm-modal-name {
+  font-family: var(--font-iai-ui);
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: #0a0a0a;
+}
+.grm-modal-time {
+  font-family: var(--font-iai-data);
+  font-size: 0.72rem;
+  color: #a3a3a3;
+}
+.grm-modal-g {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  margin-right: 28px; /* clears the dialog's corner close button */
+}
+.grm-modal-stars .grm-star {
+  width: 17px;
+  height: 17px;
+}
+.grm-modal-text {
+  font-family: var(--font-iai-ui);
+  font-size: 0.98rem;
+  line-height: 1.8;
+  color: #404040;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+/* footer: hairline divider + gradient pill CTA */
+.grm-modal-footer {
+  display: flex;
+  justify-content: flex-start;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  padding-top: 18px;
+}
+.grm-modal-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-iai-data);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #ffffff;
+  background: linear-gradient(135deg, #7c3aed 0%, #e040fb 100%);
+  border-radius: 999px;
+  padding: 11px 22px;
+  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.25);
+  transition: box-shadow 240ms ease, transform 240ms ease, filter 240ms ease;
+}
+.grm-modal-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 30px rgba(124, 58, 237, 0.32);
+  filter: brightness(1.06);
+}

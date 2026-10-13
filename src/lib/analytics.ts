@@ -1,33 +1,36 @@
-"use client";
-
-export const ANALYTICS_CONSENT_STORAGE_KEY = "ainow.analytics-consent.v1";
+export const ANALYTICS_CONSENT_STORAGE_KEY = "ainow.analytics-consent";
 const LEAD_EVENT_STORAGE_KEY = "ainow.analytics-lead-events.v1";
 const MAX_STORED_EVENT_IDS = 100;
 
 export type LeadForm =
   | "contact"
+  | "landing_phone"
+  | "hero_phone"
   | "homepage_cta"
+  | "partner_application"
+  | "partner_lead"
   | "aistaff_gate"
   | "aistaff_bot";
 
+export type LeadContentName =
+  | "contact-phone"
+  | "phone-lead"
+  | "hero-phone"
+  | "cta-phone"
+  | "partner-application"
+  | "partner-lead"
+  | "aistaff-gate"
+  | "aistaff-bot";
+
 type AnalyticsWindow = Window & {
   dataLayer?: unknown[];
-  gtag?: (...args: unknown[]) => void;
+  fbq?: (...args: unknown[]) => void;
 };
 
-function hasAcceptedConsent(): boolean {
+export function hasAnalyticsConsent(): boolean {
   if (typeof window === "undefined") return false;
-
   try {
-    const value = window.localStorage.getItem(ANALYTICS_CONSENT_STORAGE_KEY);
-    if (value === "accepted") return true;
-    if (!value) return false;
-    const parsed = JSON.parse(value) as {
-      status?: string;
-      analytics?: boolean;
-    };
-    if (parsed.status === "declined" || parsed.analytics === false) return false;
-    return parsed.status === "accepted";
+    return window.localStorage.getItem(ANALYTICS_CONSENT_STORAGE_KEY) === "accepted";
   } catch {
     return false;
   }
@@ -35,7 +38,6 @@ function hasAcceptedConsent(): boolean {
 
 function readStoredEventIds(): string[] {
   if (typeof window === "undefined") return [];
-
   try {
     const raw = window.sessionStorage.getItem(LEAD_EVENT_STORAGE_KEY);
     if (!raw) return [];
@@ -50,7 +52,6 @@ function readStoredEventIds(): string[] {
 
 function markEventId(eventId: string): void {
   if (typeof window === "undefined") return;
-
   try {
     const eventIds = readStoredEventIds().filter((value) => value !== eventId);
     eventIds.push(eventId);
@@ -72,24 +73,27 @@ export function createLeadEventId(): string {
   return `lead-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 }
 
-export function trackLead(leadForm: LeadForm, eventId = createLeadEventId()): boolean {
-  if (!hasAcceptedConsent()) return false;
+export function trackLead(
+  leadForm: LeadForm,
+  eventId = createLeadEventId(),
+  contentName?: LeadContentName,
+): boolean {
+  if (!hasAnalyticsConsent()) return false;
   if (emittedEventIds.has(eventId) || readStoredEventIds().includes(eventId)) return false;
 
   const params = {
-    content_name: leadForm,
+    content_name: contentName ?? leadForm,
     lead_form: leadForm,
     event_id: eventId,
   };
   const analyticsWindow = window as AnalyticsWindow;
 
-  if (typeof analyticsWindow.gtag === "function") {
-    analyticsWindow.gtag("event", "generate_lead", params);
-  } else {
-    analyticsWindow.dataLayer = analyticsWindow.dataLayer || [];
-    analyticsWindow.dataLayer.push(["event", "generate_lead", params]);
+  if (typeof analyticsWindow.fbq === "function") {
+    analyticsWindow.fbq("track", "Lead", params, { eventID: eventId });
   }
 
+  analyticsWindow.dataLayer = analyticsWindow.dataLayer || [];
+  analyticsWindow.dataLayer.push({ event: "generate_lead", ...params });
   emittedEventIds.add(eventId);
   markEventId(eventId);
   return true;

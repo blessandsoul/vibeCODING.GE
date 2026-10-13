@@ -1,0 +1,380 @@
+/* =========================================================================
+   LandingEcosystem, gapless hairline bento (3 products + iAI manager row).
+   Ported from the approved prototype, eco- prefixed. White cells, product
+   color only as small role tags, Nemo video in a thin neutral ring.
+   ========================================================================= */
+
+.eco-eyebrow {
+  font-family: var(--font-space-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #6f6f7a;
+  margin-bottom: 12px;
+}
+.eco-math {
+  margin-top: 14px;
+  color: #4b4b55;
+  font-size: 14.5px;
+  line-height: 1.55;
+}
+
+.eco-bento {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-areas:
+    'content ads staff'
+    'iai iai iai';
+  background: rgba(10, 10, 10, 0.1);
+  gap: 1px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(10, 10, 10, 0.06),
+    0 1px 2px -1px rgba(10, 10, 10, 0.06),
+    0 2px 4px 0 rgba(10, 10, 10, 0.04);
+}
+.eco-cell {
+  /* each product cell carries its color: a 3px top edge + a whisper of a
+     tone wash fading into white */
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--tone, #7c3aed) 4%, #fff), #fff 52%);
+  box-shadow: inset 0 3px 0 0 var(--tone, #7c3aed);
+  padding: 36px 30px;
+  min-width: 0;
+  position: relative;
+  transition-property: transform, box-shadow;
+  transition-duration: 200ms;
+  transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+}
+.eco-cell:hover {
+  transform: translateY(-3px);
+  z-index: 1;
+  box-shadow:
+    inset 0 3px 0 0 var(--tone, #7c3aed),
+    0 0 0 1px color-mix(in srgb, var(--tone, #7c3aed) 25%, transparent),
+    0 12px 24px -18px rgba(10, 10, 10, 0.35);
+}
+.eco-content { grid-area: content; }
+.eco-ads { grid-area: ads; }
+.eco-staff { grid-area: staff; }
+.eco-iai {
+  grid-area: iai;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 32px;
+  align-items: center;
+}
+
+.eco-wm { font-size: 20px; }
+
+.eco-role {
+  /* block-level flex: the role tag lives on its OWN line under the
+     wordmark, never glued beside it */
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  gap: 7px;
+  margin: 14px 0 0;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-family: var(--font-iai-ui);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.eco-role svg {
+  width: 13px;
+  height: 13px;
+  /* contextual icon pop on reveal: scale 0.25 -> 1, blur 4px -> 0 */
+  opacity: 0;
+  transform: scale(0.25);
+  filter: blur(4px);
+  transition-property: opacity, transform, filter;
+  transition-duration: 300ms;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+.eco-bento.in .eco-role svg { opacity: 1; transform: scale(1); filter: blur(0); }
+.eco-bento.in .eco-content .eco-role svg { transition-delay: 180ms; }
+.eco-bento.in .eco-ads .eco-role svg { transition-delay: 280ms; }
+.eco-bento.in .eco-staff .eco-role svg { transition-delay: 380ms; }
+.eco-bento.in .eco-iai .eco-role svg { transition-delay: 480ms; }
+.eco-role.r-pink { color: #ec4899; background: rgba(236, 72, 153, 0.1); }
+.eco-role.r-emerald { color: #10b981; background: rgba(16, 185, 129, 0.1); }
+.eco-role.r-blue { color: #2563eb; background: rgba(37, 99, 235, 0.1); }
+.eco-role.r-violet { color: #7c3aed; background: rgba(124, 58, 237, 0.1); }
+
+.eco-cell > p,
+.eco-iai-desc {
+  margin: 12px 0 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: #4b4b55;
+  max-width: 52ch;
+}
+
+.eco-covers {
+  display: flex;
+  margin-top: 18px;
+  padding-left: 4px;
+}
+/* a fanned stack of fresh post covers instead of three gray boxes */
+.eco-cover {
+  width: 46px;
+  height: 58px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  outline: 1px solid rgba(0, 0, 0, 0.08);
+  outline-offset: -1px;
+  box-shadow: 0 2px 6px -3px rgba(10, 10, 10, 0.25);
+  transition: transform 220ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.eco-cover:nth-child(1) {
+  background: linear-gradient(160deg, #fce7f3, #fbcfe8);
+  color: #db2777;
+  transform: rotate(-6deg);
+}
+.eco-cover:nth-child(2) {
+  background: linear-gradient(160deg, #ede9fe, #ddd6fe);
+  color: #7c3aed;
+  transform: rotate(2deg) translateY(-4px);
+  margin-left: -9px;
+}
+.eco-cover:nth-child(3) {
+  background: linear-gradient(160deg, #fef3c7, #fde68a);
+  color: #b45309;
+  transform: rotate(5deg) translateY(1px);
+  margin-left: -9px;
+}
+.eco-cover:nth-child(4) {
+  background: linear-gradient(160deg, #cffafe, #a5f3fc);
+  color: #0e7490;
+  transform: rotate(9deg) translateY(4px);
+  margin-left: -9px;
+}
+.eco-content:hover .eco-cover:nth-child(1) { transform: rotate(-2deg); }
+.eco-content:hover .eco-cover:nth-child(2) { transform: rotate(0) translateY(-6px); }
+.eco-content:hover .eco-cover:nth-child(3) { transform: rotate(2deg); }
+.eco-content:hover .eco-cover:nth-child(4) { transform: rotate(4deg) translateY(1px); }
+
+.eco-bar { margin-top: 18px; }
+.eco-bar-track {
+  display: flex;
+  height: 8px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: #f0f0f2;
+}
+.eco-bar-track i {
+  display: block;
+  height: 100%;
+  /* fills animate in when the bento reveals */
+  width: 0;
+  transition: width 900ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.eco-bar-track .b-meta { background: #10b981; }
+.eco-bar-track .b-goo { background: #2563eb; }
+.eco-bento.in .b-meta { width: 62%; transition-delay: 250ms; }
+.eco-bento.in .b-goo { width: 38%; transition-delay: 350ms; }
+.eco-bar-legend {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 7px;
+  font-family: var(--font-space-mono), monospace;
+  font-size: 10px;
+  color: #6f6f7a;
+}
+.eco-bar-legend span::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-right: 5px;
+  vertical-align: 1px;
+}
+.eco-bar-legend span:first-child::before { background: #10b981; }
+.eco-bar-legend span:last-child::before { background: #2563eb; }
+
+.eco-chat {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 16px;
+}
+.eco-q,
+.eco-a {
+  /* the two bubbles slide in one after the other on reveal */
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 320ms cubic-bezier(0.23, 1, 0.32, 1), transform 320ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.eco-bento.in .eco-q { opacity: 1; transform: none; transition-delay: 300ms; }
+.eco-bento.in .eco-a { opacity: 1; transform: none; transition-delay: 650ms; }
+.eco-q {
+  align-self: flex-end;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border-bottom-right-radius: 4px;
+  background: #f0f0f2;
+  font-size: 12.5px;
+  color: #0a0a0a;
+}
+.eco-a {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border-bottom-left-radius: 4px;
+  background: rgba(37, 99, 235, 0.07);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #1e4fc2;
+}
+.eco-a i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+}
+
+.eco-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 18px;
+  min-height: 40px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #7c3aed;
+}
+.eco-link svg {
+  transition: transform 150ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.eco-link:hover { text-decoration: underline; }
+.eco-link:hover svg { transform: translate(2px, -2px); }
+.eco-link:focus-visible {
+  outline: 2px solid #7c3aed;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.eco-fig { text-align: center; }
+.eco-orb {
+  width: 132px;
+  height: 132px;
+  border-radius: 50%;
+  position: relative;
+  background: #e9e9ee;
+  margin: 0 auto;
+}
+.eco-video {
+  position: absolute;
+  inset: 3px;
+  width: calc(100% - 6px);
+  height: calc(100% - 6px);
+  border-radius: 50%;
+  object-fit: cover;
+  background: #fff;
+}
+.eco-name {
+  margin: 12px 0 0;
+  font-size: 12.5px;
+  color: #6f6f7a;
+}
+.eco-name b {
+  color: #0a0a0a;
+  font-family: var(--font-space-mono), monospace;
+}
+
+.eco-tiktok-roadmap {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  margin-top: 14px;
+  padding: 14px 16px;
+  border: 1px solid #dedee5;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.88);
+}
+.eco-tiktok-mark {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid #dedee5;
+  border-radius: 13px;
+  color: #111827;
+  background: #f7f7f9;
+}
+.eco-tiktok-mark svg { width: 22px; height: 22px; }
+.eco-tiktok-copy { min-width: 0; }
+.eco-tiktok-copy strong {
+  display: block;
+  color: #111827;
+  font-size: 14px;
+  line-height: 1.35;
+}
+.eco-tiktok-copy p {
+  margin: 3px 0 0;
+  color: #5f6470;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+.eco-tiktok-status {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid #d8ccff;
+  border-radius: 999px;
+  color: #6d28d9;
+  background: #f5f0ff;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .eco-bento {
+    grid-template-columns: 1fr;
+    grid-template-areas: 'content' 'ads' 'staff' 'iai';
+  }
+  .eco-iai { grid-template-columns: 1fr; }
+  .eco-fig { justify-self: center; }
+  .eco-tiktok-roadmap {
+    grid-template-columns: 44px minmax(0, 1fr);
+  }
+  .eco-tiktok-status {
+    grid-column: 2;
+    justify-self: start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eco-section .fade-up {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  /* everything the reveal animates is simply visible, no motion */
+  .eco-role svg,
+  .eco-q,
+  .eco-a {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
+  }
+  .eco-bar-track .b-meta { width: 62% !important; transition: none !important; }
+  .eco-bar-track .b-goo { width: 38% !important; transition: none !important; }
+  .eco-cell,
+  .eco-cover,
+  .eco-link svg {
+    transition: none !important;
+  }
+}

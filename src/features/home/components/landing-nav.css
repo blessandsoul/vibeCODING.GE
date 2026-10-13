@@ -1,5 +1,5 @@
 /* =========================================================================
-   LandingNav, floating glass navbar + aiNOW wordmark
+   LandingNav — floating glass navbar + aiNOW wordmark
    Ported verbatim from ainow_handoff/index.html (v9_real_ge.html).
    Only change vs. source: literal font names ('Space Mono', 'Bricolage
    Grotesque', 'Noto Sans Georgian') are routed through the next/font CSS
@@ -8,14 +8,16 @@
    ========================================================================= */
 
 /* === Canonical aiNOW logo ===
-   ai = Space Mono, gradient blue->violet->magenta · NOW = Bricolage Grotesque extrabold ·
+   ai = Space Mono, prism ink in the three aiNOW product colors · NOW = Bricolage Grotesque extrabold cobalt ink ·
    THREE skewed accent bars top-right of NOW: pink #ec4899 / blue #2563eb / emerald #10b981
    (the three sub-brands). The .wm-accent rule body below is the source of truth, not this comment. */
 .wordmark-3d {
-  color: var(--brand-ink, #0a0a0a);
+  color: #0a0a0a;
   line-height: 0.92;
   display: inline-flex;
   align-items: baseline;
+  position: relative;
+  isolation: isolate;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -23,24 +25,41 @@
   font-family: var(--font-iai-data);
   font-weight: 400;
   letter-spacing: -0.02em;
-  /* Canonical aiNOW gradient. Product identity changes in the mark, not in the "ai" glyphs. */
-  background: linear-gradient(130deg, #2f6bff 0%, #8b3dff 45%, #e040fb 100%);
+  /* The brand colors read as one small prism, not a generic rainbow gradient. */
+  background: linear-gradient(116deg, #e83f9c 0%, #e83f9c 27%, #2d67f2 48%, #10b981 74%, #2d67f2 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
+  text-shadow: 0 0.08em 0.24em rgba(45, 103, 242, 0.18);
 }
 .wordmark-3d .wm-mark {
   font-family: var(--font-iai-ui);
   font-weight: 800;
   letter-spacing: -0.05em;
-  color: var(--brand-ink, #0a0a0a);
+  color: #0b1f57;
   margin-left: 0.04em;
 }
-.wordmark-3d.ainow-parent .wm-mark {
-  color: #0a0a0a;
+.wordmark-3d--animated .wm-prefix {
+  animation: wordmark-prefix-rise 5.6s cubic-bezier(0.22, 1, 0.36, 1) 700ms infinite;
 }
-/* THREE accent bars at top-right CORNER of NOW, matches the business card
+.wordmark-3d .wm-letter {
+  display: inline-block;
+  transform-origin: 50% 85%;
+  text-shadow:
+    0 0.035em 0 rgba(255, 255, 255, 0.8),
+    0 0.13em 0.32em rgba(31, 91, 214, 0.16);
+}
+.wordmark-3d .wm-letter:nth-child(1) { color: #0b205b; }
+.wordmark-3d .wm-letter:nth-child(2) { color: #2d67e8; }
+.wordmark-3d .wm-letter:nth-child(3) { color: #0a1b49; }
+.wordmark-3d--animated .wm-letter {
+  animation: wordmark-letter-rise 5.6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+.wordmark-3d--animated .wm-letter:nth-child(1) { animation-delay: 780ms; }
+.wordmark-3d--animated .wm-letter:nth-child(2) { animation-delay: 850ms; }
+.wordmark-3d--animated .wm-letter:nth-child(3) { animation-delay: 920ms; }
+/* THREE accent bars at top-right CORNER of NOW — matches the business card
    (ainow_handoff/business_cards/print_ready.html): pink #ec4899 / blue #2563eb /
    emerald #10b981 = the three sub-brands (aiCONTENT / aiSTAFF / iAI). Painted as
    three skewed stripes via a single element background, so EVERY .wordmark-3d on
@@ -51,9 +70,9 @@
   display: inline-block;
   /* Card-exact placement (print_ready.html): flex-start pins the bar cluster to
      the top-right CORNER of NOW, hugging the caps. margin-top 0.18em is the card's
-     own value. This relies on a UNIFORM line-height across contexts, hero/footer
+     own value. This relies on a UNIFORM line-height across contexts — hero/footer
      are forced to 0.92 by the rule below (they default to 1 via Tailwind
-     leading-none), so the cluster lands at the same corner everywhere, not higher
+     leading-none) — so the cluster lands at the same corner everywhere, not higher
      in the hero. */
   align-self: flex-start;
   width: 0.46em;
@@ -61,9 +80,6 @@
   margin-top: 0.18em;
   margin-left: 0.12em;
   transform: skewX(-15deg);
-  /* The 3 accent stripes are the UNIFIED aiNOW family mark (pink / blue / green),
-     identical on every product and matching the favicon, so the logo + footer
-     wordmark always carry the same tri-color stripes (not a single brand hue). */
   background-image:
     linear-gradient(#ec4899, #ec4899),
     linear-gradient(#2563eb, #2563eb),
@@ -72,22 +88,82 @@
   background-size: 100% 0.085em;
   background-position: 0 0, 0 0.16em, 0 0.32em;
 }
-/* Cross-sell family bar keeps the original pink/blue/emerald tri-color stripe
-   (the three sub-brands), independent of the active product. */
-.slogan-pill .wm-accent {
-  background-image:
-    linear-gradient(#ec4899, #ec4899),
-    linear-gradient(#2563eb, #2563eb),
-    linear-gradient(#10b981, #10b981);
+.wordmark-3d--animated .wm-accent {
+  animation: wordmark-accent-breathe 3.8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  transform-origin: 50% 50%;
+}
+.wordmark-3d .wm-light-pass {
+  position: absolute;
+  z-index: 2;
+  top: 8%;
+  bottom: 12%;
+  left: -20%;
+  width: 16%;
+  border-radius: 999px;
+  pointer-events: none;
+  opacity: 0;
+  background: rgba(255, 255, 255, 0.88);
+  filter: blur(1px);
+  transform: skewX(-18deg) translateX(-1.2em);
+}
+.wordmark-3d--animated .wm-light-pass {
+  animation: wordmark-light-pass 5.6s cubic-bezier(0.22, 1, 0.36, 1) 700ms infinite;
+}
+.wordmark-3d--animated:hover .wm-accent,
+.nav-logo:focus-visible .wordmark-3d--animated .wm-accent {
+  animation-play-state: paused;
+  transform: skewX(-15deg) translateY(-0.04em) scale(1.06);
+}
+@keyframes wordmark-accent-breathe {
+  0%, 70%, 100% { transform: skewX(-15deg) translateY(0) scale(1); }
+  82% { transform: skewX(-15deg) translateY(-0.035em) scale(1.055); }
+}
+@keyframes wordmark-prefix-rise {
+  0%, 13%, 100% { transform: translateY(0); opacity: 1; }
+  7% { transform: translateY(-0.06em); opacity: 0.82; }
+}
+@keyframes wordmark-letter-rise {
+  0%, 13%, 100% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  7% { transform: translateY(-0.075em) rotate(-1deg); opacity: 0.84; }
+}
+@keyframes wordmark-light-pass {
+  0%, 12% { opacity: 0; transform: skewX(-18deg) translateX(-1.2em); }
+  26% { opacity: 0.58; }
+  45% { opacity: 0; transform: skewX(-18deg) translateX(7.1em); }
+  100% { opacity: 0; transform: skewX(-18deg) translateX(7.1em); }
 }
 .wordmark-3d .wm-accent::before,
 .wordmark-3d .wm-accent::after { content: none; }
+
+/* The dark-surface treatment keeps the prism legible in the footer and on a
+   future dark header without flattening the three product colors. */
+@media (prefers-color-scheme: dark) {
+  .wordmark-3d .wm-prefix {
+    background-image: linear-gradient(116deg, #ff78ba 0%, #ff78ba 27%, #78a0ff 48%, #55e5b7 74%, #78a0ff 100%);
+    text-shadow: 0 0.08em 0.3em rgba(102, 153, 255, 0.3);
+  }
+  .wordmark-3d .wm-letter {
+    text-shadow:
+      0 0.035em 0 rgba(255, 255, 255, 0.2),
+      0 0.13em 0.34em rgba(109, 159, 255, 0.27);
+  }
+  .wordmark-3d .wm-letter:nth-child(1) { color: #d9e6ff; }
+  .wordmark-3d .wm-letter:nth-child(2) { color: #83a8ff; }
+  .wordmark-3d .wm-letter:nth-child(3) { color: #f1f6ff; }
+}
 /* Uniform tight line-height for the wordmark in EVERY context (incl. hero +
    footer, which otherwise inherit line-height:1 from Tailwind `leading-none`) so
-   the flex-start accent bars hug the caps identically everywhere, exactly like
+   the flex-start accent bars hug the caps identically everywhere — exactly like
    the business card (line-height 0.92). */
 .wordmark-3d.text-3xl, .wordmark-3d.text-xl, .wordmark-3d.text-lg, .wordmark-3d.text-sm,
 .wordmark-3d.hero-wordmark, .wordmark-3d.footer-wordmark { line-height: 0.92 !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .wordmark-3d--animated .wm-accent,
+  .wordmark-3d--animated .wm-light-pass,
+  .wordmark-3d--animated .wm-prefix,
+  .wordmark-3d--animated .wm-letter { animation: none; }
+}
 
 /* ===== Floating glass navbar ===== */
 .glass-nav {
@@ -134,54 +210,30 @@
 }
 /* ===== Nav CTA - gradient pill, static ===== */
 .glass-cta {
-  width: 44px;
-  min-width: 44px;
-  height: 44px;
-  flex: 0 0 44px;
-  position: relative;
-  isolation: isolate;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
+  padding: 9px 18px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   color: #fff;
   background: linear-gradient(135deg, #7c3aed 0%, #e040fb 100%);
   border-radius: 999px;
   box-shadow:
     0 4px 14px -3px rgba(124,58,237,0.45),
     inset 0 1px 0 rgba(255,255,255,0.22);
-  transition: transform 160ms cubic-bezier(.23,1,.32,1), filter 160ms ease, box-shadow 160ms ease;
-}
-.glass-cta:active { transform: scale(0.96); }
-.nav-call-cta::after{content:'';position:absolute;inset:3px;z-index:0;border:1px solid rgba(124,58,237,.48);border-radius:inherit;pointer-events:none;animation:nav-phone-ring 3.4s cubic-bezier(.23,1,.32,1) infinite}.nav-call-icon{width:21px;height:21px;position:relative;z-index:1;transform-origin:50% 55%;animation:nav-phone-nudge 3.4s cubic-bezier(.23,1,.32,1) infinite}@keyframes nav-phone-ring{0%,70%,100%{opacity:0;transform:scale(.78)}76%{opacity:.42}90%{opacity:0;transform:scale(1.48)}}@keyframes nav-phone-nudge{0%,69%,84%,100%{transform:rotate(0)}73%{transform:rotate(-9deg)}77%{transform:rotate(8deg)}81%{transform:rotate(-4deg)}}
-
-@media (max-width: 768px) {
-  .glass-nav-inner { height: 44px; }
+  font-family: var(--font-iai-ui);
 }
 
 @media (max-width: 640px) {
   .glass-nav { padding: 4px; }
-  .glass-nav-inner { padding: 0 8px 0 16px; gap: 8px; }
+  .glass-nav-inner { padding: 0 8px 0 16px; height: 44px; gap: 8px; }
+  .glass-cta { padding: 7px 12px; font-size: 10px; letter-spacing: 0.06em; }
 }
-
-/* The same primary action remains in the mobile drawer. Hiding only the
-   duplicate pill at the narrowest width leaves room for the 44px menu and
-   language controls without shortening localized labels into abbreviations. */
-@media(prefers-reduced-motion:reduce){.nav-call-cta::after,.nav-call-icon{animation:none}}
 
 /* ===== Nav top state - logo hidden at scroll 0 (opacity only) ===== */
 .nav-logo {
   opacity: 1;
   transition: opacity 420ms cubic-bezier(0.22, 1, 0.36, 1);
   will-change: opacity;
-}
-.nav-logo-slot {
-  min-block-size: 44px;
-  min-inline-size: 44px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 0.92;
 }
 .glass-nav.is-top .nav-logo {
   opacity: 0;
@@ -201,16 +253,11 @@
   color: #2a2a2a;
 }
 .nav-link {
-  min-height: 44px;
-  min-width: 44px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   color: inherit;
   white-space: nowrap;
   transition: color 200ms;
 }
-.nav-link:hover { color: var(--brand); }
+.nav-link:hover { color: #7c3aed; }
 @media (min-width: 900px) {
   .nav-menu { display: flex; }
   .nav-burger { display: none !important; }
@@ -223,9 +270,8 @@
   justify-content: center;
   align-items: center;
   gap: 4px;
-  flex: 0 0 44px;
-  width: 44px;
-  height: 44px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   background: rgba(255,255,255,0.6);
   border: 1px solid rgba(0,0,0,0.06);
@@ -236,7 +282,7 @@
   transition: background 220ms, transform 220ms;
 }
 .nav-burger:hover { background: rgba(255,255,255,0.85); }
-.nav-burger:active { transform: scale(0.96); }
+.nav-burger:active { transform: scale(0.94); }
 .nav-burger span {
   width: 16px;
   height: 1.8px;
@@ -264,14 +310,13 @@
   touch-action: pan-y;
   z-index: -1;
   opacity: 0;
-  visibility: hidden;
   pointer-events: none;
   transition: opacity 420ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .nav-drawer-bg {
   position: absolute;
   inset: 0;
-  /* Source value, blur now works since .glass-nav no longer uses transform. */
+  /* Source value — blur now works since .glass-nav no longer uses transform. */
   background: rgba(255,255,255,0.92);
   backdrop-filter: blur(32px) saturate(180%);
 }
@@ -306,10 +351,9 @@
   transform: translateY(20px);
   transition: opacity 380ms ease, transform 380ms cubic-bezier(0.22, 1, 0.36, 1), color 200ms;
 }
-.nav-drawer-link:active { color: var(--brand); }
+.nav-drawer-link:active { color: #7c3aed; }
 .glass-nav.menu-open .nav-drawer {
   opacity: 1;
-  visibility: visible;
   pointer-events: auto;
   z-index: -1;
 }
@@ -339,8 +383,6 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  min-width: 44px;
-  min-height: 44px;
   font: inherit;
   font-size: 13px;
   font-weight: 500;
@@ -351,13 +393,13 @@
   cursor: pointer;
   transition: color 200ms;
 }
-.nav-services-trigger:hover { color: var(--brand); }
+.nav-services-trigger:hover { color: #7c3aed; }
 .nav-services-chevron {
   width: 12px;
   height: 12px;
   transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
 }
-.nav-services.is-open .nav-services-chevron { transform: rotate(180deg); }
+.nav-services:hover .nav-services-chevron { transform: rotate(180deg); }
 
 .nav-dropdown {
   position: absolute;
@@ -392,24 +434,24 @@
   right: 0;
   height: 16px;
 }
-.nav-services.is-open .nav-dropdown {
+.nav-services:hover .nav-dropdown,
+.nav-services:focus-within .nav-dropdown {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
   transform: translateX(-50%) translateY(0);
 }
-.nav-product-dropdown {
-  width: 240px;
-}
 .nav-dropdown-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 2px;
+  gap: 4px;
+  width: 640px;
+  padding: 12px;
 }
+.nav-dropdown-grid .nav-dd-link { min-height: 58px; }
 .nav-dd-link {
   display: flex;
   align-items: center;
-  min-height: 44px;
   gap: 10px;
   padding: 9px 12px;
   border-radius: 12px;
@@ -419,7 +461,7 @@
   text-decoration: none;
   transition: background 180ms, color 180ms;
 }
-.nav-dd-link:hover { background: color-mix(in srgb, var(--brand) 8%, transparent); color: var(--brand); }
+.nav-dd-link:hover { background: rgba(124, 58, 237, 0.08); color: #7c3aed; }
 .nav-dd-icon {
   display: inline-flex;
   align-items: center;
@@ -428,13 +470,33 @@
   height: 26px;
   border-radius: 8px;
   background: linear-gradient(135deg, rgba(124, 58, 237, 0.12), rgba(224, 64, 251, 0.12));
-  color: var(--brand);
+  color: #7c3aed;
   flex-shrink: 0;
 }
 .nav-dd-icon svg {
   width: 15px;
   height: 15px;
 }
+.nav-product-copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+  line-height: 1.15;
+}
+.nav-product-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #242424;
+}
+.nav-product-description {
+  font-size: 11px;
+  font-weight: 450;
+  line-height: 1.25;
+  color: #66616b;
+}
+.nav-dd-link:hover .nav-product-name { color: #7c3aed; }
+.nav-dd-link:hover .nav-product-description { color: #5f5270; }
 
 /* ===== Language switcher (in-bar pill, all breakpoints) ===== */
 .nav-actions {
@@ -451,7 +513,7 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  height: 44px;
+  height: 36px;
   padding: 0 12px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.6);
@@ -465,14 +527,15 @@
   cursor: pointer;
   transition: background 220ms, color 200ms;
 }
-.nav-lang-trigger:hover { background: rgba(255, 255, 255, 0.85); color: var(--brand); }
+.nav-lang-trigger:hover { background: rgba(255, 255, 255, 0.85); color: #7c3aed; }
 .nav-lang-globe { width: 14px; height: 14px; flex-shrink: 0; }
 .nav-lang-chevron {
   width: 11px;
   height: 11px;
   transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
 }
-.nav-lang.is-open .nav-lang-chevron { transform: rotate(180deg); }
+.nav-lang:hover .nav-lang-chevron,
+.nav-lang:focus-within .nav-lang-chevron { transform: rotate(180deg); }
 
 /* Dropdown reuses .nav-dropdown glass panel, but right-aligned single column */
 .nav-lang-dropdown {
@@ -482,46 +545,22 @@
   transform: translateY(6px);
   padding: 8px;
 }
-.nav-lang.is-open .nav-lang-dropdown {
+.nav-lang:hover .nav-lang-dropdown,
+.nav-lang:focus-within .nav-lang-dropdown {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
   transform: translateY(0);
 }
-
-.nav-burger:focus-visible,
-.nav-link:focus-visible,
-.nav-logo:focus-visible,
-.nav-services-trigger:focus-visible,
-.nav-lang-trigger:focus-visible,
-.nav-dd-link:focus-visible,
-.glass-cta:focus-visible,
-.nav-drawer-link:focus-visible {
-  outline: 2px solid var(--brand-ink);
-  outline-offset: 3px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .glass-nav-bg,
-  .nav-logo,
-  .nav-burger,
-  .nav-burger span,
-  .nav-drawer,
-  .nav-drawer-link,
-  .nav-dropdown,
-  .nav-lang-chevron,
-  .glass-cta { transition: none !important; }
-}
-.nav-drawer-theme-row{padding-top:10px}.nav-drawer-theme{width:100%;justify-content:flex-start;padding-inline:18px}.dark .glass-nav-bg{background:rgba(16,18,24,.7);border-color:rgba(255,255,255,.12);box-shadow:0 1px 0 rgba(255,255,255,.08) inset,0 16px 38px -18px rgba(0,0,0,.7)}.dark .nav-link,.dark .nav-lang-trigger{color:#f4f4f5}.dark .nav-lang-trigger,.dark .nav-burger{background:rgba(25,28,36,.8);border-color:rgba(255,255,255,.1)}.dark .nav-burger span{background:#f4f4f5}.dark .nav-drawer-bg{background:rgba(16,18,24,.96)}.dark .nav-drawer-link{border-color:rgba(255,255,255,.1);color:#f4f4f5}.dark .nav-dropdown{background:rgba(20,23,30,.94);border-color:rgba(255,255,255,.12)}.dark .nav-dd-link{color:#e4e4e7}.dark .wordmark-3d .wm-mark{color:#f4f4f5}
 .nav-lang-dropdown .nav-dd-link.is-current {
-  background: color-mix(in srgb, var(--brand) 8%, transparent);
-  color: var(--brand);
+  background: rgba(124, 58, 237, 0.08);
+  color: #7c3aed;
   font-weight: 700;
 }
 
 @media (max-width: 640px) {
   .nav-actions { gap: 6px; }
-  .nav-lang-trigger { height: 44px; padding: 0 9px; font-size: 10px; gap: 4px; }
+  .nav-lang-trigger { height: 32px; padding: 0 9px; font-size: 10px; gap: 4px; }
 }
 
 /* ===== Services accordion (mobile drawer) ===== */
@@ -555,7 +594,8 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 11px 4px;
+  min-height: 54px;
+  padding: 8px 4px;
   font-family: var(--font-iai-ui);
   font-size: 17px;
   font-weight: 500;
@@ -563,12 +603,14 @@
   text-decoration: none;
   letter-spacing: -0.01em;
 }
-.nav-drawer-sublink:active { color: var(--brand); }
+.nav-drawer-sublink:active { color: #7c3aed; }
+.nav-drawer-sublink .nav-product-name { font-size: 16px; }
+.nav-drawer-sublink .nav-product-description { font-size: 12px; }
 
 /* Section anchors clear the fixed glass nav when scrolled/linked to */
 #products, #team, #work, #faq, #cta { scroll-margin-top: 88px; }
 
-/* ===== "More" dropdown (desktop), single-column glass panel ===== */
+/* ===== "More" dropdown (desktop) — single-column glass panel ===== */
 .nav-more { position: relative; display: flex; align-items: center; }
 .nav-more:hover .nav-services-chevron,
 .nav-more:focus-within .nav-services-chevron { transform: rotate(180deg); }
@@ -584,9 +626,4 @@
   visibility: visible;
   pointer-events: auto;
   transform: translateY(0);
-}
-
-.dark .nav-services-trigger { color: #f4f4f5; }
-.dark .nav-services-trigger:hover {
-  color: color-mix(in srgb, var(--brand) 70%, #ffffff);
 }

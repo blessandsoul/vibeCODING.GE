@@ -1,12 +1,10 @@
-'use client';
-
 import Image from 'next/image';
-import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 
 import './meta-trust-strip.css';
 
-export function MetaTrustStrip(): React.ReactElement {
-  const t = useTranslations('metaTrust');
+export async function MetaTrustStrip() {
+  const t = await getTranslations('home.metaTrust');
 
   return (
     <aside className="meta-trust" aria-label={t('provider')}>

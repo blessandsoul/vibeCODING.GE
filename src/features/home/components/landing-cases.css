@@ -1,0 +1,95 @@
+/* =========================================================================
+   LandingCases, hairline NDA-case rows. Ported from the approved prototype
+   (agents/ainow/draft/20260710_fri_homepage_structure_v1), nda- prefixed to
+   avoid collisions with site-wide classes.
+   ========================================================================= */
+
+.nda-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 36px;
+}
+.nda-eyebrow {
+  font-family: var(--font-space-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #6f6f7a;
+  margin-bottom: 12px;
+}
+.nda-note {
+  margin: 0;
+  max-width: 34ch;
+  color: #4b4b55;
+  font-size: 14px;
+}
+.nda-link {
+  color: #7c3aed;
+  font-weight: 600;
+}
+.nda-link:hover {
+  text-decoration: underline;
+}
+
+.nda-list {
+  border-top: 1px solid rgba(10, 10, 10, 0.1);
+}
+.nda-row {
+  display: grid;
+  grid-template-columns: 190px 1fr auto;
+  gap: 20px;
+  align-items: baseline;
+  padding: 17px 2px;
+  border-bottom: 1px solid rgba(10, 10, 10, 0.1);
+}
+.nda-ind {
+  font-family: var(--font-space-mono), monospace;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #6f6f7a;
+}
+.nda-body b {
+  display: block;
+  font-family: var(--font-iai-ui);
+  font-weight: 700;
+  font-size: 15.5px;
+  letter-spacing: -0.01em;
+  color: #0a0a0a;
+}
+.nda-body p {
+  margin: 4px 0 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: #4b4b55;
+  max-width: 58ch;
+}
+.nda-tech {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.nda-tech i {
+  font-style: normal;
+  font-family: var(--font-space-mono), monospace;
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: #f5f5f6;
+  color: #6f6f7a;
+  white-space: nowrap;
+}
+
+@media (max-width: 767px) {
+  .nda-row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .nda-tech {
+    justify-content: flex-start;
+  }
+}

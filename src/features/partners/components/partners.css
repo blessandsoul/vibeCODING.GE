@@ -1,0 +1,19 @@
+/* Partner route typography stays scoped so forms and partner-only content do
+   not change global site styles. Surface treatment comes from shared glass
+   utilities and the route wrapper. */
+.partners-page {
+  color: rgb(15 23 42);
+}
+
+.dark .partners-page {
+  color: rgb(226 232 240);
+}
+
+.partners-page .font-headline {
+  font-family: var(--font-bricolage), "Bricolage Grotesque",
+    "Noto Sans Georgian", sans-serif;
+}
+
+.partners-page .eyebrow {
+  font-family: var(--font-iai-data);
+}

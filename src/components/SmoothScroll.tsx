@@ -8,7 +8,7 @@ import Lenis from 'lenis';
    Initializes Lenis on mount, drives it with a requestAnimationFrame loop, and
    destroys it on unmount. Bails out entirely under prefers-reduced-motion (no
    smoothing, native scroll only). Lenis listens to the native scroll, so the
-   nav's scrollIntoView anchor jumps and href="#cta" links keep working.
+   nav's scrollIntoView anchor jumps and href="#..." links keep working.
    ========================================================================= */
 
 export function SmoothScroll() {
@@ -20,15 +20,25 @@ export function SmoothScroll() {
       return;
     }
 
-    const lenis = new Lenis({ lerp: 0.1, smoothWheel: true });
+    const lenis = new Lenis({
+      duration: 1.1,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: 'vertical',
+      gestureOrientation: 'vertical',
+      smoothWheel: true,
+      wheelMultiplier: 1.0,
+      touchMultiplier: 1.2,
+    });
 
     // Native window.scrollTo() and Lenis keep separate scroll targets. Route
     // changes therefore go through Lenis, otherwise its next animation frame
     // can restore the position from the previous page.
     const resetForRouteChange = (event: Event) => {
-      const routeEvent = event as CustomEvent<{ handled: boolean }>;
+      const routeEvent = event as CustomEvent<{ handled: boolean; target?: HTMLElement }>;
       routeEvent.detail.handled = true;
-      lenis.scrollTo(0, { duration: 0.42, force: true });
+      const target = routeEvent.detail.target;
+      if (target) lenis.resize();
+      lenis.scrollTo(target ?? 0, { duration: 0.42, force: true });
     };
     window.addEventListener('landing:route-change', resetForRouteChange);
 
