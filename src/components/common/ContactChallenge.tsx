@@ -58,7 +58,7 @@ export function ContactChallenge({ onToken }: { onToken: (token: string) => void
       <p role="alert" className="text-sm text-destructive">{securityCopy.failed}</p>
       <p className="text-xs leading-relaxed text-slate-500 dark:text-slate-400">{securityCopy.help}</p>
       {ready && <button type="button"
-        className="rounded-lg border border-slate-200 bg-white/70 px-3 py-2 text-xs font-medium text-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 dark:border-white/15 dark:bg-white/5 dark:text-slate-200"
+        className="min-h-11 rounded-lg border border-slate-200 bg-white/70 px-3 py-2 text-xs font-medium text-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 dark:border-white/15 dark:bg-white/5 dark:text-slate-200"
         onClick={() => {
           onToken("");
           if (widget.current && window.turnstile) {
