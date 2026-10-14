@@ -324,7 +324,7 @@ function AiNowClosingCtaFormFields({
           <SelectTrigger id="ainow-contact-preference" aria-label={copy.contactPreferenceLabel} className="h-10 w-full rounded-xl border-black/[0.1] bg-white/70 px-3.5 text-xs text-slate-900 shadow-2xs backdrop-blur-md dark:border-white/15 dark:bg-white/[0.05] dark:text-slate-100">
             <span className="min-w-0 flex-1 truncate text-left">{preferredChannel.label}</span>
           </SelectTrigger>
-          <SelectContent className="rounded-xl border-black/[0.1] bg-white/95 p-1 shadow-xl backdrop-blur-xl dark:border-white/15 dark:bg-slate-950/95">
+          <SelectContent alignItemWithTrigger={false} align="start" className="rounded-xl border-black/[0.1] bg-white/95 p-1 shadow-xl backdrop-blur-xl dark:border-white/15 dark:bg-slate-950/95">
             {copy.contactPreferences.map((item) => <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>)}
           </SelectContent>
         </Select>
@@ -346,7 +346,7 @@ function AiNowClosingCtaFormFields({
               {selectedProduct ? selectedProduct.name + ": " + selectedProductLabel : copy.productPlaceholder}
             </span>
           </SelectTrigger>
-          <SelectContent className="rounded-xl border-black/[0.1] bg-white/95 p-1 shadow-xl backdrop-blur-xl dark:border-white/15 dark:bg-slate-950/95">
+          <SelectContent alignItemWithTrigger={false} align="start" className="rounded-xl border-black/[0.1] bg-white/95 p-1 shadow-xl backdrop-blur-xl dark:border-white/15 dark:bg-slate-950/95">
             {visibleProducts.map((item) => <SelectItem key={item.id} value={item.id}>{item.name}: {getApprovedProductDisplayLabel(item.id, locale, item.labelKa, homeCopy.productLabels[item.id])}</SelectItem>)}
           </SelectContent>
         </Select>

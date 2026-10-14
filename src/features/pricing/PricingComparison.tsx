@@ -785,7 +785,7 @@ function PlanSelection({
             <SelectTrigger id="pricing-plan-selection" className="dodo-glass-inset min-h-11 w-full px-3 text-sm font-semibold text-slate-900 dark:text-white">
               <span className="min-w-0 flex-1 truncate text-start">{product.plans.find((plan) => plan.id === selectedPlanId)?.name ?? copy.selectionOptional}</span>
             </SelectTrigger>
-            <SelectContent className="dodo-glass-card">
+            <SelectContent alignItemWithTrigger={false} align="start" className="dodo-glass-card">
             {isCustom ? <SelectItem value="undecided" className="min-h-10">{copy.selectionOptional}</SelectItem> : null}
             {product.plans.map((plan) => (
               <SelectItem key={plan.id} value={plan.id} className="min-h-10 [&_[data-slot=select-item-text]]:whitespace-normal">{`${plan.name} · ${plan.price}`}</SelectItem>

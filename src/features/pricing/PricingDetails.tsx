@@ -56,7 +56,7 @@ function CallEstimate({ product, selectedPlanId, locale }: { product: PricingPro
           <Label htmlFor="pricing-extra-channels">{copy.extraChannelLabel}</Label>
           <Select value={extraChannels} onValueChange={setExtraChannels}>
             <SelectTrigger id="pricing-extra-channels" className="dodo-glass-inset min-h-11 w-full tabular-nums"><span>{minutes(Number(extraChannels), locale)} · {money(Number(extraChannels) * CALL_RATES.extraChannel, locale)}</span></SelectTrigger>
-            <SelectContent className="dodo-glass-card">{Array.from({ length: 10 }, (_, value) => value).map((value) => <SelectItem key={value} value={String(value)} className="min-h-10">{minutes(value, locale)} · {money(value * CALL_RATES.extraChannel, locale)}</SelectItem>)}</SelectContent>
+            <SelectContent alignItemWithTrigger={false} align="start" className="dodo-glass-card">{Array.from({ length: 10 }, (_, value) => value).map((value) => <SelectItem key={value} value={String(value)} className="min-h-10">{minutes(value, locale)} · {money(value * CALL_RATES.extraChannel, locale)}</SelectItem>)}</SelectContent>
           </Select>
           <p className="text-xs text-slate-600 dark:text-slate-300">{copy.extraChannelRate}</p>
         </div>
