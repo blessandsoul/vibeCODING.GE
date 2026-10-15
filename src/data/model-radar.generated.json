@@ -1,70 +1,112 @@
 {
-  "schemaVersion": "1.0",
-  "generatedAt": "2026-09-20T07:51:20.278Z",
+  "schemaVersion": "1.1",
+  "generatedAt": "2026-10-15T11:25:59.713Z",
   "source": {
     "name": "models.dev public model catalog",
     "url": "https://models.dev/catalog.json",
     "documentation": "https://models.dev/",
-    "catalogModelCount": 414
+    "catalogModelCount": 549
   },
   "selectionPolicy": {
-    "label": "Latest tracked models",
-    "explanation": "One currently listed, non-preview, non-batch model is selected per tracked AI lab by the catalog release timestamp. This is an availability monitor, not a benchmark or a claim that one model is universally best.",
+    "label": "Latest approved flagship families",
+    "explanation": "Only approved flagship families are eligible. Versions are compared within these families; newer budget, preview, high-throughput or unrelated-modality releases cannot replace them. Verified snapshots are retained when current family data is missing or older. This public catalog does not establish which model runs in a particular customer product.",
     "trackedLabs": [
       {
         "id": "openai",
         "name": "OpenAI",
-        "type": "generation"
+        "type": "generation",
+        "approvedFamilies": [
+          "gpt-astra"
+        ]
       },
       {
         "id": "anthropic",
         "name": "Anthropic",
-        "type": "generation"
+        "type": "generation",
+        "approvedFamilies": [
+          "claude-fable",
+          "claude-opus"
+        ]
+      },
+      {
+        "id": "bytedance",
+        "name": "ByteDance",
+        "type": "video",
+        "approvedFamilies": [
+          "seedance"
+        ]
       },
       {
         "id": "google",
         "name": "Google",
-        "type": "generation"
+        "type": "generation",
+        "approvedFamilies": [
+          "gemini-argon"
+        ]
       },
       {
         "id": "xai",
         "name": "xAI",
-        "type": "generation"
+        "type": "generation",
+        "approvedFamilies": [
+          "grok"
+        ]
       },
       {
         "id": "mistral",
         "name": "Mistral AI",
-        "type": "generation"
+        "type": "generation",
+        "approvedFamilies": [
+          "mistral-large"
+        ]
       },
       {
         "id": "deepseek",
         "name": "DeepSeek",
-        "type": "generation"
+        "type": "generation",
+        "approvedFamilies": [
+          "deepseek-thinking"
+        ]
       },
       {
         "id": "meta",
         "name": "Meta",
-        "type": "open"
+        "type": "generation",
+        "approvedFamilies": [
+          "muse"
+        ]
       },
       {
         "id": "alibaba",
         "name": "Qwen",
-        "type": "open"
+        "type": "generation",
+        "approvedFamilies": [
+          "qwen"
+        ]
       },
       {
         "id": "cohere",
         "name": "Cohere",
-        "type": "generation"
+        "type": "generation",
+        "approvedFamilies": [
+          "command-a"
+        ]
       },
       {
         "id": "zhipuai",
         "name": "Z.ai",
-        "type": "generation"
+        "type": "generation",
+        "approvedFamilies": [
+          "glm"
+        ]
       },
       {
         "id": "moonshotai",
         "name": "Moonshot AI",
-        "type": "generation"
+        "type": "generation",
+        "approvedFamilies": [
+          "kimi-k3"
+        ]
       }
     ]
   },
@@ -72,7 +114,9 @@
     {
       "id": "openai/gpt-6-astra",
       "name": "GPT-6 Astra",
+      "provider": "openai",
       "lab": "OpenAI",
+      "family": "gpt-astra",
       "category": "generation",
       "releasedAt": "2026-09-04",
       "contextWindow": 1050000,
@@ -85,11 +129,13 @@
       "sourceUrl": "https://models.dev/"
     },
     {
-      "id": "anthropic/claude-fable-5-1",
-      "name": "Claude Fable 5.1",
+      "id": "anthropic/claude-opus-5-5",
+      "name": "Claude Opus 5.5",
+      "provider": "anthropic",
       "lab": "Anthropic",
+      "family": "claude-opus",
       "category": "generation",
-      "releasedAt": "2026-09-01",
+      "releasedAt": "2026-09-22",
       "contextWindow": 1000000,
       "modalities": [
         "text",
@@ -100,11 +146,31 @@
       "sourceUrl": "https://models.dev/"
     },
     {
-      "id": "google/gemini-3.8-flash",
-      "name": "Gemini 3.8 Flash",
+      "id": "bytedance-seed/seedance-2.5",
+      "name": "Seedance 2.5",
+      "provider": "bytedance",
+      "lab": "ByteDance",
+      "family": "seedance",
+      "category": "video",
+      "releasedAt": "2026-07-31",
+      "contextWindow": null,
+      "modalities": [
+        "text",
+        "image",
+        "video",
+        "audio"
+      ],
+      "source": "models.dev public model catalog",
+      "sourceUrl": "https://models.dev/"
+    },
+    {
+      "id": "google/gemini-4-argon",
+      "name": "Gemini 4 Argon",
+      "provider": "google",
       "lab": "Google",
+      "family": "gemini-argon",
       "category": "generation",
-      "releasedAt": "2026-09-02",
+      "releasedAt": "2026-10-13",
       "contextWindow": 1048576,
       "modalities": [
         "text",
@@ -117,26 +183,31 @@
       "sourceUrl": "https://models.dev/"
     },
     {
-      "id": "xai/grok-4.6",
-      "name": "Grok 4.6",
+      "id": "xai/grok-4.7",
+      "name": "Grok 4.7",
+      "provider": "xai",
       "lab": "xAI",
+      "family": "grok",
       "category": "generation",
-      "releasedAt": "2026-08-12",
+      "releasedAt": "2026-09-21",
       "contextWindow": 500000,
       "modalities": [
         "text",
-        "image"
+        "image",
+        "pdf"
       ],
       "source": "models.dev public model catalog",
       "sourceUrl": "https://models.dev/"
     },
     {
-      "id": "mistral/mistral-medium-latest",
-      "name": "Mistral Medium (latest)",
+      "id": "mistral/mistral-large-4",
+      "name": "Mistral Large 4",
+      "provider": "mistral",
       "lab": "Mistral AI",
+      "family": "mistral-large",
       "category": "generation",
-      "releasedAt": "2026-04-29",
-      "contextWindow": 262144,
+      "releasedAt": "2026-10-06",
+      "contextWindow": 1048576,
       "modalities": [
         "text",
         "image"
@@ -145,69 +216,47 @@
       "sourceUrl": "https://models.dev/"
     },
     {
-      "id": "deepseek/deepseek-v4.1-flash",
-      "name": "DeepSeek V4.1 Flash",
+      "id": "deepseek/deepseek-v4-pro-0813",
+      "name": "DeepSeek V4 Pro 0813",
+      "provider": "deepseek",
       "lab": "DeepSeek",
+      "family": "deepseek-thinking",
       "category": "generation",
-      "releasedAt": "2026-09-10",
+      "releasedAt": "2026-08-12",
       "contextWindow": 1000000,
       "modalities": [
-        "text",
-        "image"
+        "text"
       ],
       "source": "models.dev public model catalog",
       "sourceUrl": "https://models.dev/"
     },
     {
-      "id": "meta/llama-4-scout-17b-instruct",
-      "name": "Llama 4 Scout 17B Instruct",
+      "id": "meta/muse-wonder-1.0",
+      "name": "Muse Wonder",
+      "provider": "meta",
       "lab": "Meta",
-      "category": "open",
-      "releasedAt": "2025-04-05",
-      "contextWindow": 10000000,
-      "modalities": [
-        "text",
-        "image"
-      ],
-      "source": "models.dev public model catalog",
-      "sourceUrl": "https://models.dev/"
-    },
-    {
-      "id": "alibaba/qwen3.8-omni-flash",
-      "name": "Qwen3.8 Omni Flash",
-      "lab": "Qwen",
-      "category": "open",
-      "releasedAt": "2026-09-17",
-      "contextWindow": 1000000,
+      "family": "muse",
+      "category": "generation",
+      "releasedAt": "2026-10-12",
+      "contextWindow": 1048576,
       "modalities": [
         "text",
         "image",
-        "audio",
-        "video"
+        "video",
+        "pdf",
+        "audio"
       ],
       "source": "models.dev public model catalog",
       "sourceUrl": "https://models.dev/"
     },
     {
-      "id": "cohere/command-a-plus-05-2026",
-      "name": "Command A Plus",
-      "lab": "Cohere",
+      "id": "alibaba/qwen3.8-max",
+      "name": "Qwen3.8 Max",
+      "provider": "alibaba",
+      "lab": "Qwen",
+      "family": "qwen",
       "category": "generation",
-      "releasedAt": "2026-05-20",
-      "contextWindow": 128000,
-      "modalities": [
-        "text",
-        "image"
-      ],
-      "source": "models.dev public model catalog",
-      "sourceUrl": "https://models.dev/"
-    },
-    {
-      "id": "zhipuai/glm-5.3-flash",
-      "name": "GLM-5.3-Flash",
-      "lab": "Z.ai",
-      "category": "generation",
-      "releasedAt": "2026-08-26",
+      "releasedAt": "2026-08-03",
       "contextWindow": 1000000,
       "modalities": [
         "text",
@@ -219,9 +268,42 @@
       "sourceUrl": "https://models.dev/"
     },
     {
+      "id": "cohere/command-a-plus-05-2026",
+      "name": "Command A Plus",
+      "provider": "cohere",
+      "lab": "Cohere",
+      "family": "command-a",
+      "category": "generation",
+      "releasedAt": "2026-05-20",
+      "contextWindow": 128000,
+      "modalities": [
+        "text",
+        "image"
+      ],
+      "source": "models.dev public model catalog",
+      "sourceUrl": "https://models.dev/"
+    },
+    {
+      "id": "zhipuai/glm-5.3",
+      "name": "GLM-5.3",
+      "provider": "zhipuai",
+      "lab": "Z.ai",
+      "family": "glm",
+      "category": "generation",
+      "releasedAt": "2026-08-14",
+      "contextWindow": 1000000,
+      "modalities": [
+        "text"
+      ],
+      "source": "models.dev public model catalog",
+      "sourceUrl": "https://models.dev/"
+    },
+    {
       "id": "moonshotai/kimi-k3",
       "name": "Kimi K3",
+      "provider": "moonshotai",
       "lab": "Moonshot AI",
+      "family": "kimi-k3",
       "category": "generation",
       "releasedAt": "2026-07-16",
       "contextWindow": 1048576,
