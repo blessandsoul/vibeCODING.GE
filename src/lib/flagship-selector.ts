@@ -397,16 +397,34 @@ function compareText(first: string, second: string): number {
   return first < second ? -1 : 1;
 }
 
-function compareCandidates(first: Candidate, second: Candidate): number {
+function compareFamilyCandidates(first: Candidate, second: Candidate): number {
   const versionOrder = compareVersions(first.version, second.version);
   if (versionOrder !== 0) return versionOrder;
 
-  // Release time is only a tie-breaker after semantic version selection. It
-  // represents verified availability, not a global ranking signal.
+  // Release time is only a tie-breaker within one approved family. It
+  // represents verified availability, not a cross-family ranking signal.
   if (first.release.timestamp !== second.release.timestamp) {
     return first.release.timestamp - second.release.timestamp;
   }
 
+  // An equally-versioned/equally-dated catalog row is preferred over the
+  // snapshot so a live readback does not become a fallback merely because the
+  // same model is also present in the snapshot.
+  if (first.model.selectionSource !== second.model.selectionSource) {
+    return first.model.selectionSource === "catalog" ? 1 : -1;
+  }
+
+  return compareText(first.model.id, second.model.id);
+}
+
+function compareFamilyWinners(first: Candidate, second: Candidate): number {
+  if (first.release.timestamp !== second.release.timestamp) {
+    return first.release.timestamp - second.release.timestamp;
+  }
+
+  // Versions from different approved families are intentionally incomparable.
+  // Family id is only a deterministic tie-break when verified availability is
+  // on the same date.
   const familyOrder = compareText(first.family.id, second.family.id);
   if (familyOrder !== 0) return familyOrder;
   return compareText(first.model.id, second.model.id);
@@ -533,10 +551,20 @@ function toSnapshotCandidate(
   };
 }
 
-function selectBest(candidates: readonly Candidate[]): Candidate | null {
+function selectBestFamilyCandidate(candidates: readonly Candidate[]): Candidate | null {
   let best: Candidate | null = null;
   for (const candidate of candidates) {
-    if (!best || compareCandidates(candidate, best) > 0) best = candidate;
+    if (!best || compareFamilyCandidates(candidate, best) > 0) best = candidate;
+  }
+  return best;
+}
+
+function selectLatestFamily(
+  candidates: readonly Candidate[],
+): Candidate | null {
+  let best: Candidate | null = null;
+  for (const candidate of candidates) {
+    if (!best || compareFamilyWinners(candidate, best) > 0) best = candidate;
   }
   return best;
 }
@@ -555,11 +583,13 @@ function resultStatus(selections: readonly ProviderSelection[]): SelectionResult
  * Select one flagship per explicitly configured provider.
  *
  * Catalog candidates are admitted only when their provider-specific approved
- * family pattern, version, display name, and release date all validate.  The
- * winning version is semantic-first; release time is consulted only for a
- * version tie.  A missing/invalid live family falls back to a known snapshot
- * and remains visible as `status: "snapshot"`. A newer approved snapshot also
- * wins over an older live family, with the downgrade made explicit.
+ * family pattern, version, display name, and release date all validate. Live
+ * and snapshot rows are merged per family; semantic version selects the family
+ * row, then verified release date selects among family winners. Versions from
+ * different families are never compared. A missing/invalid live family falls
+ * back to a known snapshot and remains visible as `status: "snapshot"`. A
+ * newer approved snapshot also wins over an older live family, with the
+ * downgrade made explicit.
  */
 export function selectFlagshipModels(
   catalog: readonly CatalogModel[] | unknown,
@@ -609,10 +639,16 @@ export function selectFlagshipModels(
       }
     }
 
-    const live = selectBest(liveCandidates);
-    const snapshot = selectBest(snapshotCandidates);
+    const familyWinners = provider.families.flatMap((family) => {
+      const familyCandidates = [...liveCandidates, ...snapshotCandidates].filter(
+        (candidate) => candidate.family.id === family.id,
+      );
+      const winner = selectBestFamilyCandidate(familyCandidates);
+      return winner ? [winner] : [];
+    });
+    const winner = selectLatestFamily(familyWinners);
 
-    if (live && snapshot && compareCandidates(snapshot, live) > 0) {
+    if (winner?.model.selectionSource === "snapshot") {
       return {
         provider: provider.id,
         lab: provider.lab,
@@ -620,12 +656,16 @@ export function selectFlagshipModels(
         approvedFamilies,
         status: "snapshot",
         fallback: true,
-        fallbackReason: "catalog-older-than-snapshot",
-        model: snapshot.model,
+        fallbackReason: liveCandidates.length > 0
+          ? "catalog-older-than-snapshot"
+          : matchedFamilyRow
+            ? "catalog-candidate-invalid"
+            : "catalog-family-missing",
+        model: winner.model,
       };
     }
 
-    if (live) {
+    if (winner) {
       return {
         provider: provider.id,
         lab: provider.lab,
@@ -634,22 +674,7 @@ export function selectFlagshipModels(
         status: "live",
         fallback: false,
         fallbackReason: null,
-        model: live.model,
-      };
-    }
-
-    if (snapshot) {
-      return {
-        provider: provider.id,
-        lab: provider.lab,
-        category: provider.category,
-        approvedFamilies,
-        status: "snapshot",
-        fallback: true,
-        fallbackReason: matchedFamilyRow
-          ? "catalog-candidate-invalid"
-          : "catalog-family-missing",
-        model: snapshot.model,
+        model: winner.model,
       };
     }
 
@@ -673,4 +698,3 @@ export function selectFlagshipModels(
     models: selections.flatMap((selection) => (selection.model ? [selection.model] : [])),
   };
 }
-
