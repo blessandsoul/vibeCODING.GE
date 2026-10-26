@@ -6,6 +6,7 @@ import { SectionContainer } from '@/components/layout/SectionContainer';
 import { getAiNowHomeCopy } from '@/features/home/components/ainow/AiNowHomeCopy';
 import { targetAuxiliaryMetadata } from '@/lib/target-auxiliary-seo';
 import { PRODUCT_ITEMS, productHref } from '@/features/products/catalog';
+import { getFamilyProductName } from '@/features/products/family-catalog';
 import { Link } from '@/i18n/navigation';
 import { buildAlternates } from '@/i18n/seo-locales';
 
@@ -65,7 +66,7 @@ export default async function ProductsPage({ params }: Props) {
                 className="dodo-glass-box group flex h-full flex-col overflow-hidden p-7 transition duration-300 hover:-translate-y-0.5 md:p-8"
               >
                 <div className="relative z-10 mb-5 flex items-center justify-between">
-                  <h2 className="font-headline text-xl font-semibold tracking-[-0.025em] text-slate-950 dark:text-white">{product.label}</h2>
+                  <h2 className="font-headline text-xl font-semibold tracking-[-0.025em] text-slate-950 dark:text-white">{getFamilyProductName(product.descriptionKey, locale, product.label)}</h2>
                   <span className="dodo-glass-inset flex h-10 w-10 shrink-0 items-center justify-center text-lg text-slate-600 transition-colors duration-300 group-hover:text-blue-600 dark:text-slate-300 dark:group-hover:text-blue-300">
                     <Ico name={product.Icon} className="size-5" />
                   </span>

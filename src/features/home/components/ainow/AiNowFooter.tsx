@@ -3,7 +3,8 @@
 import { Link } from "@/i18n/navigation";
 import { useLocale } from "next-intl";
 import { AiNowLogo } from "@/components/common/AiNowLogo";
-import { AGENT_PRODUCTS, PUBLIC_FACTS } from "@/lib/public-facts";
+import { PUBLIC_FACTS } from "@/lib/public-facts";
+import { FAMILY_PRODUCTS, getFamilyProductName } from "@/features/products/family-catalog";
 import { getAiNowHomeCopy } from "./AiNowHomeCopy";
 
 export function AiNowFooter() {
@@ -76,10 +77,10 @@ export function AiNowFooter() {
               {copy.footer.products}
             </h4>
             <ul className="space-y-2 text-xs">
-              {AGENT_PRODUCTS.filter((product) => product.id === "vibecoding").map((product) => (
+              {FAMILY_PRODUCTS.map((product) => (
                 <li key={product.id}>
                   <a href={product.url} className="hover:text-white transition-colors">
-                    {product.name} ({copy.productLabels[product.id] ?? product.labelKa})
+                    {getFamilyProductName(product.id, locale, product.name)}
                   </a>
                 </li>
               ))}

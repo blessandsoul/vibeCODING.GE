@@ -17,6 +17,7 @@ import { AiNowLogo } from "@/components/common/AiNowLogo";
 import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
 import { useThemeTransition } from "@/components/common/useThemeTransition";
 import { getAiNowHomeCopy } from "./AiNowHomeCopy";
+import { FAMILY_PRODUCTS, getFamilyProductDescription, getFamilyProductName } from "@/features/products/family-catalog";
 import {
   AnimatedWindowsIcon,
   AnimatedDebuggerIcon,
@@ -34,6 +35,9 @@ import {
   AnimatedSmartphoneIcon,
   AnimatedScaleIcon,
   AnimatedCarIcon,
+  AnimatedRadioIcon,
+  AnimatedCheckCircleIcon,
+  AnimatedChartIcon,
   AnimatedArrowRightIcon,
 } from "./AiNowAnimatedIcons";
 
@@ -131,7 +135,6 @@ const PRODUCT_GROUPS: Array<{ id: ProductGroupId; dotColor: string; items: Produ
     items: [
       { id: "aicontent", title: "aiCONTENT", icon: AnimatedSparklesIcon, accentColor: "text-[#ec4899]", dotColor: "bg-[#ec4899]", href: "https://aicontent.ge" },
       { id: "aiads", title: "aiADS", icon: AnimatedTargetIcon, accentColor: "text-[#10b981]", dotColor: "bg-[#10b981]", href: "https://aiads.ge" },
-      { id: "airadar", title: "aiRADAR", icon: AnimatedTargetIcon, accentColor: "text-[#f97316]", dotColor: "bg-[#f97316]", href: "https://airadar.ge" },
       { id: "aimusic", title: "aiMUSIC", icon: AnimatedMicrophoneIcon, accentColor: "text-[#d946ef]", dotColor: "bg-[#d946ef]", href: "https://aimusic.ge" },
     ],
   },
@@ -159,6 +162,8 @@ const PRODUCT_GROUPS: Array<{ id: ProductGroupId; dotColor: string; items: Produ
     dotColor: "bg-[#6366f1]",
     items: [
       { id: "iai", title: "iAI", icon: AnimatedGitBranchIcon, accentColor: "text-[#7c3aed]", dotColor: "bg-[#7c3aed]", href: "https://iai.ge" },
+      { id: "aivision", title: "aiVISION", icon: AnimatedChartIcon, accentColor: "text-[#0891b2]", dotColor: "bg-[#0891b2]", href: "https://aivision.ge" },
+      { id: "airadar", title: "aiRADAR", icon: AnimatedTargetIcon, accentColor: "text-[#f97316]", dotColor: "bg-[#f97316]", href: "https://airadar.ge" },
       { id: "aijurist", title: "aiJURIST", icon: AnimatedScaleIcon, accentColor: "text-[#6366f1]", dotColor: "bg-[#6366f1]", href: "https://aijurist.ge" },
       { id: "aiaudit", title: "aiAUDIT", icon: AnimatedBookIcon, accentColor: "text-[#8b5cf6]", dotColor: "bg-[#8b5cf6]", href: "https://aiaudit.ge" },
       { id: "aitaxi", title: "aiTAXI", icon: AnimatedCarIcon, accentColor: "text-[#eab308]", dotColor: "bg-[#eab308]", href: "https://aitaxi.ge" },
@@ -221,7 +226,15 @@ export function AiNowNav() {
   const productGroups = PRODUCT_GROUPS.map((group) => ({
     ...group,
     title: familyNav[group.id],
-    items: group.items.map((item) => ({ ...item, subtitle: getNavProductDescription(item.id, locale, copy.nav.productDescriptions[item.id]) })),
+    items: group.items.map((item) => {
+      const familyProduct = FAMILY_PRODUCTS.find((product) => product.id === item.id);
+      const familyBrand = familyProduct?.name ?? (item.id === "iai" ? "iAI" : item.title);
+      return {
+        ...item,
+        title: getFamilyProductName(item.id, locale, familyBrand),
+        subtitle: getFamilyProductDescription(item.id, locale),
+      };
+    }),
   }));
   const resourceItems = RESOURCE_ITEMS.map((item) => ({
     ...item,

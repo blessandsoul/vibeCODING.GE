@@ -18,6 +18,7 @@ export const PRODUCT_ITEMS = [
   { href: 'https://aimusic.ge', label: 'aiMUSIC', descriptionKey: 'aimusic', Icon: 'solar:headphones-round-bold-duotone' },
   { href: 'https://vibecoding.ge', label: 'vibeCODING', descriptionKey: 'vibecoding', Icon: 'solar:code-square-bold-duotone' },
   { href: 'https://aitaxi.ge', label: 'aiTAXI', descriptionKey: 'aitaxi', Icon: 'solar:map-point-bold-duotone' },
+  { href: 'https://aivision.ge', label: 'aiVISION', descriptionKey: 'aivision', Icon: 'solar:chart-2-bold-duotone' },
 ] as const;
 
 export function productHref(href: string, locale: string): string {

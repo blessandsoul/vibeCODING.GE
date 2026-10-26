@@ -27,4 +27,9 @@ export const FAMILY: readonly FamilyMember[] = [
   { key: "aiapp", domain: "aiapp.ge", label: "aiAPP.ge", live: true },
   { key: "vibecoding", domain: "vibecoding.ge", label: "vibecoding.ge", live: true },
   { key: "aibrain", domain: "aibrain.ge", label: "aiBRAIN.ge", live: true },
+  { key: "aiaudit", domain: "aiaudit.ge", label: "aiAUDIT.ge", live: true },
+  { key: "aijurist", domain: "aijurist.ge", label: "aiJURIST.ge", live: true },
+  { key: "aimusic", domain: "aimusic.ge", label: "aiMUSIC.ge", live: true },
+  { key: "airadar", domain: "airadar.ge", label: "aiRADAR.ge", live: true },
+  { key: "aivision", domain: "aivision.ge", label: "aiVISION.ge", live: true },
 ] as const;
