@@ -20,15 +20,10 @@ export function ContactRequestForm({ source, attribution: suppliedAttribution }:
   const previewDisabled = isLandingCloneClientPreview();
   const searchParams = useSearchParams();
   const t = useTranslations("contact");
-  const brief = searchParams.get("brief")?.slice(0, 5000) ?? "";
+  const brief = searchParams.get("brief")?.slice(0, 1800) ?? "";
   const attribution: LeadAttribution = {
-    source: suppliedAttribution?.source ?? source ?? `${CLOSING_LEAD_PRODUCT}-contact`,
-    sourcePath: suppliedAttribution?.sourcePath ?? "/contact",
-    utmSource: (suppliedAttribution?.utmSource ?? searchParams.get("utm_source")) || undefined,
-    utmMedium: (suppliedAttribution?.utmMedium ?? searchParams.get("utm_medium")) || undefined,
-    utmCampaign: (suppliedAttribution?.utmCampaign ?? searchParams.get("utm_campaign")) || undefined,
-    utmContent: (suppliedAttribution?.utmContent ?? searchParams.get("utm_content")) || undefined,
-    utmTerm: (suppliedAttribution?.utmTerm ?? searchParams.get("utm_term")) || undefined,
+    // Source is the form tag; visit path and first-touch tags come from the shared context.
+    source: suppliedAttribution?.source ?? source ?? CLOSING_LEAD_PRODUCT + "-contact",
   };
 
   const handleSubmitted = (message: string) => {

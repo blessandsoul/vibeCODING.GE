@@ -1,9 +1,6 @@
-interface SendTelegramNotificationParams {
-  phone?: string;
-  name?: string;
-  email?: string;
-  message?: string;
-}
+import { formatContactNotification, type ContactNotificationParams } from "@/features/contact/lib/contact-notification";
+
+type SendTelegramNotificationParams = ContactNotificationParams;
 
 export async function sendTelegramNotification(
   params: SendTelegramNotificationParams,
@@ -15,34 +12,33 @@ export async function sendTelegramNotification(
     throw new Error("Telegram bot token or chat ID not configured");
   }
 
-  const lines = [`📞 *ახალი პროექტის მოთხოვნა*`, ``];
-  if (params.name) lines.push(`👤 სახელი: ${params.name}`);
-  if (params.phone) lines.push(`📞 ტელეფონი: \`${params.phone}\``);
-  if (params.email) lines.push(`📧 ელფოსტა: ${params.email}`);
-  if (params.message) lines.push(``, `💬 ${params.message}`);
-  lines.push(``, `_ainow.ge · კონტაქტის ფორმა_`);
-  const text = lines.join("\n");
-
-  const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
-
+  const url = "https://api.telegram.org/bot" + botToken + "/sendMessage";
   const response = await fetch(url, {
     method: "POST",
+    signal: AbortSignal.timeout(10_000),
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       chat_id: chatId,
-      text,
-      parse_mode: "Markdown",
+      text: formatContactNotification(params),
     }),
   });
 
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(
-      `Telegram API error: ${error.description || "Unknown error"}`,
-    );
+  let payload: { ok?: unknown; result?: { message_id?: unknown }; description?: unknown };
+  try {
+    payload = await response.json() as { ok?: unknown; result?: { message_id?: unknown }; description?: unknown };
+  } catch {
+    throw new Error("Telegram API returned an invalid response");
+  }
+  if (
+    !response.ok
+    || payload.ok !== true
+    || typeof payload.result?.message_id !== "number"
+    || !Number.isFinite(payload.result.message_id)
+  ) {
+    throw new Error("Telegram API error: " + String(payload.description || "Message was not accepted"));
   }
 
-  return response.json();
+  return payload;
 }
 
 interface SendInvoiceReminderNotificationParams {

@@ -12,13 +12,14 @@ import { AGENT_PRODUCTS } from "@/lib/public-facts";
 import { localizePricingProduct } from "@/features/pricing/pricing-copy";
 import { PRICING_PRODUCTS } from "@/features/pricing/pricing-data";
 import { trackLead } from "@/lib/facebook-pixel";
+import { getContactSubmissionContext } from "@/features/contact/lib/contact-context";
+import { getQualifiedContactCopy } from "@/features/contact/content/qualified-contact-copy";
 import {
   getClosingFormCopy,
   type ClosingFormCopy,
   type ContactPreference,
 } from "@/features/contact/content/closing-form-copy";
 import {
-  appendPricingSelectionToMessage,
   getPricingSelection,
   getPricingSelectionFromSearch,
   type PricingSelection,
@@ -28,13 +29,12 @@ import {
   createClosingLeadSubmitter,
   CLOSING_LEAD_MAX_MESSAGE,
   CLOSING_LEAD_PRODUCT,
-  sanitizeUtmValue,
   type ClosingLeadInput,
 } from "@/features/home/lib/closing-lead-message";
 import { AnimatedArrowRightIcon, AnimatedMailIcon } from "./AiNowAnimatedIcons";
 import { getAiNowHomeCopy } from "./AiNowHomeCopy";
 
-type FieldErrors = Partial<Record<"company" | "phone" | "task", string>>;
+type FieldErrors = Partial<Record<"name" | "company" | "phone" | "task" | "contactConfirmed", string>>;
 
 function getApprovedProductDisplayLabel(productId: string, locale: string, fallback: string, kaOverride?: string): string {
   if (locale === "ka") return kaOverride ?? fallback;
@@ -55,6 +55,9 @@ function isValidPhone(value: string): boolean {
 export interface LeadAttribution {
   source?: string;
   sourcePath?: string;
+  landingPath?: string;
+  referrerHost?: string;
+  paidClick?: boolean;
   utmSource?: string;
   utmMedium?: string;
   utmCampaign?: string;
@@ -148,14 +151,17 @@ function AiNowClosingCtaFormFields({
   copy,
 }: AiNowClosingCtaFormFieldsProps) {
   const locale = useLocale();
+  const qualifiedCopy = getQualifiedContactCopy(locale);
   const homeCopy = getAiNowHomeCopy(locale);
   const visibleProducts = AGENT_PRODUCTS.filter((item) => item.id === CLOSING_LEAD_PRODUCT);
+  const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [company, setCompany] = useState("");
   const [product, setProduct] = useState<string>(initialPricingSelection?.agentProduct.id ?? CLOSING_LEAD_PRODUCT);
   const [planId, setPlanId] = useState(initialPricingSelection?.plan?.id ?? "");
   const [task, setTask] = useState(initialMessage);
   const [contactPreference, setContactPreference] = useState<ContactPreference>("whatsapp");
+  const [contactConfirmed, setContactConfirmed] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState("");
   const [challengeAttempt, setChallengeAttempt] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -186,37 +192,40 @@ function AiNowClosingCtaFormFields({
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
-    const urlParams = new URLSearchParams(window.location.search);
-    const campaignValue = (key: string) => sanitizeUtmValue(urlParams.get(key) ?? undefined);
+    const cleanName = name.trim();
     const cleanPhone = phone.trim();
     const cleanCompany = company.trim();
     const cleanTask = task.trim();
-    const message = appendPricingSelectionToMessage(cleanTask, selectedPricingSelection);
+    const visitContext = getContactSubmissionContext();
     const leadInput: ClosingLeadInput = {
+      name: cleanName,
       phone: cleanPhone,
       company: cleanCompany,
       product: selectedProduct?.name ?? CLOSING_LEAD_PRODUCT,
-      task: message,
-      contactPreference: preferredChannel.label,
+      task: cleanTask,
+      contactPreference,
+      contactChannel: contactPreference,
+      contactConfirmed,
       turnstileToken,
       plan: selectedPlan ? { id: selectedPlan.id, name: selectedPlan.name, price: selectedPlan.price, cadence: selectedPlan.cadence } : null,
       attribution: {
-        source: attribution?.source ?? `${CLOSING_LEAD_PRODUCT}-homepage-cta`,
-        sourcePath: attribution?.sourcePath ?? (pricingOrigin ? "/pricing" : "/"),
-        utmSource: attribution?.utmSource ?? campaignValue("utm_source"),
-        utmMedium: attribution?.utmMedium ?? campaignValue("utm_medium"),
-        utmCampaign: attribution?.utmCampaign ?? campaignValue("utm_campaign"),
-        utmContent: attribution?.utmContent ?? campaignValue("utm_content"),
-        utmTerm: attribution?.utmTerm ?? campaignValue("utm_term"),
+        source: attribution?.source ?? CLOSING_LEAD_PRODUCT + "-homepage-cta",
+        ...visitContext,
       },
     };
     const nextErrors: FieldErrors = {};
 
+    if (cleanName.length < 2) {
+      nextErrors.name = cleanName.length === 0 ? qualifiedCopy.nameRequired : qualifiedCopy.nameError;
+    } else if (!/\p{L}/u.test(cleanName)) {
+      nextErrors.name = qualifiedCopy.nameError;
+    }
     if (cleanCompany.length < 2) nextErrors.company = copy.companyError;
     if (!isValidPhone(cleanPhone)) {
       nextErrors.phone = `${copy.phoneErrorPrefix} ${preferredChannel.validationAction}`;
     }
     if (cleanTask.length < 8) nextErrors.task = copy.taskError;
+    if (!contactConfirmed) nextErrors.contactConfirmed = qualifiedCopy.confirmationError;
     try {
       buildClosingLeadMessage(leadInput);
     } catch {
@@ -247,10 +256,12 @@ function AiNowClosingCtaFormFields({
       } catch {
         // Analytics must never turn an accepted lead into a form error.
       }
+      setName("");
       setPhone("");
       setCompany("");
       setTask("");
       setContactPreference("whatsapp");
+      setContactConfirmed(false);
       setTurnstileToken("");
       setFieldErrors({});
       onSubmitted(preferredChannel.success);
@@ -272,7 +283,31 @@ function AiNowClosingCtaFormFields({
           <p className="mt-1 text-emerald-800 dark:text-emerald-200">{copy.briefBody}</p>
         </div>
       ) : null}
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-3 sm:grid-cols-3">
+        <div className="text-left">
+          <Label htmlFor="ainow-name" className="mb-1.5 text-[11px] font-semibold text-slate-600 dark:text-slate-300">{qualifiedCopy.nameLabel}</Label>
+          <Input
+            id="ainow-name"
+            name="name"
+            type="text"
+            required
+            minLength={2}
+            maxLength={120}
+            autoComplete="name"
+            placeholder={qualifiedCopy.namePlaceholder}
+            value={name}
+            onChange={(event) => {
+              setName(event.target.value);
+              if (event.target.value.trim().length >= 2 && /\p{L}/u.test(event.target.value.trim())) {
+                setFieldErrors((current) => ({ ...current, name: undefined }));
+              }
+            }}
+            aria-invalid={Boolean(fieldErrors.name)}
+            aria-describedby={fieldErrors.name ? "ainow-name-error" : undefined}
+            className="h-10 rounded-xl border-black/[0.1] bg-white/70 px-3.5 text-xs text-slate-900 shadow-2xs placeholder:text-slate-400 dark:border-white/15 dark:bg-white/[0.05] dark:text-slate-100 dark:placeholder:text-slate-500"
+          />
+          {fieldErrors.name && <p id="ainow-name-error" role="alert" className="mt-1.5 text-xs font-medium text-rose-700 dark:text-rose-300">{fieldErrors.name}</p>}
+        </div>
         <div className="text-left">
           <Label htmlFor="ainow-company" className="mb-1.5 text-[11px] font-semibold text-slate-600 dark:text-slate-300">{copy.companyLabel}</Label>
           <Input
@@ -388,6 +423,28 @@ function AiNowClosingCtaFormFields({
           className="min-h-24 resize-y rounded-xl border-black/[0.1] bg-white/70 px-3.5 py-2.5 text-xs leading-relaxed text-slate-900 shadow-2xs backdrop-blur-md placeholder:text-slate-400 dark:border-white/15 dark:bg-white/[0.05] dark:text-slate-100 dark:placeholder:text-slate-500"
         />
         {fieldErrors.task && <p id="ainow-task-error" role="alert" className="mt-1.5 text-xs font-medium text-rose-700 dark:text-rose-300">{fieldErrors.task}</p>}
+      </div>
+
+
+      <div className="block text-left">
+        <label htmlFor="ainow-contact-confirmed" className="flex items-start gap-3 text-xs leading-relaxed text-slate-700 dark:text-slate-200">
+          <input
+            id="ainow-contact-confirmed"
+            name="contactConfirmed"
+            type="checkbox"
+            required
+            checked={contactConfirmed}
+            onChange={(event) => {
+              setContactConfirmed(event.target.checked);
+              if (event.target.checked) setFieldErrors((current) => ({ ...current, contactConfirmed: undefined }));
+            }}
+            aria-invalid={Boolean(fieldErrors.contactConfirmed)}
+            aria-describedby={fieldErrors.contactConfirmed ? "ainow-contact-confirmed-error" : undefined}
+            className="mt-0.5 size-4 shrink-0 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+          />
+          <span>{qualifiedCopy.confirmation} *</span>
+        </label>
+        {fieldErrors.contactConfirmed && <p id="ainow-contact-confirmed-error" role="alert" className="mt-1.5 text-xs font-medium text-rose-700 dark:text-rose-300">{fieldErrors.contactConfirmed}</p>}
       </div>
 
       <ContactChallenge key={challengeAttempt} onToken={setTurnstileToken} errorText={copy.submitError} />

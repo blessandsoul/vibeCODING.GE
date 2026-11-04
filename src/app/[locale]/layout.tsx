@@ -10,6 +10,7 @@ import { isIndexedLocale } from "@/i18n/seo-locales";
 import { Providers } from "@/app/providers";
 import { LayoutShell } from "@/components/layout/LayoutShell";
 import { PublicIntegrations } from "@/components/layout/PublicIntegrations";
+import { ContactVisitContext } from "@/features/contact/components/ContactVisitContext";
 import { Toaster } from "sonner";
 import { StructuredData } from "@/components/seo/StructuredData";
 import { ScrollToTop } from "@/components/common/ScrollToTop";
@@ -169,6 +170,7 @@ export default async function LocaleLayout({
         <Providers>
           <NextIntlClientProvider locale={locale} messages={publicMessages}>
             <LayoutShell>{children}</LayoutShell>
+            <ContactVisitContext />
             <PublicIntegrations />
             <ScrollToTop />
             <Toaster position="top-right" richColors theme="dark" />

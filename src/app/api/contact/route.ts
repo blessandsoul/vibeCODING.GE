@@ -26,9 +26,6 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    if (!(await verifyContactChallenge(body?.turnstileToken))) {
-      return NextResponse.json({ error: "Please complete the security check." }, { status: 403 });
-    }
     const parsed = contactFormSchema.safeParse(body);
 
     if (!parsed.success) {
@@ -36,6 +33,10 @@ export async function POST(request: Request) {
         { error: "Invalid form data", details: parsed.error.flatten() },
         { status: 400 },
       );
+    }
+
+    if (!(await verifyContactChallenge(body?.turnstileToken))) {
+      return NextResponse.json({ error: "Please complete the security check." }, { status: 403 });
     }
 
     await sendTelegramNotification(parsed.data);
