@@ -1,5 +1,7 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
+const retiredTeamPortraits = ["giorgi-darbaiseli-v2.png", "giorgi.jpg", "nika-skhirtladze-v3.png", "aleksandre.jpg", "aleksandre-b.jpg", "beka.jpg"] as const;
+
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 const isLandingClonePreview = !(
@@ -39,7 +41,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "avatar.vercel.sh",
       },
-    ],
+    
+{ protocol: "https", hostname: "ainow.ge", pathname: "/team/andro-kasparov-v3.png", search: "" },
+{ protocol: "https", hostname: "ainow.ge", pathname: "/team/tornike-epitashvili-v3.png", search: "" },
+],
     localPatterns: [
       {
         pathname: "/blog/*/opengraph-image",
@@ -192,7 +197,11 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       ...shortSlugRedirects,
-    ];
+    
+{ source: "/team/andro.jpg", destination: "https://ainow.ge/team/andro-kasparov-v3.png", permanent: true },
+{ source: "/team/tornike.jpg", destination: "https://ainow.ge/team/tornike-epitashvili-v3.png", permanent: true },
+{ source: "/team/tornike-epitashvili-v2.jpg", destination: "https://ainow.ge/team/tornike-epitashvili-v3.png", permanent: true },
+];
   },
 
   async headers() {
@@ -241,7 +250,9 @@ const nextConfig: NextConfig = {
             ],
           }]
         : []),
-    ];
+    
+...retiredTeamPortraits.map(file => ({ source: `/team/${file}`, headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow, noimageindex" }] })),
+];
   },
 };
 

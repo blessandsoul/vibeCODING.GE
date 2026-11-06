@@ -2485,12 +2485,14 @@
       "headingPre": "",
       "headingSuffix": "'da biz kimiz",
       "subtitle": "İki kişi: iş yönü ve müşteri çalışması tek ekipte.",
-      "m1Name": "Andrew Altair",
-      "m1Bio": "Vizyoner ve iş stratejisti. Teknolojiyi, insanları ve fikirleri tek bir bütünde bir araya getirir.",
-      "m2Name": "",
-      "m2Bio": "Mimarlık, geliştirme ve ölçeklendirme. Yapay zekayla güçlendirilmiş tam donanımlı bir mühendis.",
-      "m4Name": "",
-      "m4Bio": "Erişim ve yeni müşteriler. Yapay zekaya ihtiyacı olan işletmeleri bulur ve görüşmeyi başlatır."
+      "m1Name": "Andro Kasparov",
+      "m1Role": "CEO",
+      "m1CoFounder": "Kurucu ortak",
+      "m1Bio": "İş hedefini, ürün yönünü ve her sonucun kalite standardını belirler.",
+      "m2Name": "Tornike Epitashvili",
+      "m2Role": "CTO",
+      "m2CoFounder": "Kurucu ortak",
+      "m2Bio": "Teknolojik mimariye, yapay zekâ modeli entegrasyonuna ve temel altyapıya liderlik eder."
     },
     "stack": {
       "eyebrow": "STACK · cephaneliğimiz",

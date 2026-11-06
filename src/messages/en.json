@@ -2940,12 +2940,14 @@
       "headingPre": "Who we are at",
       "headingSuffix": "",
       "subtitle": "Two people: business direction and client delivery in one team.",
-      "m1Name": "Andrew Altair",
-      "m1Bio": "Visionary and business strategist. Brings technology, people and ideas together into one whole.",
-      "m2Name": "",
-      "m2Bio": "Architecture, development and scaling. A full-stack engineer supercharged with AI.",
-      "m4Name": "",
-      "m4Bio": "Outreach and new clients. Finds businesses that need AI and starts the conversation."
+      "m1Name": "Andro Kasparov",
+      "m1Role": "CEO",
+      "m1CoFounder": "Co-founder",
+      "m1Bio": "Sets the business goal, product direction and quality bar for every result.",
+      "m2Name": "Tornike Epitashvili",
+      "m2Role": "CTO",
+      "m2CoFounder": "Co-founder",
+      "m2Bio": "Leads technological architecture, AI model integration and core infrastructure."
     },
     "stack": {
       "eyebrow": "STACK · our arsenal",

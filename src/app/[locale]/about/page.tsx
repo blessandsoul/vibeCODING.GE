@@ -1,11 +1,12 @@
+import { AboutTeamGrid } from "@/features/about/components/AboutTeamGrid";
 import type { Metadata } from 'next';
-import { AiNowImage as Image } from '@/features/home/components/ainow/AiNowImage';
+
 import Link from 'next/link';
 
 import { FadeIn } from '@/components/common/FadeIn';
 import { SectionContainer } from '@/components/layout/SectionContainer';
 import { getAboutContent } from '@/features/about/data/about-content';
-import { publicTeam } from '@/features/about/data/team';
+
 import { ownerServiceMetadata } from '@/lib/owner-seo';
 import { getPageContentLocale } from '@/i18n/seo-locales';
 import { cn } from '@/lib/utils';
@@ -90,22 +91,7 @@ export default async function AboutPage({ params }: Props) {
 
         <SectionContainer>
           <FadeIn><h2 className="text-center font-headline text-2xl font-semibold leading-tight tracking-[-0.035em] text-slate-950 md:text-4xl dark:text-white">{copy.teamTitle}</h2></FadeIn>
-          <div className="mx-auto mt-10 grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {publicTeam.map((member, index) => (
-              <FadeIn key={member.name} delay={index * 0.08}>
-                <div className="dodo-glass-card flex h-full flex-col items-center p-7 text-center">
-                  <div className={cn('rounded-full bg-linear-to-br p-[2.5px]', member.accent)}>
-                    <div className="h-24 w-24 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-900">
-                      <Image src={member.image} alt={member.name} width={96} height={96} className="h-full w-full object-cover" style={member.imagePosition ? { objectPosition: member.imagePosition } : undefined} frameClassName="h-full w-full" />
-                    </div>
-                  </div>
-                  <h3 className="mt-4 font-headline text-xl font-semibold tracking-[-0.025em] text-slate-950 dark:text-white">{locale === 'ka' ? member.nameKa : member.name}</h3>
-                  <span className={cn('mt-1.5 inline-block rounded-full bg-linear-to-r px-3 py-0.5 text-xs font-medium text-white', member.accent)}>{pick(member.role)}</span>
-                  <p className="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">{pick(member.bio)}</p>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
+          <AboutTeamGrid locale={locale} />
         </SectionContainer>
 
         <SectionContainer>

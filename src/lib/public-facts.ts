@@ -1,9 +1,27 @@
+// @ts-expect-error -- The standalone data runner needs an explicit TypeScript extension.
+import { publicTeam as companyPublicTeam } from "../features/about/data/team.ts";
 // The explicit extension keeps the standalone contract test able to load this
 // pure data module with Node's built-in TypeScript stripping.
 // @ts-expect-error -- Next resolves the TypeScript data module without an extension.
 import { PRICING_PRODUCTS } from "../features/pricing/pricing-data.ts";
 // @ts-expect-error -- Node's standalone TypeScript test runner needs the extension.
 import { getAiNowHomeCopy } from "../features/home/components/ainow/AiNowHomeCopy.ts";
+
+const publicProfileImage = (image: string) => image.startsWith("http") ? image : `https://ainow.ge${image}`;
+export const PUBLIC_TEAM_PROFILES = companyPublicTeam.map((member) => ({
+  slug: member.id,
+  id: member.id === "andro-kasparov" ? "https://andrewaltair.ge/#person" : `https://ainow.ge/#person-${member.id}`,
+  name: member.name,
+  alternateName: member.id === "andro-kasparov" ? ["Andrew Altair", member.nameKa, member.localizedNames.ru] : [member.nameKa, member.localizedNames.ru, "Toko", "Токо"],
+  jobTitle: member.role.en,
+  coFounder: true,
+  url: `https://ainow.ge/about#${member.id}`,
+  image: publicProfileImage(member.image),
+  imageCaption: `${member.name}, co-founder and ${member.role.en} of aiNOW`,
+}));
+
+const ownerProfile = PUBLIC_TEAM_PROFILES.find(member => member.slug === "andro-kasparov");
+if (!ownerProfile) throw new Error("The approved public owner profile is missing");
 
 export const PUBLIC_FACTS = {
   brand: {
@@ -21,7 +39,7 @@ export const PUBLIC_FACTS = {
   founded: "2026",
   foundingDate: "2026-02-05",
   lastUpdated: "2026-09-28",
-  founder: {
+  founder: { ...({
     name: "Andrew Altair",
     id: "https://andrewaltair.ge/#person",
     url: "https://andrewaltair.ge/about",
@@ -32,7 +50,7 @@ export const PUBLIC_FACTS = {
       "https://x.com/andr3waltair",
       "https://github.com/andr3waltair",
     ],
-  },
+  }), name: ownerProfile.name, alternateName: ownerProfile.alternateName, id: ownerProfile.id, url: ownerProfile.url, image: ownerProfile.image, jobTitle: ownerProfile.jobTitle },
   site: {
     locales: ["ka", "en", "ru"],
     routeLocales: ["ka", "en", "ru", "de", "tr", "fa", "zh"],
@@ -85,7 +103,7 @@ export const PUBLIC_FACTS = {
     "https://www.linkedin.com/company/ainowgeorgia",
     "https://github.com/ainowgeorgia",
   ],
-} as const;
+ founders: PUBLIC_TEAM_PROFILES, } as const;
 
 export const PUBLIC_POSITIONING = {
   model: "consulting_and_implementation",
@@ -732,7 +750,7 @@ export function buildAiSummary(): Record<string, unknown> {
     },
     lastUpdated: PUBLIC_FACTS.lastUpdated,
     plannedIntegrations: TIKTOK_PRODUCT_ROADMAP,
-  };
+   founders: PUBLIC_TEAM_PROFILES, team: PUBLIC_TEAM_PROFILES, };
 }
 
 export function buildAiFaq(): Record<string, unknown> & {
@@ -761,7 +779,7 @@ export function buildAiService(): Record<string, unknown> {
       url: PUBLIC_FACTS.brand.url,
       founder: PUBLIC_FACTS.founder,
       location: `${PUBLIC_FACTS.location.city}, ${PUBLIC_FACTS.location.country}`,
-    },
+     founders: PUBLIC_TEAM_PROFILES, team: PUBLIC_TEAM_PROFILES, },
     siteLocales: [...PUBLIC_FACTS.site.locales],
     serviceLanguages: [...PUBLIC_FACTS.service.languages],
     positioning: PUBLIC_POSITIONING,
@@ -792,7 +810,7 @@ export function buildAiTxt(): string {
     `URL: ${PUBLIC_FACTS.brand.url}`,
     `Brand-Established: ${PUBLIC_FACTS.brandEstablished}`,
     `Founded: ${PUBLIC_FACTS.founded}`,
-    `Founder: ${PUBLIC_FACTS.founder.name} (${PUBLIC_FACTS.founder.url})`,
+    `Founder: ${PUBLIC_FACTS.founder.name} (${PUBLIC_FACTS.founder.url})`, ...PUBLIC_TEAM_PROFILES.flatMap(member => [`Co-Founder: ${member.name}, ${member.jobTitle}`, `Co-Founder-Profile: ${member.url}`, `Co-Founder-Portrait: ${member.image}`]),
     `Location: ${PUBLIC_FACTS.location.city}, ${PUBLIC_FACTS.location.country}`,
     `Site-Languages: ${PUBLIC_FACTS.site.locales.join(", ")}`,
     `Service-Languages: ${PUBLIC_FACTS.service.languages.join(", ")}`,

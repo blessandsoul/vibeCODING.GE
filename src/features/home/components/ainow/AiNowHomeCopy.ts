@@ -103,8 +103,8 @@ export interface AiNowHomeCopy {
     eyebrow: string;
     title: string;
     paragraphs: string[];
-    names: { andro: string; nika: string; giorgi: string };
-    roles: { founder: string; commercial: string; businessDevelopment: string };
+    names: { andro: string; tornike: string };
+    roles: { coFounder: string; ceo: string; cto: string };
     location: string;
     year: string;
   };
@@ -340,8 +340,8 @@ const ka: AiNowHomeCopy = {
       "მხარდაჭერის პირობებს წინასწარ ვათანხმებთ, რომ იცოდეთ, ვის მიმართოთ და რაში დაგეხმარებათ ჩვენი გუნდი.",
       "iAI ამ პროდუქტებისა და მათ შორის სამუშაოს კოორდინაციაში გვეხმარება.",
     ],
-    names: { andro: "ანდრო კასპაროვი", nika: "ნიკა სხირტლაძე", giorgi: "გიორგი დარბაისელი" },
-    roles: { founder: "დამფუძნებელი", commercial: "კომერციული დირექტორი", businessDevelopment: "ბიზნესის განვითარების დირექტორი" },
+    names: { andro: "ანდრო კასპაროვი", tornike: "თორნიკე ეპიტაშვილი" },
+    roles: { coFounder: "თანადამფუძნებელი", ceo: "CEO", cto: "CTO" },
     location: "თბილისი, საქართველო",
     year: "2026",
   },
@@ -593,8 +593,8 @@ const en: AiNowHomeCopy = {
       "We agree support terms in advance, so you know whom to contact and what our team can help with.",
       "iAI helps coordinate these products and the work between them.",
     ],
-    names: { andro: "Andro Kasparov", nika: "Nika Skhirtladze", giorgi: "Giorgi Darbaiseli" },
-    roles: { founder: "Founder", commercial: "Commercial director", businessDevelopment: "Business Development Director" },
+    names: { andro: "Andro Kasparov", tornike: "Tornike Epitashvili" },
+    roles: { coFounder: "Co-founder", ceo: "CEO", cto: "CTO" },
     location: "Tbilisi, Georgia",
     year: "2026",
   },
@@ -846,8 +846,8 @@ const ru: AiNowHomeCopy = {
       "Заранее согласуем условия поддержки, чтобы вы знали, к кому обращаться и чем сможет помочь наша команда.",
       "iAI помогает координировать эти продукты и работу между ними.",
     ],
-    names: { andro: "Андро Каспаров", nika: "Ника Схиртладзе", giorgi: "Гиорги Дарбаисели" },
-    roles: { founder: "Основатель", commercial: "Коммерческий директор", businessDevelopment: "Директор по развитию бизнеса" },
+    names: { andro: "Андрей Каспаров", tornike: "Торнике Эпиташвили" },
+    roles: { coFounder: "Соучредитель", ceo: "CEO", cto: "CTO" },
     location: "Тбилиси, Грузия",
     year: "2026",
   },
@@ -1099,8 +1099,8 @@ const de: AiNowHomeCopy = {
       "Die Supportbedingungen vereinbaren wir im Voraus, damit Sie wissen, an wen Sie sich wenden können und wobei unser Team hilft.",
       "iAI koordiniert diese Produkte und die Arbeit zwischen ihnen.",
     ],
-    names: { andro: "Andro Kasparov", nika: "Nika Skhirtladze", giorgi: "Giorgi Darbaiseli" },
-    roles: { founder: "Gründer", commercial: "Leitung Commercial", businessDevelopment: "Leitung Geschäftsentwicklung" },
+    names: { andro: "Andro Kasparov", tornike: "Tornike Epitashvili" },
+    roles: { coFounder: "Mitgründer", ceo: "CEO", cto: "CTO" },
     location: "Tiflis, Georgien",
     year: "2026",
   },
@@ -1352,8 +1352,8 @@ const tr: AiNowHomeCopy = {
       "Destek koşullarını önceden belirleriz; böylece kime ulaşacağınızı ve ekibimizin size nerede yardımcı olacağını bilirsiniz.",
       "iAI bu ürünleri ve aralarındaki işi koordine etmeye yardımcı olur.",
     ],
-    names: { andro: "Andro Kasparov", nika: "Nika Skhirtladze", giorgi: "Giorgi Darbaiseli" },
-    roles: { founder: "Kurucu", commercial: "Ticari direktör", businessDevelopment: "İş Geliştirme Direktörü" },
+    names: { andro: "Andro Kasparov", tornike: "Tornike Epitashvili" },
+    roles: { coFounder: "Kurucu ortak", ceo: "CEO", cto: "CTO" },
     location: "Tiflis, Gürcistan",
     year: "2026",
   },
@@ -1605,8 +1605,8 @@ const fa: AiNowHomeCopy = {
       "شرایط پشتیبانی را از قبل مشخص می‌کنیم تا بدانید با چه کسی تماس بگیرید و تیم ما در چه زمینه‌ای کمک می‌کند.",
       "iAI به هماهنگی این محصولات و کار میان آن‌ها کمک می‌کند.",
     ],
-    names: { andro: "Andro Kasparov", nika: "Nika Skhirtladze", giorgi: "گیورگی داربایسلی" },
-    roles: { founder: "بنیان‌گذار", commercial: "مدیر تجاری", businessDevelopment: "مدیر توسعه کسب‌وکار" },
+    names: { andro: "Andro Kasparov", tornike: "Tornike Epitashvili" },
+    roles: { coFounder: "هم‌بنیان‌گذار", ceo: "CEO", cto: "CTO" },
     location: "تفلیس، گرجستان",
     year: "2026",
   },
@@ -1858,8 +1858,8 @@ const zh: AiNowHomeCopy = {
       "我们会提前约定支持方式，让您知道该联系谁，以及我们的团队能在哪些方面提供帮助。",
       "iAI帮助协调这些产品以及它们之间的工作。",
     ],
-    names: { andro: "Andro Kasparov", nika: "Nika Skhirtladze", giorgi: "Giorgi Darbaiseli" },
-    roles: { founder: "创始人", commercial: "商务总监", businessDevelopment: "业务发展总监" },
+    names: { andro: "Andro Kasparov", tornike: "Tornike Epitashvili" },
+    roles: { coFounder: "联合创始人", ceo: "CEO", cto: "CTO" },
     location: "格鲁吉亚第比利斯",
     year: "2026",
   },

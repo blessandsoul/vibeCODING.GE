@@ -1,19 +1,18 @@
 "use client";
 
 import { useLocale } from "next-intl";
+import { useAlternatingTeam } from "@/features/about/hooks/useAlternatingTeam";
+import { getTeamMemberCopy } from "@/features/about/data/team";
+import { FounderBadge } from "@/features/about/components/FounderBadge";
 import { AnimatedFeatherIcon } from "./AiNowAnimatedIcons";
 import { AiNowSectionFrame } from "./AiNowSectionFrame";
 import { getAiNowHomeCopy } from "./AiNowHomeCopy";
 import { AiNowImage } from "./AiNowImage";
 
-// Keep the homepage's public team surface independent from the broader About
-// page data contract. Tornike remains intentionally hidden until his public
-// profile is approved for this surface.
-const teamVisibility = { tornikeEpitashvili: false } as const;
-
 export function AiNowTeamLetter() {
   const locale = useLocale();
   const copy = getAiNowHomeCopy(locale);
+  const team = useAlternatingTeam();
 
   return (
     <AiNowSectionFrame
@@ -61,92 +60,38 @@ export function AiNowTeamLetter() {
           </div>
 
           <div className="mt-8 pt-6 border-t border-black/[0.08] dark:border-white/10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-            <div className="flex flex-wrap items-center gap-5 sm:gap-6">
-              <div className="flex items-center gap-3">
-                <div className="relative size-12 rounded-full overflow-hidden ring-2 ring-blue-500/30 dark:ring-blue-400/40 shadow-sm shrink-0 bg-slate-100 dark:bg-slate-800">
-                  <AiNowImage
-                    src="/team/andro-kasparov-v3.png"
-                    alt={`${copy.team.names.andro} · ${copy.team.roles.founder}`}
-                    width={48}
-                    height={48}
-                    frameClassName="block size-full"
-                    className="size-full object-cover object-top"
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <div className="font-semibold text-sm text-slate-900 dark:text-slate-100 leading-tight">
-                    {copy.team.names.andro}
-                  </div>
-                  <div className="font-mono text-[11px] font-medium text-blue-600 dark:text-blue-400 tracking-wide">
-                    {copy.team.roles.founder}
-                  </div>
-                </div>
-              </div>
-
-              {teamVisibility.tornikeEpitashvili ? (
-                <div className="flex items-center gap-3">
-                  <div className="relative size-12 rounded-full overflow-hidden ring-2 ring-indigo-500/30 dark:ring-indigo-400/40 shadow-sm shrink-0 bg-slate-100 dark:bg-slate-800">
-                    <AiNowImage
-                      src="/team/tornike-epitashvili-v2.jpg"
-                      alt="Tornike Epitashvili · technology lead"
-                      width={48}
-                      height={48}
-                      frameClassName="block size-full"
-                      className="size-full object-cover object-top"
-                    />
-                  </div>
-                  <div className="flex flex-col">
-                    <div className="font-semibold text-sm text-slate-900 dark:text-slate-100 leading-tight">
-                      Tornike Epitashvili
+            <div className="flex flex-wrap items-center gap-5 sm:gap-6" data-ainow-team>
+              {team.map((member) => {
+                const memberCopy = getTeamMemberCopy(member, locale);
+                const portraitRing = member.badgeTone === "amethyst"
+                  ? "ring-[#857acc]/45 dark:ring-[#a89ae6]/55"
+                  : "ring-[#fa65ca]/45 dark:ring-[#fa3d7c]/55";
+                return (
+                  <div key={member.id} className="flex items-center gap-3" data-team-member={member.name}>
+                    <div className={`relative size-12 rounded-full overflow-hidden ring-2 shadow-sm shrink-0 bg-slate-100 dark:bg-slate-800 ${portraitRing}`}>
+                      <AiNowImage
+                        src={member.image}
+                        alt={`${memberCopy.name} · ${memberCopy.role}`}
+                        width={48}
+                        height={48}
+                        frameClassName="block size-full"
+                        className="size-full object-cover"
+                        style={{ objectPosition: member.imagePosition }}
+                      />
                     </div>
-                    <div className="font-mono text-[11px] font-medium text-indigo-600 dark:text-indigo-400 tracking-wide">
-                      Co-founder · technology lead
+                    <div className="flex flex-col">
+                      <div className="font-semibold text-sm text-slate-900 dark:text-slate-100 leading-tight">{memberCopy.name}</div>
+                      <FounderBadge
+                        label={memberCopy.coFounderLabel}
+                        role={memberCopy.role}
+                        tone={member.badgeTone}
+                        compact
+                        className="mt-1 self-start"
+                      />
                     </div>
                   </div>
-                </div>
-              ) : null}
-
-              <div className="flex items-center gap-3">
-                <div className="relative size-12 rounded-full overflow-hidden ring-2 ring-pink-500/30 dark:ring-pink-400/40 shadow-sm shrink-0 bg-slate-100 dark:bg-slate-800">
-                  <AiNowImage
-                    src="/team/nika-skhirtladze-v3.png"
-                    alt={`${copy.team.names.nika} · ${copy.team.roles.commercial}`}
-                    width={48}
-                    height={48}
-                    frameClassName="block size-full"
-                    className="size-full object-cover object-top"
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <div className="font-semibold text-sm text-slate-900 dark:text-slate-100 leading-tight">
-                    {copy.team.names.nika}
-                  </div>
-                  <div className="font-mono text-[11px] font-medium text-pink-600 dark:text-pink-400 tracking-wide">
-                    {copy.team.roles.commercial}
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <div className="relative size-12 rounded-full overflow-hidden ring-2 ring-emerald-500/30 dark:ring-emerald-400/40 shadow-sm shrink-0 bg-slate-100 dark:bg-slate-800">
-                  <AiNowImage
-                    src="/team/giorgi-darbaiseli-v2.png"
-                    alt={`${copy.team.names.giorgi} · ${copy.team.roles.businessDevelopment}`}
-                    width={48}
-                    height={48}
-                    frameClassName="block size-full"
-                    className="size-full object-cover object-top"
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <div className="font-semibold text-sm text-slate-900 dark:text-slate-100 leading-tight">
-                    {copy.team.names.giorgi}
-                  </div>
-                  <div className="font-mono text-[11px] font-medium text-emerald-600 dark:text-emerald-400 tracking-wide">
-                    {copy.team.roles.businessDevelopment}
-                  </div>
-                </div>
-              </div>
+                );
+              })}
             </div>
 
             <div className="flex flex-col lg:items-end text-xs font-mono text-slate-400 dark:text-slate-500 shrink-0">

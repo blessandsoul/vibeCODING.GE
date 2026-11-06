@@ -146,8 +146,8 @@ const en = {
       "For vibeCODING, we begin with public evidence, separate what needs permission and write the risk, repair and verification path.",
       "We do not claim hack-proof applications, compliance certification or a guaranteed security outcome.",
     ],
-    names: { andro: "Andro Kasparov", nika: "Nika Skhirtladze", giorgi: "Giorgi Darbaiseli" },
-    roles: { founder: "Founder", commercial: "Commercial director", businessDevelopment: "Business Development Director" },
+    names: { andro: "Andro Kasparov", tornike: "Tornike Epitashvili" },
+    roles: { coFounder: "Co-founder", ceo: "CEO", cto: "CTO" },
     location: "Tbilisi, Georgia", year: "2026",
   },
   faq: {
@@ -279,8 +279,8 @@ const ka = {
   team: {
     eyebrow: "ჩვენი როლი", title: "სწრაფად შექმნილი პროგრამის შემოწმების ფენა",
     paragraphs: ["ჩვენ ვართ aiNOW — თბილისში მომუშავე გუნდი, რომელიც მფლობელებს AI-ით შექმნილი პროგრამის გამოშვების გადაწყვეტილების გამარტივებაში ეხმარება.", "vibeCODING-ისთვის ვიწყებთ საჯარო მტკიცებულებით, ცალკე ვყოფთ ნებართვის საჭირო ნაწილს და ვწერთ რისკის, ხარვეზების გამოსწორებისა და გადამოწმების გზას.", "არ ვაცხადებთ აპის სრულ დაცულობას, შესაბამისობის სერტიფიკაციას ან უსაფრთხოების გარანტირებულ შედეგს."],
-    names: { andro: "Andro Kasparov", nika: "Nika Skhirtladze", giorgi: "Giorgi Darbaiseli" },
-    roles: { founder: "დამფუძნებელი", commercial: "კომერციული დირექტორი", businessDevelopment: "ბიზნესის განვითარების დირექტორი" },
+    names: { andro: "ანდრო კასპაროვი", tornike: "თორნიკე ეპიტაშვილი" },
+    roles: { coFounder: "თანადამფუძნებელი", ceo: "CEO", cto: "CTO" },
     location: "თბილისი, საქართველო", year: "2026",
   },
   faq: {
@@ -401,8 +401,8 @@ const ru = {
   team: {
     eyebrow: "Наша роль", title: "Слой проверки для быстро созданного ПО",
     paragraphs: ["Мы — aiNOW, команда из Тбилиси, которая помогает владельцам принять понятное решение о релизе AI-приложения.", "В vibeCODING начинаем с публичной проверки, отмечаем, где нужен дополнительный доступ, и описываем риски, исправления и способ их проверки.", "Мы не заявляем защиту от любых атак, сертификацию соответствия или гарантированный результат безопасности."],
-    names: { andro: "Andro Kasparov", nika: "Nika Skhirtladze", giorgi: "Giorgi Darbaiseli" },
-    roles: { founder: "Основатель", commercial: "Коммерческий директор", businessDevelopment: "Директор по развитию бизнеса" }, location: "Тбилиси, Грузия", year: "2026",
+    names: { andro: "Андрей Каспаров", tornike: "Торнике Эпиташвили" },
+    roles: { coFounder: "Соучредитель", ceo: "CEO", cto: "CTO" }, location: "Тбилиси, Грузия", year: "2026",
   },
   faq: {
     eyebrow: "[Ответы о проверке безопасности]", title: "Вопросы о vibeCODING", description: "Прямые ответы о публичном сканировании, согласованных границах, цене и исправлении.",

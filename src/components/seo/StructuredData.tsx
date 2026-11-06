@@ -1,8 +1,29 @@
+import { publicTeam as companyPublicTeam } from "@/features/about/data/team";
 import { getLocale } from "next-intl/server";
 import { PRODUCT_OG_URL } from "@/lib/product-og";
 import { CONTACT_PHONE, SITE_CONTENT_UPDATED } from "@/lib/constants/app.constants";
 import { getAiNowHomeCopy } from "@/features/home/components/ainow/AiNowHomeCopy";
 import { PRODUCT_BASE_URL, PRODUCT_FACTS } from "@/lib/product-public-facts";
+
+const publicProfileImage = (image: string) => image.startsWith("http") ? image : `https://ainow.ge${image}`;
+const PUBLIC_TEAM_PROFILES = companyPublicTeam.map((member) => ({
+  slug: member.id,
+  id: member.id === "andro-kasparov" ? "https://andrewaltair.ge/#person" : `https://ainow.ge/#person-${member.id}`,
+  name: member.name,
+  alternateName: member.id === "andro-kasparov" ? ["Andrew Altair", member.nameKa, member.localizedNames.ru] : [member.nameKa, member.localizedNames.ru, "Toko", "Токо"],
+  jobTitle: member.role.en,
+  coFounder: true,
+  url: `https://ainow.ge/about#${member.id}`,
+  image: publicProfileImage(member.image),
+  imageCaption: `${member.name}, co-founder and ${member.role.en} of aiNOW`,
+}));
+
+const publicPeopleSchema = PUBLIC_TEAM_PROFILES.map(member => ({
+    "@type": "Person", "@id": member.id, name: member.name, alternateName: member.alternateName, jobTitle: member.jobTitle,
+    description: member.imageCaption, url: member.url, worksFor: { "@id": "https://ainow.ge#organization" },
+    image: { "@type": "ImageObject", "@id": `https://ainow.ge/#portrait-${member.slug}`, url: member.image, contentUrl: member.image, caption: member.imageCaption, about: { "@id": member.id } },
+  }));
+
 
 const organizationSchema = {
   "@type": "Organization",
@@ -48,12 +69,7 @@ const organizationSchema = {
   // Reciprocal cross-domain entity edge: aiNOW's founder is Andrew Altair
   // (andrewaltair.ge#person). Pairs with personSchema.worksFor -> ainow.ge#organization
   // on andrewaltair.ge so Google associates the two domains as one entity graph.
-  founder: {
-    "@type": "Person",
-    "@id": "https://andrewaltair.ge/#person",
-    name: "Andrew Altair",
-    url: "https://andrewaltair.ge/about",
-  },
+  founder: PUBLIC_TEAM_PROFILES.map(member => ({ "@id": member.id })),
 };
 
 const websiteSchema = {
@@ -140,7 +156,7 @@ function getSiteGraph(locale: string) {
 
   return {
     "@context": "https://schema.org",
-    "@graph": [organization, localBusinessSchema, website],
+    "@graph": [organization, localBusinessSchema, website, ...publicPeopleSchema],
   };
 }
 

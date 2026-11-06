@@ -2485,14 +2485,14 @@
       "headingPre": "我们在 ",
       "headingSuffix": " 是谁",
       "subtitle": "两个人：业务方向与客户交付由同一团队负责。",
-      "m1Name": "Andrew Altair",
-      "m1Bio": "有远见的商业战略家。将技术、人员和想法融为一体。",
-      "m2Name": "",
-      "m2Bio": "架构、开发和扩展。一位充满人工智能的全栈工程师。",
-      "m3Name": "乔治·达尔拜塞利",
-      "m3Bio": "销售、客户关系和完成交易。将对话变成合同。",
-      "m4Name": "",
-      "m4Bio": "客户开拓与新客户。寻找需要 AI 的企业并开启对话。"
+      "m1Name": "Andro Kasparov",
+      "m1Role": "CEO",
+      "m1CoFounder": "联合创始人",
+      "m1Bio": "确定业务目标、产品方向和每项成果的质量标准。",
+      "m2Name": "Tornike Epitashvili",
+      "m2Role": "CTO",
+      "m2CoFounder": "联合创始人",
+      "m2Bio": "负责技术架构、人工智能模型集成和核心基础设施。"
     },
     "stack": {
       "eyebrow": "堆栈·我们的武器库",

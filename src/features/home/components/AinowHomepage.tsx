@@ -1,3 +1,4 @@
+import { getTeamMemberCopy, publicTeam } from '@/features/about/data/team';
 import Image from 'next/image';
 
 import { Ico } from '@/components/common/Ico';
@@ -365,13 +366,18 @@ export async function AinowHomepage({ locale }: { locale: string }) {
         <div className="ah-text-shell" data-family-shell>
           <SectionHeading label={ui.team.label} heading={ui.team.heading} description={ui.team.description} />
           <div className="ah-team-list">
-            {ui.team.members.map((member, index) => (
-              <article key={member.name} className="ah-person">
-                <Image src={index === 0 ? '/team/andro.jpg' : '/team/giorgi.jpg'} alt={member.name} width={168} height={168} sizes="(max-width: 640px) 88px, 128px" />
-                <div><p className="ah-person-index">0{index + 1}</p><h3>{member.name}</h3><strong>{member.role}</strong><p>{member.bio}</p></div>
-                {index === 0 && <a href={PUBLIC_FACTS.founder.url} target="_blank" rel="noopener noreferrer" className="ah-person-link" aria-label={member.name}><Ico name="solar:arrow-right-up-bold-duotone" /></a>}
-              </article>
-            ))}
+
+            {publicTeam.map((member, index) => {
+              const memberCopy = getTeamMemberCopy(member, locale);
+              return (
+                <article key={member.id} className="ah-person">
+                  <Image src={member.image} alt={memberCopy.name} width={168} height={168} sizes="(max-width: 640px) 88px, 128px" style={{ objectPosition: member.imagePosition }} />
+                  <div><p className="ah-person-index">0{index + 1}</p><h3>{memberCopy.name}</h3><strong>{memberCopy.coFounderLabel} · {memberCopy.role}</strong><p>{memberCopy.bio}</p></div>
+                  {index === 0 && <a href={PUBLIC_FACTS.founder.url} target="_blank" rel="noopener noreferrer" className="ah-person-link" aria-label={memberCopy.name}><Ico name="solar:arrow-right-up-bold-duotone" /></a>}
+                </article>
+              );
+            })}
+
           </div>
         </div>
       </section>

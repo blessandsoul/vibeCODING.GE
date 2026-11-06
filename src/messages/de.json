@@ -2485,12 +2485,14 @@
       "headingPre": "Wer wir bei",
       "headingSuffix": " sind",
       "subtitle": "Zwei Menschen: Geschäftsausrichtung und Kundenarbeit in einem Team.",
-      "m1Name": "Andrew Altair",
-      "m1Bio": "Visionär und Business-Stratege. Vereint Technologie, Menschen und Ideen zu einem Ganzen.",
-      "m2Name": "",
-      "m2Bio": "Architektur, Entwicklung und Skalierung. Full-Stack-Ingenieur, verstärkt durch KI.",
-      "m4Name": "",
-      "m4Bio": "Outreach und Neukunden. Findet Unternehmen, die KI brauchen, und startet das Gespräch."
+      "m1Name": "Andro Kasparov",
+      "m1Role": "CEO",
+      "m1CoFounder": "Mitgründer",
+      "m1Bio": "Definiert das Geschäftsziel, die Produktrichtung und den Qualitätsstandard jedes Ergebnisses.",
+      "m2Name": "Tornike Epitashvili",
+      "m2Role": "CTO",
+      "m2CoFounder": "Mitgründer",
+      "m2Bio": "Leitet die technologische Architektur, die Integration von KI-Modellen und die Kerninfrastruktur."
     },
     "stack": {
       "eyebrow": "STACK · unser Arsenal",

@@ -98,9 +98,7 @@ export const HOME_PRESENTATION: Record<HomeLocale, HomePresentation> = {
     cases: { label: 'საქმეები', heading: 'როგორ ვაგვარებთ ბიზნესის ამოცანებს', description: 'კონკრეტული პრობლემა, შესრულებული სამუშაო და მიღებული შედეგი.', link: 'ყველა ქეისი', method: 'გაზომვის მეთოდი' },
     team: {
       label: 'გუნდი', heading: 'ვინ მართავს aiNOW-ს', description: 'ბიზნესის ხედვა და ტექნიკური შესრულება ერთ გუნდში.',
-      members: [
-        { name: 'Andrew Altair', role: 'დამფუძნებელი · CEO', bio: 'ადგენს ბიზნესის მიზანს, პროდუქტების მიმართულებასა და შედეგის სტანდარტს.' },
-      ],
+      members: [{"name":"ანდრო კასპაროვი","role":"თანადამფუძნებელი · CEO","bio":"განსაზღვრავს ბიზნესის მიზანს, პროდუქტის მიმართულებასა და ხარისხის სტანდარტს."},{"name":"თორნიკე ეპიტაშვილი","role":"თანადამფუძნებელი · CTO","bio":"ხელმძღვანელობს ტექნოლოგიურ არქიტექტურას, AI მოდელების ინტეგრაციასა და სისტემების მდგრადობას."}],
     },
     faq: { label: 'FAQ', heading: 'ხშირი კითხვები', description: 'პირდაპირი პასუხები დაწყების, ვადებისა და მართვის შესახებ.' },
     cta: { label: 'დავიწყოთ', heading: 'აჩვენეთ, რა სჭირდება თქვენს ბიზნესს', description: 'aiNOW მოამზადებს გასაგებ დემოს თქვენი ამოცანის მიხედვით.', button: 'მოითხოვეთ დემო' },
@@ -136,9 +134,7 @@ export const HOME_PRESENTATION: Record<HomeLocale, HomePresentation> = {
     cases: { label: 'Cases', heading: 'How we solve business tasks', description: 'The business problem, the work completed and the resulting outcome.', link: 'See all cases', method: 'Measurement method' },
     team: {
       label: 'Team', heading: 'Who leads aiNOW', description: 'Business direction and technical delivery in one team.',
-      members: [
-        { name: 'Andrew Altair', role: 'Founder · CEO', bio: 'Sets the business goal, product direction and quality bar for every result.' },
-      ],
+      members: [{"name":"Andro Kasparov","role":"Co-founder · CEO","bio":"Sets the business goal, product direction and quality bar for every result."},{"name":"Tornike Epitashvili","role":"Co-founder · CTO","bio":"Leads technological architecture, AI model integration and core infrastructure."}],
     },
     faq: { label: 'FAQ', heading: 'Common questions', description: 'Direct answers about setup, timing and control.' },
     cta: { label: 'Start', heading: 'Show us what your business needs', description: 'aiNOW will prepare a clear demo around your task.', button: 'Request a demo' },
@@ -174,9 +170,7 @@ export const HOME_PRESENTATION: Record<HomeLocale, HomePresentation> = {
     cases: { label: 'Кейсы', heading: 'Как мы решаем задачи бизнеса', description: 'Конкретная проблема, выполненная работа и полученный результат.', link: 'Все кейсы', method: 'Методика измерения' },
     team: {
       label: 'Команда', heading: 'Кто управляет aiNOW', description: 'Бизнес-направление и техническая реализация в одной команде.',
-      members: [
-        { name: 'Andrew Altair', role: 'Основатель · CEO', bio: 'Задаёт бизнес-цель, направление продуктов и стандарт качества результата.' },
-      ],
+      members: [{"name":"Андрей Каспаров","role":"Соучредитель · CEO","bio":"Определяет бизнес-цель, направление продукта и стандарт качества каждого результата."},{"name":"Торнике Эпиташвили","role":"Соучредитель · CTO","bio":"Руководит технологической архитектурой, интеграцией AI-моделей и базовой инфраструктурой."}],
     },
     faq: { label: 'FAQ', heading: 'Частые вопросы', description: 'Прямые ответы о запуске, сроках и управлении.' },
     cta: { label: 'Начнём', heading: 'Покажите, что нужно вашему бизнесу', description: 'aiNOW подготовит понятное демо под вашу задачу.', button: 'Запросить демо' },
@@ -212,9 +206,7 @@ export const HOME_PRESENTATION: Record<HomeLocale, HomePresentation> = {
     cases: { label: 'Projekte', heading: 'Wie wir Geschäftsaufgaben lösen', description: 'Das konkrete Problem, die ausgeführte Arbeit und das erzielte Ergebnis.', link: 'Alle Projekte', method: 'Messmethode' },
     team: {
       label: 'Team', heading: 'Wer aiNOW leitet', description: 'Geschäftliche Richtung und technische Umsetzung in einem Team.',
-      members: [
-        { name: 'Andrew Altair', role: 'Gründer · CEO', bio: 'Definiert Geschäftsziel, Produktrichtung und Qualitätsstandard der Ergebnisse.' },
-      ],
+      members: [{"name":"Andro Kasparov","role":"Mitgründer · CEO","bio":"Definiert das Geschäftsziel, die Produktrichtung und den Qualitätsstandard jedes Ergebnisses."},{"name":"Tornike Epitashvili","role":"Mitgründer · CTO","bio":"Leitet die technologische Architektur, die Integration von KI-Modellen und die Kerninfrastruktur."}],
     },
     faq: { label: 'FAQ', heading: 'Häufige Fragen', description: 'Klare Antworten zu Start, Zeitplan und Kontrolle.' },
     cta: { label: 'Start', heading: 'Zeigen Sie uns, was Ihr Unternehmen braucht', description: 'aiNOW erstellt eine verständliche Demo für Ihre Aufgabe.', button: 'Demo anfragen' },
@@ -250,9 +242,7 @@ export const HOME_PRESENTATION: Record<HomeLocale, HomePresentation> = {
     cases: { label: 'Projeler', heading: 'İşletme sorunlarını nasıl çözüyoruz', description: 'Somut sorun, tamamlanan çalışma ve elde edilen sonuç.', link: 'Tüm projeler', method: 'Ölçüm yöntemi' },
     team: {
       label: 'Ekip', heading: "aiNOW'u kim yönetiyor", description: 'İş yönü ve teknik uygulama tek ekipte.',
-      members: [
-        { name: 'Andrew Altair', role: 'Kurucu · CEO', bio: 'İş hedefini, ürün yönünü ve sonuçlar için kalite standardını belirler.' },
-      ],
+      members: [{"name":"Andro Kasparov","role":"Kurucu ortak · CEO","bio":"İş hedefini, ürün yönünü ve her sonucun kalite standardını belirler."},{"name":"Tornike Epitashvili","role":"Kurucu ortak · CTO","bio":"Teknolojik mimariye, yapay zekâ modeli entegrasyonuna ve temel altyapıya liderlik eder."}],
     },
     faq: { label: 'FAQ', heading: 'Sık sorulan sorular', description: 'Başlangıç, süre ve kontrol hakkında net yanıtlar.' },
     cta: { label: 'Başlayalım', heading: 'İşletmenizin neye ihtiyacı olduğunu gösterin', description: 'aiNOW görevinize uygun, anlaşılır bir demo hazırlayacak.', button: 'Demo isteyin' },
@@ -288,9 +278,7 @@ export const HOME_PRESENTATION: Record<HomeLocale, HomePresentation> = {
     cases: { label: 'پروژه‌ها', heading: 'چگونه مسائل کسب‌وکار را حل می‌کنیم', description: 'مسئله مشخص، کار انجام‌شده و نتیجه به‌دست‌آمده.', link: 'همه پروژه‌ها', method: 'روش اندازه‌گیری' },
     team: {
       label: 'تیم', heading: 'چه کسانی aiNOW را مدیریت می‌کنند', description: 'مسیر کسب‌وکار و اجرای فنی در یک تیم.',
-      members: [
-        { name: 'Andrew Altair', role: 'بنیان‌گذار · مدیرعامل', bio: 'هدف کسب‌وکار، مسیر محصول و معیار کیفیت نتیجه را تعیین می‌کند.' },
-      ],
+      members: [{"name":"Andro Kasparov","role":"هم‌بنیان‌گذار · CEO","bio":"هدف کسب‌وکار، مسیر محصول و معیار کیفیت هر نتیجه را تعیین می‌کند."},{"name":"Tornike Epitashvili","role":"هم‌بنیان‌گذار · CTO","bio":"معماری فناوری، یکپارچه‌سازی مدل‌های هوش مصنوعی و زیرساخت اصلی را هدایت می‌کند."}],
     },
     faq: { label: 'FAQ', heading: 'پرسش‌های رایج', description: 'پاسخ‌های روشن درباره شروع، زمان‌بندی و کنترل.' },
     cta: { label: 'شروع کنیم', heading: 'نشان دهید کسب‌وکار شما به چه چیزی نیاز دارد', description: 'aiNOW یک دموی روشن و متناسب با درخواست شما آماده می‌کند.', button: 'درخواست دمو' },
@@ -326,9 +314,7 @@ export const HOME_PRESENTATION: Record<HomeLocale, HomePresentation> = {
     cases: { label: '案例', heading: '我们如何解决业务问题', description: '具体问题、完成的工作和最终结果。', link: '查看所有案例', method: '衡量方法' },
     team: {
       label: '团队', heading: '谁在管理aiNOW', description: '业务方向和技术交付由同一团队负责。',
-      members: [
-        { name: 'Andrew Altair', role: '创始人 · 首席执行官', bio: '负责业务目标、产品方向和结果质量标准。' },
-      ],
+      members: [{"name":"Andro Kasparov","role":"联合创始人 · CEO","bio":"确定业务目标、产品方向和每项成果的质量标准。"},{"name":"Tornike Epitashvili","role":"联合创始人 · CTO","bio":"负责技术架构、人工智能模型集成和核心基础设施。"}],
     },
     faq: { label: 'FAQ', heading: '常见问题', description: '关于开始、时间和控制方式的直接回答。' },
     cta: { label: '开始', heading: '告诉我们你的业务需要什么', description: 'aiNOW会围绕你的任务准备清晰的演示。', button: '申请演示' },
