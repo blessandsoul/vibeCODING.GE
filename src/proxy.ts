@@ -1,3 +1,4 @@
+import { isRetiredTeamPortrait } from "@/lib/retired-team-portraits";
 import { NextRequest, NextResponse } from "next/server";
 import createMiddleware from "next-intl/middleware";
 import { routing } from "./i18n/routing";
@@ -47,6 +48,17 @@ function preservePartnerKitNotFound(request: NextRequest, response: NextResponse
 
 /** Public locale routing only; source admin/auth/legacy maps are not public adapters. */
 export default function proxy(request: NextRequest): NextResponse {
+  const assetPath = request.nextUrl.pathname;
+  if (assetPath.startsWith("/team/") || assetPath === "/_next/image") {
+    if (isRetiredTeamPortrait(new URL(request.url))) {
+      return new NextResponse(null, {
+        status: 410,
+        headers: { "X-Robots-Tag": "noindex", "Cache-Control": "public, max-age=300" },
+      });
+    }
+    return NextResponse.next();
+  }
+
   const { pathname } = request.nextUrl;
   const isLoopbackPreview = request.nextUrl.hostname === "localhost" || request.nextUrl.hostname === "127.0.0.1";
   if (isLoopbackPreview && (pathname === "/ka" || pathname.startsWith("/ka/"))) {
@@ -57,4 +69,4 @@ export default function proxy(request: NextRequest): NextResponse {
   return previewHeaders(preservePartnerKitNotFound(request, intlMiddleware(request)));
 }
 
-export const config = { matcher: ["/((?!api|_next|_vercel|.*\\..*).*)"] };
+export const config = { matcher: ["/((?!api|_next|_vercel|.*\\..*).*)", "/team/:path*", "/_next/image"] };

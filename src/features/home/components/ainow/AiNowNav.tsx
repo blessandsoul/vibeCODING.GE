@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { Link } from "@/i18n/navigation";
 import { useLocale } from "next-intl";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronDown,
@@ -219,8 +220,21 @@ const RESOURCE_ITEMS = [
   },
 ];
 
+const ABOUT_LABELS: Record<string, string> = {
+  ka: "ჩვენ შესახებ",
+  en: "About us",
+  ru: "О нас",
+  de: "Über uns",
+  tr: "Hakkımızda",
+  fa: "درباره ما",
+  zh: "关于我们",
+};
+
 export function AiNowNav() {
   const locale = useLocale();
+  const pathname = usePathname();
+  const aboutLabel = ABOUT_LABELS[locale] ?? ABOUT_LABELS.en;
+  const isAbout = pathname === "/about" || pathname === `/${locale}/about`;
   const copy = getAiNowHomeCopy(locale);
   const familyNav = getFamilyNavLabels(locale);
   const productGroups = PRODUCT_GROUPS.map((group) => ({
@@ -497,6 +511,13 @@ export function AiNowNav() {
             >
               {copy.nav.pricing}
             </Link>
+            <Link
+              href="/about"
+              aria-current={isAbout ? "page" : undefined}
+              className="rounded-md px-2.5 py-1.5 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-black/[0.04] dark:hover:bg-white/[0.06] hover:text-slate-900 dark:hover:text-white transition-colors"
+            >
+              {aboutLabel}
+            </Link>
 
             {/* Subtle Divider */}
             <span className="h-3.5 w-[1px] bg-slate-300 dark:bg-white/20 mx-1 select-none" />
@@ -686,6 +707,14 @@ export function AiNowNav() {
                     className="rounded p-2 text-slate-800 dark:text-slate-200 hover:bg-black/[0.04] dark:hover:bg-white/[0.06]"
                   >
                     {copy.nav.pricing}
+                  </Link>
+                  <Link
+                    href="/about"
+                    aria-current={isAbout ? "page" : undefined}
+                    onClick={closeMobileMenu}
+                    className="rounded p-2 text-slate-800 dark:text-slate-200 hover:bg-black/[0.04] dark:hover:bg-white/[0.06]"
+                  >
+                    {aboutLabel}
                   </Link>
                   <Link
                     href="/blog"
